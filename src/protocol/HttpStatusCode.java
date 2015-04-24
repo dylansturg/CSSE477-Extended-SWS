@@ -55,6 +55,26 @@ public class HttpStatusCode {
 		codeMessage = message;
 	}
 
+	public int getStatusCode() {
+		return statusCode;
+	}
+
+	public String getStatusMessage() {
+		return codeMessage;
+	}
+
+	/**
+	 * Not currently in use, but can be used to return a default page for
+	 * certain status codes.
+	 * 
+	 * For example, a 404 could have a custom (fancy) page.
+	 * 
+	 * @return
+	 */
+	public String getPathToDefaultFile() {
+		return null;
+	}
+
 	private static HttpStatusCode Create(int code, String message) {
 		return new HttpStatusCode(code, message);
 	}
