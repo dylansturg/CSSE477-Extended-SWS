@@ -41,7 +41,7 @@ import java.util.Map;
  * @author Nathan Jarvis
  */
 
-//HTTP base request that specific requests extend. 
+// HTTP base request that specific requests extend.
 public class HTTPRequest {
 
 	protected Socket readSocket;
@@ -67,8 +67,8 @@ public class HTTPRequest {
 		headers = new HashMap<String, String>();
 		readSocket = socket;
 	}
-	
-	protected void commonInit(){
+
+	protected void commonInit() {
 		try {
 			this.readHeaders();
 			this.readBody();
@@ -81,7 +81,12 @@ public class HTTPRequest {
 	public String getMethod() {
 		return method;
 	}
-	//Read in the headers and their content and place in Map
+
+	public String getPath() {
+		return path;
+	}
+
+	// Read in the headers and their content and place in Map
 	public void readHeaders() throws IOException {
 		InputStream inStream;
 		String[] requestHeader;
