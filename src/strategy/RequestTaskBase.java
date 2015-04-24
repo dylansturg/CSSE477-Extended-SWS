@@ -28,14 +28,11 @@
 
 package strategy;
 
-import java.awt.color.CMMException;
 import java.net.Socket;
-import java.util.ArrayList;
 import java.util.List;
 
-import protocol.HttpRequest;
 import protocol.HttpResponse;
-import strategy.IRequestTask.IRequestTaskCompletionListener;
+import request.HTTPRequest;
 
 /**
  * 
@@ -43,13 +40,13 @@ import strategy.IRequestTask.IRequestTaskCompletionListener;
  */
 public abstract class RequestTaskBase implements IRequestTask {
 	protected List<IRequestTaskCompletionListener> completionListeners;
-	protected HttpRequest request;
+	protected HTTPRequest request;
 	protected boolean completed = false;
 	protected Socket client;
 
 	protected HttpResponse response;
 
-	public RequestTaskBase(HttpRequest request) {
+	public RequestTaskBase(HTTPRequest request) {
 		this.request = request;
 	}
 

@@ -28,8 +28,8 @@
 
 package strategy.directoryoperations;
 
-import protocol.HttpRequest;
 import protocol.HttpResponse;
+import request.HTTPRequest;
 
 /**
  * 
@@ -44,7 +44,7 @@ public class GetRequestHandler extends RequestHandler {
 	 * strategy.directoryoperations.RequestHandler#handle(protocol.HttpRequest)
 	 */
 	@Override
-	public HttpResponse handle(HttpRequest request) {
+	public HttpResponse handle(HTTPRequest request) {
 		// request is guaranteed to be GetHttpRequest
 
 		return null;

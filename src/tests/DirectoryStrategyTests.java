@@ -35,6 +35,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.Field;
 import java.net.Socket;
 import java.nio.charset.Charset;
 import java.util.HashMap;
@@ -48,17 +49,13 @@ import request.HTTPRequestFactory;
 import strategy.DirectoryStrategy;
 import strategy.IRequestTask;
 import strategy.directoryoperations.GetRequestHandler;
+import strategy.directoryoperations.RequestHandler;
 
 /**
  * 
  * @author Chandan R. Rupakheti (rupakhcr@clarkson.edu)
  */
 public class DirectoryStrategyTests {
-
-	@Test
-	public void test() {
-		fail("Not yet implemented");
-	}
 
 	@Test
 	public void testDirectoryStrategyCreatesGetForGetRequest() {
@@ -74,7 +71,18 @@ public class DirectoryStrategyTests {
 				testRoute);
 
 		assertNotNull(task);
-		assertEquals(task.getClass(), GetRequestHandler.class);
+
+		try {
+			Field field = task.getClass().getDeclaredField("handler");
+			field.setAccessible(true);
+			RequestHandler handlerForTask = (RequestHandler) field.get(task);
+
+			assertEquals(handlerForTask.getClass(), GetRequestHandler.class);
+
+		} catch (IllegalArgumentException | IllegalAccessException
+				| NoSuchFieldException | SecurityException e) {
+			fail();
+		}
 
 	}
 

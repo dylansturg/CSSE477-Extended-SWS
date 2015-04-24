@@ -25,11 +25,11 @@
  * NY 13699-5722
  * http://clarkson.edu/~rupakhcr
  */
- 
+
 package strategy.directoryoperations;
 
-import protocol.HttpRequest;
 import protocol.HttpResponse;
+import request.HTTPRequest;
 
 /**
  * 
@@ -37,11 +37,14 @@ import protocol.HttpResponse;
  */
 public class UnsupportedRequestHandler extends RequestHandler {
 
-	/* (non-Javadoc)
-	 * @see strategy.directoryoperations.RequestHandler#handle(protocol.HttpRequest)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * strategy.directoryoperations.RequestHandler#handle(protocol.HttpRequest)
 	 */
 	@Override
-	public HttpResponse handle(HttpRequest request) {
+	public HttpResponse handle(HTTPRequest request) {
 		// TODO Auto-generated method stub
 		return null;
 	}
