@@ -36,6 +36,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import configuration.ResourceStrategyRoute;
 import protocol.HttpRequest;
 import protocol.HttpResponse;
 import protocol.HttpResponseFactory;
@@ -69,7 +70,8 @@ public class DirectoryStrategy extends ResourceStrategyBase {
 	 * strategy.ResourceStrategyBase#prepareEvaluation(protocol.HttpRequest)
 	 */
 	@Override
-	public IRequestTask prepareEvaluation(HttpRequest request) {
+	public IRequestTask prepareEvaluation(HttpRequest request,
+			ResourceStrategyRoute fromRoute) {
 
 		String verb = request.getMethod();
 		String expectedHandlerClass = buildHandlerClassName(verb);
@@ -91,6 +93,7 @@ public class DirectoryStrategy extends ResourceStrategyBase {
 			handler = new UnsupportedRequestHandler();
 		}
 
+		handler.setTriggeredRoute(fromRoute);
 		// Defer all of the heavy lifting into the Task
 		return new DirectoryRequestTask(handler, request);
 	}

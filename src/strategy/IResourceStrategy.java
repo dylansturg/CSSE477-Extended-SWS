@@ -28,6 +28,7 @@
 
 package strategy;
 
+import configuration.ResourceStrategyRoute;
 import protocol.HttpRequest;
 
 /**
@@ -53,5 +54,5 @@ public interface IResourceStrategy {
 	 * @return Runnable to execute on a thread which will generate a
 	 *         HTTPResponse
 	 */
-	public IRequestTask prepareEvaluation(HttpRequest request);
+	public IRequestTask prepareEvaluation(HttpRequest request, ResourceStrategyRoute fromRoute);
 }

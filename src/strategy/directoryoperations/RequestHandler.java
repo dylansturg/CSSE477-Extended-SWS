@@ -25,9 +25,10 @@
  * NY 13699-5722
  * http://clarkson.edu/~rupakhcr
  */
- 
+
 package strategy.directoryoperations;
 
+import configuration.ResourceStrategyRoute;
 import protocol.HttpRequest;
 import protocol.HttpResponse;
 
@@ -36,5 +37,15 @@ import protocol.HttpResponse;
  * @author Chandan R. Rupakheti (rupakhcr@clarkson.edu)
  */
 public abstract class RequestHandler {
+	protected ResourceStrategyRoute triggeredRoute;
+
 	public abstract HttpResponse handle(HttpRequest request);
+
+	public ResourceStrategyRoute getTriggeredRoute() {
+		return triggeredRoute;
+	}
+
+	public void setTriggeredRoute(ResourceStrategyRoute route) {
+		triggeredRoute = route;
+	}
 }

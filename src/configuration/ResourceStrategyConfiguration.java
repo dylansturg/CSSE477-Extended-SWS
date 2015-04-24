@@ -55,7 +55,7 @@ public class ResourceStrategyConfiguration {
 
 		activeRoutes
 				.add(new ResourceStrategyRoute("strategy.DirectoryStrategy",
-						"", new HashMap<String, String>()));
+						"(.*?)", new HashMap<String, String>()));
 	}
 
 	public ResourceStrategyRoute findRouteForResourcePath(String path) {

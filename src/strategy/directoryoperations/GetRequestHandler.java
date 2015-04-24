@@ -45,7 +45,8 @@ public class GetRequestHandler extends RequestHandler {
 	 */
 	@Override
 	public HttpResponse handle(HttpRequest request) {
-		// TODO Auto-generated method stub
+		// request is guaranteed to be GetHttpRequest
+
 		return null;
 	}
 

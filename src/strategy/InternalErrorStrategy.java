@@ -28,23 +28,52 @@
 
 package strategy;
 
+import configuration.ResourceStrategyRoute;
 import protocol.HttpRequest;
+import protocol.HttpResponse;
 
 /**
  * 
  * @author Chandan R. Rupakheti (rupakhcr@clarkson.edu)
  */
 public class InternalErrorStrategy extends ResourceStrategyBase {
+
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * strategy.ResourceStrategyBase#prepareEvaluation(protocol.HttpRequest)
+	 * strategy.ResourceStrategyBase#prepareEvaluation(protocol.HttpRequest,
+	 * configuration.ResourceStrategyRoute)
 	 */
 	@Override
-	public IRequestTask prepareEvaluation(HttpRequest request) {
-		// TODO Auto-generated method stub
-		return super.prepareEvaluation(request);
+	public IRequestTask prepareEvaluation(HttpRequest request,
+			ResourceStrategyRoute fromRoute) {
+
+		return new InternalErrorRequestTask(request);
+	}
+
+	private class InternalErrorRequestTask extends RequestTaskBase {
+
+		/**
+		 * @param request
+		 */
+		public InternalErrorRequestTask(HttpRequest request) {
+			super(request);
+		}
+
+		@Override
+		public void run() {
+
+			completed = true;
+			super.run();
+		}
+
+		@Override
+		public HttpResponse getResponse() {
+			// TODO return HTTP 500 error
+			return null;
+		}
+
 	}
 
 }
