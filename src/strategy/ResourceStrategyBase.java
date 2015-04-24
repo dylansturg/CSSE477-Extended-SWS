@@ -25,20 +25,21 @@
  * NY 13699-5722
  * http://clarkson.edu/~rupakhcr
  */
- 
+
 package strategy;
 
 import configuration.ResourceStrategyRoute;
-import protocol.HttpRequest;
+import request.HTTPRequest;
 
 /**
  * 
  * @author Chandan R. Rupakheti (rupakhcr@clarkson.edu)
  */
 public abstract class ResourceStrategyBase implements IResourceStrategy {
-	
+
 	@Override
-	public IRequestTask prepareEvaluation(HttpRequest request, ResourceStrategyRoute fromRoute) {
+	public IRequestTask prepareEvaluation(HTTPRequest request,
+			ResourceStrategyRoute fromRoute) {
 		// TODO Auto-generated method stub
 		return null;
 	}

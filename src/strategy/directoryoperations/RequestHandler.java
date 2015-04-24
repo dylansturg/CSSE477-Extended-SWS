@@ -29,8 +29,8 @@
 package strategy.directoryoperations;
 
 import configuration.ResourceStrategyRoute;
-import protocol.HttpRequest;
 import protocol.HttpResponse;
+import request.HTTPRequest;
 
 /**
  * 
@@ -39,7 +39,7 @@ import protocol.HttpResponse;
 public abstract class RequestHandler {
 	protected ResourceStrategyRoute triggeredRoute;
 
-	public abstract HttpResponse handle(HttpRequest request);
+	public abstract HttpResponse handle(HTTPRequest request);
 
 	public ResourceStrategyRoute getTriggeredRoute() {
 		return triggeredRoute;

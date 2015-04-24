@@ -29,7 +29,7 @@
 package strategy;
 
 import configuration.ResourceStrategyRoute;
-import protocol.HttpRequest;
+import request.HTTPRequest;
 
 /**
  * Defines an implementation of a server-side resource management protocol. The
@@ -54,5 +54,6 @@ public interface IResourceStrategy {
 	 * @return Runnable to execute on a thread which will generate a
 	 *         HTTPResponse
 	 */
-	public IRequestTask prepareEvaluation(HttpRequest request, ResourceStrategyRoute fromRoute);
+	public IRequestTask prepareEvaluation(HTTPRequest request,
+			ResourceStrategyRoute fromRoute);
 }

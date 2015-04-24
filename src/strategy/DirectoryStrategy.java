@@ -40,6 +40,7 @@ import configuration.ResourceStrategyRoute;
 import protocol.HttpRequest;
 import protocol.HttpResponse;
 import protocol.HttpResponseFactory;
+import request.HTTPRequest;
 import strategy.directoryoperations.RequestHandler;
 import strategy.directoryoperations.UnsupportedRequestHandler;
 
@@ -70,14 +71,16 @@ public class DirectoryStrategy extends ResourceStrategyBase {
 	 * strategy.ResourceStrategyBase#prepareEvaluation(protocol.HttpRequest)
 	 */
 	@Override
-	public IRequestTask prepareEvaluation(HttpRequest request,
+	public IRequestTask prepareEvaluation(HTTPRequest request,
 			ResourceStrategyRoute fromRoute) {
 
-		String verb = request.getMethod();
-		String expectedHandlerClass = buildHandlerClassName(verb);
 		RequestHandler handler = null;
 
 		try {
+
+			String verb = request.getMethod();
+			String expectedHandlerClass = buildHandlerClassName(verb);
+
 			Class<?> handlerClass = Class.forName(expectedHandlerClass);
 			Constructor<?> handlerCtor = handlerClass.getConstructor();
 
@@ -99,6 +102,10 @@ public class DirectoryStrategy extends ResourceStrategyBase {
 	}
 
 	private String buildHandlerClassName(String verb) {
+		verb = verb.toLowerCase();
+		verb = String.format("%s%s", verb.substring(0, 1).toUpperCase(),
+				verb.substring(1));
+
 		return String.format("%s.%s%s", REQUEST_HANDLERS_PACKAGE, verb,
 				REQUEST_HANDLERS_POSTFIX);
 	}
@@ -109,16 +116,11 @@ public class DirectoryStrategy extends ResourceStrategyBase {
 		// Initialized when the task is complete
 		private HttpResponse response = null;
 
-		public DirectoryRequestTask(RequestHandler handler, HttpRequest request) {
+		public DirectoryRequestTask(RequestHandler handler, HTTPRequest request) {
 			super(request);
 			this.handler = handler;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see java.lang.Runnable#run()
-		 */
 		@Override
 		public void run() {
 			try {
