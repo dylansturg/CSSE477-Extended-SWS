@@ -28,32 +28,19 @@
 
 package request;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.Socket;
-import java.util.Map;
 
 /**
  * 
  * @author Nathan Jarvis
  */
+//Request that is created for GET
 public class GETHTTPRequest extends HTTPRequest {
 
-	public GETHTTPRequest(Socket socket, InputStreamReader reader) {
+	public GETHTTPRequest(Socket socket, InputStreamReader reader) throws Exception {
 		super(socket, reader);
-		commonInit();
-	}
-
-	private void commonInit() {
-		try {
-			this.readHeaders();
-			this.readBody();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		this.commonInit();
 		checkBody();
 	}
 
@@ -61,16 +48,19 @@ public class GETHTTPRequest extends HTTPRequest {
 	 * @param socket
 	 * @param headerMap
 	 * @param verb
+	 * @throws Exception 
 	 */
-	public GETHTTPRequest(Socket socket) {
+	public GETHTTPRequest(Socket socket) throws Exception {
 		super(socket);
-		commonInit();
+		this.commonInit();
+		checkBody();
 	}
 
-	public void checkBody() {
+	public void checkBody() throws Exception {
 		// TODO Check to see if valid GET request
 		if (this.bodyPresent) {
 			// Shouldn't be a body for get request.
+			throw new Exception("Get request should not have body.");
 		}
 	}
 }

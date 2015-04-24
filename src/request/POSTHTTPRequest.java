@@ -1,6 +1,6 @@
 /*
- * MalformedHTTPRequest.java
- * Apr 24, 2015
+ * GetHTTPRequest.java
+ * Apr 23, 2015
  *
  * Simple Web Server (SWS) for EE407/507 and CS455/555
  * 
@@ -25,26 +25,48 @@
  * NY 13699-5722
  * http://clarkson.edu/~rupakhcr
  */
- 
+
 package request;
 
+import java.io.InputStreamReader;
 import java.net.Socket;
 
 /**
  * 
  * @author Nathan Jarvis
  */
+// Request that is created for Delete
+public class POSTHTTPRequest extends HTTPRequest {
 
-//A bad request that is sent back when the server receives a messed up request.
-public class MalformedHTTPRequest extends HTTPRequest {
+	public POSTHTTPRequest(Socket socket, InputStreamReader reader)
+			throws Exception {
+		super(socket, reader);
+		this.commonInit();
+		checkRequest();
+	}
 
 	/**
 	 * @param socket
+	 * @param headerMap
+	 * @param verb
+	 * @throws Exception
 	 */
-	
-	public MalformedHTTPRequest(Socket socket) {
+	public POSTHTTPRequest(Socket socket) throws Exception {
 		super(socket);
-		// TODO Auto-generated constructor stub
+		this.commonInit();
+		checkRequest();
 	}
 
+	// Check to see if valid request
+	public void checkRequest() throws Exception {
+		if (!this.bodyPresent) {
+			// There should be a body for a post request
+			throw new Exception("Post request should have a body.");
+		}
+
+		if (this.bodyLength == this.body.length()) {
+			throw new Exception(
+					"Post request body length is not equal to expected content length.");
+		}
+	}
 }
