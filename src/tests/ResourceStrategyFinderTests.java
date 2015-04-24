@@ -38,6 +38,7 @@ import org.junit.Test;
 import protocol.HttpRequest;
 import strategy.DirectoryStrategy;
 import strategy.IResourceStrategy;
+import strategy.InternalErrorStrategy;
 import strategy.ResourceStrategyFinder;
 import configuration.ResourceStrategyConfiguration;
 import configuration.ResourceStrategyRoute;
@@ -64,6 +65,30 @@ public class ResourceStrategyFinderTests {
 
 		assertNotNull(strategy);
 		assertTrue(strategy.getClass() == DirectoryStrategy.class);
+	}
+
+	@Test
+	public void testResourceFinderServesInternalErrorForUnMappedRoute() {
+		ResourceStrategyConfiguration testConfig = createConfigurationForRoutes();
+		ResourceStrategyFinder finder = new ResourceStrategyFinder(testConfig,
+				null);
+
+		IResourceStrategy strategy = finder
+				.routeRequestToStrategy(new FakeHttpRequest());
+
+		assertNotNull(strategy);
+		assertTrue(strategy.getClass() == InternalErrorStrategy.class);
+
+	}
+
+	public ResourceStrategyConfiguration createConfigurationForRoutes(
+			ResourceStrategyRoute... routes) {
+		List<ResourceStrategyRoute> configurationRoutes = new ArrayList<ResourceStrategyRoute>();
+		if (routes != null) {
+			configurationRoutes.addAll(java.util.Arrays.asList(routes));
+		}
+
+		return new ResourceStrategyConfiguration(configurationRoutes);
 	}
 
 	public class FakeHttpRequest extends HttpRequest {

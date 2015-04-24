@@ -45,6 +45,7 @@ public abstract class RequestTaskBase implements IRequestTask {
 	protected List<IRequestTaskCompletionListener> completionListeners;
 	protected HttpRequest request;
 	protected boolean completed = false;
+	protected Socket client;
 
 	protected HttpResponse response;
 
@@ -93,6 +94,16 @@ public abstract class RequestTaskBase implements IRequestTask {
 	public void writeResponse(Socket clientSocket) {
 		// TODO Write out the created response into the given socket
 
+	}
+
+	@Override
+	public Socket getRequestingClient() {
+		return this.client;
+	}
+
+	@Override
+	public void setRequestingClient(Socket client) {
+		this.client = client;
 	}
 
 }

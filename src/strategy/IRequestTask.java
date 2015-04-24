@@ -45,6 +45,7 @@ import protocol.HttpResponse;
  * @author Chandan R. Rupakheti (rupakhcr@clarkson.edu)
  */
 public interface IRequestTask extends Runnable {
+
 	public interface IRequestTaskCompletionListener {
 		public void taskComplete(IRequestTask completed);
 	}
@@ -55,6 +56,10 @@ public interface IRequestTask extends Runnable {
 	public boolean isComplete();
 
 	public HttpResponse getResponse();
+
+	public void setRequestingClient(Socket client);
+
+	public Socket getRequestingClient();
 
 	public void writeResponse(Socket clientSocket);
 
