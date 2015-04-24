@@ -1,6 +1,6 @@
 /*
- * ResourceStrategyRouteNone.java
- * Apr 23, 2015
+ * ResourceStrategyRouteOptions.java
+ * Apr 24, 2015
  *
  * Simple Web Server (SWS) for EE407/507 and CS455/555
  * 
@@ -28,27 +28,14 @@
 
 package configuration;
 
-import java.util.Map;
-
 /**
+ * Defines a collection of constants that represent keys in a
+ * ResourceStrategyRoute's options dictionary.
  * 
  * @author Chandan R. Rupakheti (rupakhcr@clarkson.edu)
  */
-public class ResourceStrategyRouteNone extends ResourceStrategyRoute {
+public class ResourceStrategyRouteOptions {
 
-	/**
-	 * @param strategy
-	 * @param route
-	 * @param options
-	 */
-	public ResourceStrategyRouteNone(String strategy, String route,
-			Map<String, String> options) {
-		super(strategy, route, options);
-	}
-
-	@Override
-	public String getStrategyOption(String option) {
-		return null;
-	}
+	public static final String RootDirectoy = "RootDirectory";
 
 }

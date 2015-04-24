@@ -1,6 +1,6 @@
 /*
- * ResourceStrategyRouteNone.java
- * Apr 23, 2015
+ * IResourceStrategySettingsChangedListener.java
+ * Apr 24, 2015
  *
  * Simple Web Server (SWS) for EE407/507 and CS455/555
  * 
@@ -25,30 +25,15 @@
  * NY 13699-5722
  * http://clarkson.edu/~rupakhcr
  */
-
+ 
 package configuration;
-
-import java.util.Map;
 
 /**
  * 
  * @author Chandan R. Rupakheti (rupakhcr@clarkson.edu)
  */
-public class ResourceStrategyRouteNone extends ResourceStrategyRoute {
-
-	/**
-	 * @param strategy
-	 * @param route
-	 * @param options
-	 */
-	public ResourceStrategyRouteNone(String strategy, String route,
-			Map<String, String> options) {
-		super(strategy, route, options);
-	}
-
-	@Override
-	public String getStrategyOption(String option) {
-		return null;
-	}
+public interface IResourceStrategySettingsChangedListener {
+	
+	
 
 }
