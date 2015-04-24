@@ -1,6 +1,6 @@
 /*
- * RequestHandler.java
- * Apr 23, 2015
+ * InternalErrorStrategy.java
+ * Apr 24, 2015
  *
  * Simple Web Server (SWS) for EE407/507 and CS455/555
  * 
@@ -25,16 +25,26 @@
  * NY 13699-5722
  * http://clarkson.edu/~rupakhcr
  */
- 
-package strategy.directoryoperations;
+
+package strategy;
 
 import protocol.HttpRequest;
-import protocol.HttpResponse;
 
 /**
  * 
  * @author Chandan R. Rupakheti (rupakhcr@clarkson.edu)
  */
-public abstract class RequestHandler {
-	public abstract HttpResponse handle(HttpRequest request);
+public class InternalErrorStrategy extends ResourceStrategyBase {
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * strategy.ResourceStrategyBase#prepareEvaluation(protocol.HttpRequest)
+	 */
+	@Override
+	public IRequestTask prepareEvaluation(HttpRequest request) {
+		// TODO Auto-generated method stub
+		return super.prepareEvaluation(request);
+	}
+
 }

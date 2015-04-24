@@ -42,7 +42,7 @@ public class HttpRequest {
 	private Map<String, String> header;
 	private char[] body;
 	
-	private HttpRequest() {
+	protected HttpRequest() {
 		this.header = new HashMap<String, String>();
 		this.body = new char[0];
 	}

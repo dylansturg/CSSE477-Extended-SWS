@@ -25,20 +25,46 @@
  * NY 13699-5722
  * http://clarkson.edu/~rupakhcr
  */
- 
+
 package configuration;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 /**
+ * Designed to receive a parsed configuration for all possible ResourceStrategy
+ * implementations the server can access and mappings to them from various
+ * resources the server might host.
+ * 
+ * Currently only returns a DirectoryStrategy which matches any request. But
+ * provides a point for future improvements and flexible enhancements.
  * 
  * @author Chandan R. Rupakheti (rupakhcr@clarkson.edu)
  */
 public class ResourceStrategyConfiguration {
 	private List<ResourceStrategyRoute> activeRoutes;
-	
-	public ResourceStrategyRoute findRouteForResourcePath(String path){
-		return null;
+
+	public ResourceStrategyConfiguration(List<ResourceStrategyRoute> routes) {
+		activeRoutes = routes;
+	}
+
+	public ResourceStrategyConfiguration() {
+		activeRoutes = new ArrayList<ResourceStrategyRoute>();
+
+		activeRoutes
+				.add(new ResourceStrategyRoute("strategy.DirectoryStrategy",
+						"", new HashMap<String, String>()));
+	}
+
+	public ResourceStrategyRoute findRouteForResourcePath(String path) {
+		for (ResourceStrategyRoute resourceStrategyRoute : activeRoutes) {
+			String routeRegex = resourceStrategyRoute.getRouteMatch();
+			if (routeRegex != null && path.matches(routeRegex)) {
+				return resourceStrategyRoute;
+			}
+		}
+		return ResourceStrategyRouteNone.None;
 	}
 }

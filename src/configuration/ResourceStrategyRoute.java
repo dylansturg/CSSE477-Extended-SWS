@@ -34,6 +34,8 @@ import java.util.Map;
  * Storage object for a route that connects an HTTPRequest to a
  * IResourceStrategy implementation.
  * 
+ * Contains a regex to match against any given criteria.
+ * 
  * @author Chandan R. Rupakheti (rupakhcr@clarkson.edu)
  */
 public class ResourceStrategyRoute {
@@ -43,12 +45,13 @@ public class ResourceStrategyRoute {
 
 	private String strategyClass;
 	private String routeMatch;
+	private String pathToContainingJar;
 	private Map<String, String> strategyOptions;
 
 	public ResourceStrategyRoute(String strategy, String route,
 			Map<String, String> options) {
 		strategyClass = strategy;
-		route = routeMatch;
+		routeMatch = route;
 		strategyOptions = options;
 	}
 
@@ -62,5 +65,18 @@ public class ResourceStrategyRoute {
 
 	public String getStrategyOption(String option) {
 		return strategyOptions.get(option);
+	}
+
+	/**
+	 * Currently unused, but available for potential future extension. Designed
+	 * to allow pluggable ResourceStrategy classes through extensions in the
+	 * server.
+	 * 
+	 * Always returns null for now.
+	 * 
+	 * @return a path to a jar with the ResourceStrategy implementation
+	 */
+	public String getContainingJarPath() {
+		return pathToContainingJar;
 	}
 }

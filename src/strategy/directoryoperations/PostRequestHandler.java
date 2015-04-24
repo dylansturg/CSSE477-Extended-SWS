@@ -25,13 +25,28 @@
  * NY 13699-5722
  * http://clarkson.edu/~rupakhcr
  */
- 
+
 package strategy.directoryoperations;
+
+import protocol.HttpRequest;
+import protocol.HttpResponse;
 
 /**
  * 
  * @author Chandan R. Rupakheti (rupakhcr@clarkson.edu)
  */
 public class PostRequestHandler extends RequestHandler {
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * strategy.directoryoperations.RequestHandler#handle(protocol.HttpRequest)
+	 */
+	@Override
+	public HttpResponse handle(HttpRequest request) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }

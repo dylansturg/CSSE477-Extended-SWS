@@ -25,13 +25,33 @@
  * NY 13699-5722
  * http://clarkson.edu/~rupakhcr
  */
- 
+
 package strategy;
 
+import protocol.HttpRequest;
+
 /**
+ * Defines an implementation of a server-side resource management protocol. The
+ * strategy will accept a HTTPRequest and create a unit of execution that will
+ * generate a HTTPResponse from it.
+ * 
+ * Any IResourceStrategy may be cached and utilized multiple times, on multiple
+ * threads, by multiple clients. Every method should be entirely reentrant. The
+ * bulk of HTTPRequest processing/evaluation should occur in a returned
+ * IRequestTask to be deferred and evaluated in a resource constrained manner.
  * 
  * @author Chandan R. Rupakheti (rupakhcr@clarkson.edu)
  */
 public interface IResourceStrategy {
 
+	/***
+	 * Use a HTTPRequest to determine the appropriate action to take and
+	 * encapsulate that action into a Runnable. Once the Runnable is run, it
+	 * will create a HTTPResponse that should be returned to the client.
+	 * 
+	 * @param request
+	 * @return Runnable to execute on a thread which will generate a
+	 *         HTTPResponse
+	 */
+	public IRequestTask prepareEvaluation(HttpRequest request);
 }

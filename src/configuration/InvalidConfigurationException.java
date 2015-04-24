@@ -1,6 +1,6 @@
 /*
- * RequestHandler.java
- * Apr 23, 2015
+ * InvalidConfigurationException.java
+ * Apr 24, 2015
  *
  * Simple Web Server (SWS) for EE407/507 and CS455/555
  * 
@@ -26,15 +26,12 @@
  * http://clarkson.edu/~rupakhcr
  */
  
-package strategy.directoryoperations;
-
-import protocol.HttpRequest;
-import protocol.HttpResponse;
+package configuration;
 
 /**
  * 
  * @author Chandan R. Rupakheti (rupakhcr@clarkson.edu)
  */
-public abstract class RequestHandler {
-	public abstract HttpResponse handle(HttpRequest request);
+public class InvalidConfigurationException extends Exception {
+	
 }

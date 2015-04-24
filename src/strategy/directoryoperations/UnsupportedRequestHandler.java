@@ -1,6 +1,6 @@
 /*
- * RequestHandler.java
- * Apr 23, 2015
+ * UnsupportedRequestHandler.java
+ * Apr 24, 2015
  *
  * Simple Web Server (SWS) for EE407/507 and CS455/555
  * 
@@ -35,6 +35,15 @@ import protocol.HttpResponse;
  * 
  * @author Chandan R. Rupakheti (rupakhcr@clarkson.edu)
  */
-public abstract class RequestHandler {
-	public abstract HttpResponse handle(HttpRequest request);
+public class UnsupportedRequestHandler extends RequestHandler {
+
+	/* (non-Javadoc)
+	 * @see strategy.directoryoperations.RequestHandler#handle(protocol.HttpRequest)
+	 */
+	@Override
+	public HttpResponse handle(HttpRequest request) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

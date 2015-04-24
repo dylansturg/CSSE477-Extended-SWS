@@ -28,10 +28,17 @@
  
 package strategy;
 
+import protocol.HttpRequest;
+
 /**
  * 
  * @author Chandan R. Rupakheti (rupakhcr@clarkson.edu)
  */
 public abstract class ResourceStrategyBase implements IResourceStrategy {
-
+	
+	@Override
+	public IRequestTask prepareEvaluation(HttpRequest request) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

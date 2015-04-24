@@ -34,6 +34,13 @@ import java.util.List;
 import protocol.HttpResponse;
 
 /**
+ * Wrapper around Runnable to represent the action necesary for a HTTPRequest to
+ * be evaluated and generate a HTTPResponse to be sent to the client.
+ * 
+ * Utilizes a listener to notify any observers of its completion through
+ * IRequestTaskCompletionListener.
+ * 
+ * Should be executed on a background thread.
  * 
  * @author Chandan R. Rupakheti (rupakhcr@clarkson.edu)
  */
