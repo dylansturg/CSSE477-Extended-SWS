@@ -21,6 +21,8 @@
  
 package protocol;
 
+import java.io.File;
+
 /**
  * This class is a collection of HTTP protocol related constants, 
  * that can be used uniformly across the classes of this project.
@@ -84,6 +86,8 @@ public class Protocol {
     public static final String OPEN = "Keep-Alive";
     public static final String DEFAULT_FILE = "index.html";
     public static final String MIME_TEXT = "text";
+    
+    public static final String FILE_SEPERATOR = File.pathSeparator;
     
     /**
      * Returns a formatted String containing server information.<br/>
