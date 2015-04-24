@@ -1,6 +1,6 @@
 /*
- * MalformedHTTPRequest.java
- * Apr 24, 2015
+ * GetHTTPRequest.java
+ * Apr 23, 2015
  *
  * Simple Web Server (SWS) for EE407/507 and CS455/555
  * 
@@ -25,26 +25,41 @@
  * NY 13699-5722
  * http://clarkson.edu/~rupakhcr
  */
- 
+
 package request;
 
+import java.io.InputStreamReader;
 import java.net.Socket;
 
 /**
  * 
  * @author Nathan Jarvis
  */
+//Request that is created for Delete
+public class DELETEHTTPRequest extends HTTPRequest {
 
-//A bad request that is sent back when the server receives a messed up request.
-public class MalformedHTTPRequest extends HTTPRequest {
+	public DELETEHTTPRequest(Socket socket, InputStreamReader reader) throws Exception {
+		super(socket, reader);
+		this.commonInit();
+		checkBody();
+	}
 
 	/**
 	 * @param socket
+	 * @param headerMap
+	 * @param verb
+	 * @throws Exception 
 	 */
-	
-	public MalformedHTTPRequest(Socket socket) {
+	public DELETEHTTPRequest(Socket socket) throws Exception {
 		super(socket);
-		// TODO Auto-generated constructor stub
+		this.commonInit();
+		checkBody();
 	}
 
+	public void checkBody() throws Exception {
+		if (this.bodyPresent) {
+			// Shouldn't be a body for delete request.
+			throw new Exception("Delete request should not have body.");
+		}
+	}
 }

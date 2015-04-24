@@ -45,6 +45,9 @@ import request.HTTPRequest;
  * 
  * @author Nathan Jarvis
  */
+
+//Factory reads in the request verb and then creates through reflection the
+//correct HTTPRequest
 public class HTTPRequestFactory {
 
 	public HTTPRequest createRequest(Socket socket) {
@@ -66,30 +69,24 @@ public class HTTPRequestFactory {
 				requestVerb = requestVerb + ch;
 			}
 		} catch (Exception e) {
-			// Cannot do anything if we have exception reading input or output
-			// stream
-			// May be have text to log this for further analysis?
+			//Log and send back bad request
 			e.printStackTrace();
 
-			return null;
+			return new MalformedHTTPRequest(socket);
 		}
 
 		try {
-			Class<?> requestClass = Class.forName("request." + requestVerb
+			Class<?> requestClass = Class.forName("request." + requestVerb.toUpperCase()
 					+ "HTTPRequest");
 			Constructor<?> constructor = requestClass.getConstructor(
 					Socket.class, InputStreamReader.class);
 			Object instance = constructor.newInstance(socket, reader);
 			HTTPRequest httpRequestInstance = (HTTPRequest) instance;
-
 			httpRequestInstance.method = requestVerb;
 
 			return httpRequestInstance;
 		} catch (Exception e) {
-			// TODO handle exceptions sent back and create malformed request.
-
 			MalformedHTTPRequest badRequest = new MalformedHTTPRequest(socket);
-			badRequest.errorMessage = "";
 			return badRequest;
 		}
 	}

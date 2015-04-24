@@ -40,6 +40,8 @@ import java.util.Map;
  * 
  * @author Nathan Jarvis
  */
+
+//HTTP base request that specific requests extend. 
 public class HTTPRequest {
 
 	protected Socket readSocket;
@@ -53,6 +55,7 @@ public class HTTPRequest {
 	Map<String, String> headers;
 	String body;
 	Boolean bodyPresent;
+	int bodyLength;
 
 	public HTTPRequest(Socket socket, InputStreamReader inStreamReader) {
 		headers = new HashMap<String, String>();
@@ -64,11 +67,21 @@ public class HTTPRequest {
 		headers = new HashMap<String, String>();
 		readSocket = socket;
 	}
+	
+	protected void commonInit(){
+		try {
+			this.readHeaders();
+			this.readBody();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 
 	public String getMethod() {
 		return method;
 	}
-
+	//Read in the headers and their content and place in Map
 	public void readHeaders() throws IOException {
 		InputStream inStream;
 		String[] requestHeader;
@@ -93,7 +106,7 @@ public class HTTPRequest {
 
 		while ((line = reader.readLine()) != null) {
 			String headerKey = line.substring(0, line.indexOf(":"));
-			String headerContent = line.substring(line.indexOf(":"),
+			String headerContent = line.substring(line.indexOf(":") + 1,
 					line.length());
 			this.headers.put(headerKey, headerContent);
 		}
@@ -108,7 +121,7 @@ public class HTTPRequest {
 	}
 
 	protected void readBody() throws IOException {
-		int bodyLength = -1;
+		bodyLength = -1;
 		String contentLength = headers.get("Content-Length");
 		if (contentLength == null) {
 			bodyPresent = false;
