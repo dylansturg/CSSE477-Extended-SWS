@@ -38,7 +38,8 @@ import request.HTTPRequest;
 public class GetRequestHandler extends RequestHandler {
 
 	/*
-	 * (non-Javadoc)
+	 * Examines the current directory for the specified file path, and serves it
+	 * in the response if allowed to do so.
 	 * 
 	 * @see
 	 * strategy.directoryoperations.RequestHandler#handle(protocol.HttpRequest)
