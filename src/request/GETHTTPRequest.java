@@ -25,7 +25,7 @@
  * NY 13699-5722
  * http://clarkson.edu/~rupakhcr
  */
- 
+
 package request;
 
 import java.io.BufferedReader;
@@ -41,13 +41,12 @@ import java.util.Map;
  */
 public class GETHTTPRequest extends HTTPRequest {
 
-	/**
-	 * @param socket
-	 * @param headerMap
-	 * @param verb
-	 */
-	public GETHTTPRequest(Socket socket) {
-		super(socket);
+	public GETHTTPRequest(Socket socket, InputStreamReader reader) {
+		super(socket, reader);
+		commonInit();
+	}
+
+	private void commonInit() {
 		try {
 			this.readHeaders();
 			this.readBody();
@@ -57,11 +56,21 @@ public class GETHTTPRequest extends HTTPRequest {
 		}
 		checkBody();
 	}
-	
-	public void checkBody(){
-		//TODO Check to see if valid GET request
-		if(this.bodyPresent){
-			//Shouldn't be a body for get request.
+
+	/**
+	 * @param socket
+	 * @param headerMap
+	 * @param verb
+	 */
+	public GETHTTPRequest(Socket socket) {
+		super(socket);
+		commonInit();
+	}
+
+	public void checkBody() {
+		// TODO Check to see if valid GET request
+		if (this.bodyPresent) {
+			// Shouldn't be a body for get request.
 		}
 	}
 }

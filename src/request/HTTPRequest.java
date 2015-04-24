@@ -25,7 +25,7 @@
  * NY 13699-5722
  * http://clarkson.edu/~rupakhcr
  */
- 
+
 package request;
 
 import java.io.BufferedReader;
@@ -41,67 +41,88 @@ import java.util.Map;
  * @author Nathan Jarvis
  */
 public class HTTPRequest {
-	
+
 	protected Socket readSocket;
 	protected Socket writeSocket;
+
+	InputStreamReader streamReader;
+
 	String method;
 	String path;
 	String version;
 	Map<String, String> headers;
 	String body;
 	Boolean bodyPresent;
-	
-	public HTTPRequest(Socket socket){
-		headers = new HashMap<String,String>();
+
+	public HTTPRequest(Socket socket, InputStreamReader inStreamReader) {
+		headers = new HashMap<String, String>();
+		readSocket = socket;
+		streamReader = inStreamReader;
+	}
+
+	public HTTPRequest(Socket socket) {
+		headers = new HashMap<String, String>();
 		readSocket = socket;
 	}
-	
-	
-	public void readHeaders() throws IOException{
+
+	public String getMethod() {
+		return method;
+	}
+
+	public void readHeaders() throws IOException {
 		InputStream inStream;
 		String[] requestHeader;
-		inStream = this.readSocket.getInputStream();
-		
-		BufferedReader reader = new BufferedReader(new InputStreamReader(inStream));
+
+		BufferedReader reader = null;
+		if (streamReader == null) {
+			inStream = this.readSocket.getInputStream();
+			reader = new BufferedReader(new InputStreamReader(inStream));
+		} else {
+			reader = new BufferedReader(streamReader);
+		}
+
 		String line;
-		
+
 		line = reader.readLine();
 		requestHeader = line.split("\\s+");
-		System.out.println("Requested path: " + requestHeader[0] + ", Request version: " + requestHeader[1] + "\n");
-		
+		System.out.println("Requested path: " + requestHeader[0]
+				+ ", Request version: " + requestHeader[1] + "\n");
+
 		path = requestHeader[0];
 		version = requestHeader[1];
-		
-		while((line = reader.readLine()) != null){
+
+		while ((line = reader.readLine()) != null) {
 			String headerKey = line.substring(0, line.indexOf(":"));
-			String headerContent = line.substring(line.indexOf(":"), line.length());
+			String headerContent = line.substring(line.indexOf(":"),
+					line.length());
 			this.headers.put(headerKey, headerContent);
 		}
 	}
-	
-	public String getHeader(String key){
+
+	public String getHeader(String key) {
 		return headers.get(key);
 	}
-	
-	public String getContent(){
+
+	public String getContent() {
 		return body;
 	}
-	
-	protected void readBody() throws IOException{
+
+	protected void readBody() throws IOException {
 		int bodyLength = -1;
 		String contentLength = headers.get("Content-Length");
-		if(contentLength == null){
+		if (contentLength == null) {
 			bodyPresent = false;
-		}else{
+		} else {
 			bodyLength = Integer.parseInt(contentLength);
-			
+
 			InputStream inStream;
 			int count = 0;
 			inStream = this.readSocket.getInputStream();
-			
-			BufferedReader reader = new BufferedReader(new InputStreamReader(inStream));
-			
-			while(count < bodyLength){
+
+			BufferedReader reader = new BufferedReader(new InputStreamReader(
+					inStream));
+
+			while (count < bodyLength) {
 				int intChar = reader.read();
 				char ch = (char) intChar;
 				body = body + ch;

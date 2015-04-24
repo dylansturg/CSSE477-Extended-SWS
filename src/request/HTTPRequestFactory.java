@@ -25,7 +25,7 @@
  * NY 13699-5722
  * http://clarkson.edu/~rupakhcr
  */
- 
+
 package request;
 
 import java.io.BufferedReader;
@@ -37,55 +37,60 @@ import java.net.Socket;
 import java.util.HashMap;
 import java.util.Map;
 
-import request.HTTPRequest;;
+import request.HTTPRequest;
+
+;
 
 /**
  * 
  * @author Nathan Jarvis
  */
 public class HTTPRequestFactory {
-	
-	public HTTPRequest createRequest(Socket socket){
+
+	public HTTPRequest createRequest(Socket socket) {
 		InputStream inStream = null;
 		String requestVerb = "";
-		
+		InputStreamReader reader;
+
 		try {
 			inStream = socket.getInputStream();
-			
-			BufferedReader reader = new BufferedReader(new InputStreamReader(inStream));
+
+			reader = new InputStreamReader(inStream);
 			int intChar;
-			
-			while((intChar = reader.read()) != -1){
+
+			while ((intChar = reader.read()) != -1) {
 				char ch = (char) intChar;
-				if(Character.isWhitespace(ch)){
+				if (Character.isWhitespace(ch)) {
 					break;
 				}
 				requestVerb = requestVerb + ch;
 			}
-		}
-		catch(Exception e) {
-			// Cannot do anything if we have exception reading input or output stream
+		} catch (Exception e) {
+			// Cannot do anything if we have exception reading input or output
+			// stream
 			// May be have text to log this for further analysis?
 			e.printStackTrace();
-			
+
 			return null;
 		}
-		
-		try{
-			Class<?> requestClass = Class.forName("request." + requestVerb + "HTTPRequest");
-			Constructor<?> constructor = requestClass.getConstructor(Socket.class);
-			Object instance = constructor.newInstance("socket");
+
+		try {
+			Class<?> requestClass = Class.forName("request." + requestVerb
+					+ "HTTPRequest");
+			Constructor<?> constructor = requestClass.getConstructor(
+					Socket.class, InputStreamReader.class);
+			Object instance = constructor.newInstance(socket, reader);
 			HTTPRequest httpRequestInstance = (HTTPRequest) instance;
-			
+
+			httpRequestInstance.method = requestVerb;
+
 			return httpRequestInstance;
-		}
-		catch(Exception e){
-			//TODO handle exceptions sent back and create malformed request.
-			
+		} catch (Exception e) {
+			// TODO handle exceptions sent back and create malformed request.
+
 			MalformedHTTPRequest badRequest = new MalformedHTTPRequest(socket);
 			badRequest.errorMessage = "";
 			return badRequest;
 		}
 	}
-
 }
