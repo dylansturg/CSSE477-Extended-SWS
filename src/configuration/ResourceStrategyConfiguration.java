@@ -50,24 +50,22 @@ public class ResourceStrategyConfiguration {
 		activeRoutes = routes;
 	}
 
-	public ResourceStrategyConfiguration() {
-		activeRoutes = new ArrayList<ResourceStrategyRoute>();
-
-		Map<String, String> routeOptions = new HashMap<String, String>();
-		routeOptions.put(ResourceStrategyRouteOptions.RootDirectoy, "web");
-
-		activeRoutes.add(new ResourceStrategyRoute(
-				"strategy.DirectoryStrategy", "(.*?)",
-				new HashMap<String, String>()));
-	}
-
 	public ResourceStrategyRoute findRouteForResourcePath(String path) {
-		for (ResourceStrategyRoute resourceStrategyRoute : activeRoutes) {
-			String routeRegex = resourceStrategyRoute.getRouteMatch();
-			if (routeRegex != null && path.matches(routeRegex)) {
-				return resourceStrategyRoute;
-			}
+		if (path == null) {
+			return ResourceStrategyRouteNone.None;
 		}
+
+		try {
+			for (ResourceStrategyRoute resourceStrategyRoute : activeRoutes) {
+				String routeRegex = resourceStrategyRoute.getRouteMatch();
+				if (routeRegex != null && path.matches(routeRegex)) {
+					return resourceStrategyRoute;
+				}
+			}
+		} catch (Exception e) {
+			// Pass
+		}
+
 		return ResourceStrategyRouteNone.None;
 	}
 }

@@ -21,12 +21,15 @@ s * HttpResponseFactory.java
 
 package protocol;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.IOException;
 import java.net.FileNameMap;
 import java.net.URLConnection;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Map;
 
 import javax.net.ssl.SSLEngineResult.Status;
 
@@ -68,8 +71,24 @@ public class HttpResponseFactory {
 		HttpResponse response = new HttpResponse(Protocol.VERSION,
 				code.getStatusCode(), code.getStatusMessage(),
 				new HashMap<String, String>(), null);
+		fillGeneralHeader(response, connectionStyle);
 
 		return response;
+	}
+
+	private class ErrorHttpResponse extends HttpResponse {
+		public ErrorHttpResponse(String version, int status, String phrase,
+				Map<String, String> header, File file) {
+			super(version, status, phrase, header, file);
+			// TODO Auto-generated constructor stub
+		}
+
+		@Override
+		protected void writeContent(BufferedOutputStream outStream)
+				throws IOException {
+
+		}
+
 	}
 
 	public static HttpResponse createGenericSuccessfulResponse(
@@ -77,6 +96,7 @@ public class HttpResponseFactory {
 		HttpResponse response = new HttpResponse(Protocol.VERSION,
 				code.getStatusCode(), code.getStatusMessage(),
 				new HashMap<String, String>(), null);
+		fillGeneralHeader(response, connectionStyle);
 
 		return response;
 	}

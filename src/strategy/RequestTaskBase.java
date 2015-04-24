@@ -28,7 +28,10 @@
 
 package strategy;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.List;
 
 import protocol.HttpResponse;
@@ -44,10 +47,13 @@ public abstract class RequestTaskBase implements IRequestTask {
 	protected boolean completed = false;
 	protected Socket client;
 
+	protected long startTimestamp;
+
 	protected HttpResponse response;
 
 	public RequestTaskBase(HTTPRequest request) {
 		this.request = request;
+		completionListeners = new ArrayList<IRequestTask.IRequestTaskCompletionListener>();
 	}
 
 	@Override
@@ -72,11 +78,6 @@ public abstract class RequestTaskBase implements IRequestTask {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see strategy.IRequestTask#getResponse()
-	 */
 	@Override
 	public HttpResponse getResponse() {
 		return response;
@@ -87,10 +88,15 @@ public abstract class RequestTaskBase implements IRequestTask {
 		return completed;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see strategy.IRequestTask#writeResponse(java.io.OutputStream)
+	 */
 	@Override
-	public void writeResponse(Socket clientSocket) {
-		// TODO Write out the created response into the given socket
-
+	public void writeResponse(OutputStream out) throws IOException {
+		HttpResponse response = getResponse();
+		response.write(out);
 	}
 
 	@Override
@@ -103,4 +109,13 @@ public abstract class RequestTaskBase implements IRequestTask {
 		this.client = client;
 	}
 
+	@Override
+	public long getStartTime() {
+		return startTimestamp;
+	}
+
+	@Override
+	public void setStartTime(long timestamp) {
+		this.startTimestamp = timestamp;
+	}
 }

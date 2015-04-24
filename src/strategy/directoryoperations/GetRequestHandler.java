@@ -101,7 +101,7 @@ public class GetRequestHandler extends RequestHandler {
 		Map<String, String> headers = new HashMap<String, String>();
 
 		String conditionalGet = request.getHeader(Protocol.CONDITIONAL_GET);
-		if (conditionalGet != null & !conditionalGet.isEmpty()) {
+		if (conditionalGet != null && !conditionalGet.isEmpty()) {
 			try {
 				Date cachedVersion = GMTConversion
 						.fromGMTString(conditionalGet);
@@ -130,17 +130,18 @@ public class GetRequestHandler extends RequestHandler {
 	}
 
 	private String createFilePath(String rootDir, String path) {
+
 		String sep = Protocol.FILE_SEPERATOR;
-		if (!rootDir.endsWith(sep) && !path.startsWith(sep)) {
-			// Neither has the sep - add it in there
-			return rootDir + sep + path;
-		} else if (rootDir.endsWith(sep) && path.startsWith(sep)) {
-			// Both have the sep - get rid of path's
-			return rootDir + path.substring(sep.length());
-		} else {
-			// Exactly 1 of rootDir or path has the separtor already
-			return rootDir + path;
-		}
+
+		return rootDir + path;
+		/*
+		 * if (!rootDir.endsWith(sep) && !path.startsWith(sep)) { // Neither has
+		 * the sep - add it in there return rootDir + sep + path; } else if
+		 * (rootDir.endsWith(sep) && path.startsWith(sep)) { // Both have the
+		 * sep - get rid of path's return rootDir +
+		 * path.substring(sep.length()); } else { // Exactly 1 of rootDir or
+		 * path has the separtor already return rootDir + path; }
+		 */
 
 	}
 

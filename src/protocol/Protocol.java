@@ -88,7 +88,7 @@ public class Protocol {
 	public static final String DEFAULT_FILE = "index.html";
 	public static final String MIME_TEXT = "text";
 
-	public static final String FILE_SEPERATOR = File.pathSeparator;
+	public static final String FILE_SEPERATOR = File.separator;
 
 	/**
 	 * Returns a formatted String containing server information.<br/>

@@ -179,7 +179,7 @@ public class HttpResponse {
 	 *            The output stream
 	 * @throws Exception
 	 */
-	public void write(OutputStream outStream) throws Exception {
+	public void write(OutputStream outStream) throws IOException {
 		BufferedOutputStream out = new BufferedOutputStream(outStream,
 				Protocol.CHUNK_LENGTH);
 

@@ -32,7 +32,7 @@ import java.lang.reflect.Constructor;
 import java.util.HashMap;
 import java.util.Map;
 
-import protocol.HttpRequest;
+import request.HTTPRequest;
 import configuration.ResourceStrategyConfiguration;
 import configuration.ResourceStrategyRoute;
 import configuration.ServerConfiguration;
@@ -56,10 +56,14 @@ public class ResourceStrategyFinder {
 		serverConfiguration = server;
 	}
 
-	public IResourceStrategy routeRequestToStrategy(HttpRequest request) {
-		ResourceStrategyRoute targetRoute = configuration
-				.findRouteForResourcePath(request.getUri());
-		String strategyName = targetRoute.getStrategyClass();
+	public ResourceStrategyRoute findRouteForRequest(HTTPRequest request) {
+		return configuration.findRouteForResourcePath(request.getPath());
+	}
+
+	public IResourceStrategy getStrategyForResourceRoute(
+			ResourceStrategyRoute resourceRoute) {
+
+		String strategyName = resourceRoute.getStrategyClass();
 
 		if (CACHED_STRATEGIES.containsKey(strategyName)) {
 			return CACHED_STRATEGIES.get(strategyName);

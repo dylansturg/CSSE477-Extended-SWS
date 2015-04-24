@@ -1,5 +1,5 @@
 /*
- * MalformedHTTPRequest.java
+ * BadRequestStrategy.java
  * Apr 24, 2015
  *
  * Simple Web Server (SWS) for EE407/507 and CS455/555
@@ -26,35 +26,49 @@
  * http://clarkson.edu/~rupakhcr
  */
 
-package request;
+package strategy;
 
-import java.net.Socket;
+import protocol.HttpResponse;
+import protocol.HttpResponseFactory;
+import protocol.HttpStatusCode;
+import protocol.Protocol;
+import request.HTTPRequest;
+import configuration.ResourceStrategyRoute;
 
 /**
  * 
- * @author Nathan Jarvis
+ * @author Chandan R. Rupakheti (rupakhcr@clarkson.edu)
  */
+public class BadRequestStrategy extends ResourceStrategyBase {
 
-// A bad request that is sent back when the server receives a messed up request.
-public class MalformedHTTPRequest extends HTTPRequest {
-
-	/**
-	 * @param socket
-	 */
-
-	public MalformedHTTPRequest(Socket socket) {
-		super(socket);
-		// TODO Auto-generated constructor stub
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see request.HTTPRequest#getPath()
-	 */
 	@Override
-	public String getPath() {
-		return null;
+	public IRequestTask prepareEvaluation(HTTPRequest request,
+			ResourceStrategyRoute fromRoute) {
+		return new BadRequestTask(request);
 	}
 
+	private class BadRequestTask extends RequestTaskBase {
+
+		public BadRequestTask(HTTPRequest request) {
+			super(request);
+		}
+
+		@Override
+		public void run() {
+			completed = true;
+
+			super.run();
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see strategy.RequestTaskBase#getResponse()
+		 */
+		@Override
+		public HttpResponse getResponse() {
+			return HttpResponseFactory.createGenericErrorResponse(
+					HttpStatusCode.BAD_REQUEST, Protocol.CLOSE);
+		}
+	}
 }

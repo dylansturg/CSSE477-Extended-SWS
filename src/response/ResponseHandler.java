@@ -28,6 +28,8 @@
 
 package response;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -43,6 +45,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import configuration.ServerConfiguration;
+import server.Server;
 import strategy.IRequestTask;
 import strategy.IRequestTask.IRequestTaskCompletionListener;
 
@@ -61,6 +64,8 @@ public class ResponseHandler implements Runnable,
 
 	private static final int THREAD_KEEP_ALIVE = 10;
 
+	private Server server;
+
 	/**
 	 * Can be used to get information about the current server's configuration.
 	 * Eventually should contain information such as desired thread pool size.
@@ -70,6 +75,8 @@ public class ResponseHandler implements Runnable,
 	private ServerConfiguration serverConfig;
 
 	private List<Socket> clients;
+	private Map<Socket, OutputStream> clientOutStreams;
+
 	/**
 	 * Map a client's socket to that client's specific Queue of IRequestTask
 	 * operations.
@@ -96,17 +103,26 @@ public class ResponseHandler implements Runnable,
 
 	private volatile boolean stopped = false;
 
-	public ResponseHandler(ServerConfiguration configuration) {
+	public ResponseHandler(ServerConfiguration configuration, Server server) {
 		serverConfig = configuration;
+		this.server = server;
 		clients = new ArrayList<Socket>();
+		clientOutStreams = new HashMap<Socket, OutputStream>();
 		commonInit();
 	}
 
-	public ResponseHandler(ServerConfiguration configuration, Socket... clients) {
+	public ResponseHandler(ServerConfiguration configuration, Server server,
+			Socket... clients) throws IOException {
 		serverConfig = configuration;
+		this.server = server;
 		this.clients = new ArrayList<Socket>();
+		clientOutStreams = new HashMap<Socket, OutputStream>();
 		if (clients != null) {
 			this.clients.addAll(Arrays.asList(clients));
+
+			for (Socket socket : clients) {
+				clientOutStreams.put(socket, socket.getOutputStream());
+			}
 		}
 		commonInit();
 	}
@@ -127,10 +143,11 @@ public class ResponseHandler implements Runnable,
 
 	}
 
-	public void addClientToServed(Socket client) {
+	public void addClientToServed(Socket client, OutputStream clientOut) {
 		synchronized (clients) {
 			if (!clients.contains(client)) {
 				clients.add(client);
+				clientOutStreams.put(client, clientOut);
 			}
 			// else we already were serving that client, so whatever
 		}
@@ -168,6 +185,7 @@ public class ResponseHandler implements Runnable,
 			}
 
 			clientsQueue.add(task);
+			task.registerCompletionListener(this);
 
 			// ThreadPoolExecutor will handle scheduling and running the task
 			activeTaskThreadPool.execute(task);
@@ -199,10 +217,14 @@ public class ResponseHandler implements Runnable,
 										// MODE ENABLED
 						}
 
-						flushAllCompletedRequests(socket, clientTaskQueue);
+						boolean finished = flushAllCompletedRequests(
+								clientOutStreams.get(socket), clientTaskQueue);
+						if (finished) {
+							socket.close();
+						}
 					}
 
-				} catch (InterruptedException e) {
+				} catch (InterruptedException | IOException e) {
 					// TODO Log this error and learn what it means, someday
 				}
 			}
@@ -222,7 +244,7 @@ public class ResponseHandler implements Runnable,
 	 * @param client
 	 * @param tasks
 	 */
-	private void flushAllCompletedRequests(Socket client,
+	private boolean flushAllCompletedRequests(OutputStream outStream,
 			Queue<IRequestTask> tasks) {
 
 		while (!tasks.isEmpty()) {
@@ -232,8 +254,16 @@ public class ResponseHandler implements Runnable,
 			}
 
 			currentTask = tasks.remove();
-			currentTask.writeResponse(client);
+			try {
+				currentTask.writeResponse(outStream);
+			} catch (IOException exp) {
+				// TODO Log the exception, and close the socket
+			}
+
+			server.incrementServiceTime(System.currentTimeMillis()
+					- currentTask.getStartTime());
 		}
+		return tasks.isEmpty();
 	}
 
 	/**

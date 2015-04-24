@@ -30,6 +30,8 @@ package configuration;
 
 import java.util.Map;
 
+import strategy.BadRequestStrategy;
+
 /**
  * 
  * @author Chandan R. Rupakheti (rupakhcr@clarkson.edu)
@@ -49,6 +51,16 @@ public class ResourceStrategyRouteNone extends ResourceStrategyRoute {
 	@Override
 	public String getStrategyOption(String option) {
 		return null;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see configuration.ResourceStrategyRoute#getStrategyClass()
+	 */
+	@Override
+	public String getStrategyClass() {
+		return BadRequestStrategy.class.getName();
 	}
 
 }
