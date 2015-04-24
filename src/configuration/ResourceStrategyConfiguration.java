@@ -54,7 +54,7 @@ public class ResourceStrategyConfiguration {
 		activeRoutes = new ArrayList<ResourceStrategyRoute>();
 
 		Map<String, String> routeOptions = new HashMap<String, String>();
-		routeOptions.put(ResourceStrategyRouteOptions.RootDirectoy, "web/");
+		routeOptions.put(ResourceStrategyRouteOptions.RootDirectoy, "web");
 
 		activeRoutes.add(new ResourceStrategyRoute(
 				"strategy.DirectoryStrategy", "(.*?)",

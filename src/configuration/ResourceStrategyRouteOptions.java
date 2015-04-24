@@ -37,5 +37,7 @@ package configuration;
 public class ResourceStrategyRouteOptions {
 
 	public static final String RootDirectoy = "RootDirectory";
+	public static final String AllowPersistentConnections = "AllowPersistentConnections";
+	public static final String ServeDirectories = "AllowServeDirectories";
 
 }
