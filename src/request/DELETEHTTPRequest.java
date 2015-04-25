@@ -40,8 +40,6 @@ public class DELETEHTTPRequest extends HTTPRequest {
 
 	public DELETEHTTPRequest(Socket socket, InputStreamReader reader) throws Exception {
 		super(socket, reader);
-		this.commonInit();
-		checkBody();
 	}
 
 	/**
@@ -52,11 +50,9 @@ public class DELETEHTTPRequest extends HTTPRequest {
 	 */
 	public DELETEHTTPRequest(Socket socket) throws Exception {
 		super(socket);
-		this.commonInit();
-		checkBody();
 	}
 
-	public void checkBody() throws Exception {
+	public void checkRequest() throws Exception {
 		if (this.bodyPresent) {
 			// Shouldn't be a body for delete request.
 			throw new Exception("Delete request should not have body.");

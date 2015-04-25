@@ -40,8 +40,6 @@ public class GETHTTPRequest extends HTTPRequest {
 
 	public GETHTTPRequest(Socket socket, InputStreamReader reader) throws Exception {
 		super(socket, reader);
-		this.commonInit();
-		checkBody();
 	}
 
 	/**
@@ -52,11 +50,9 @@ public class GETHTTPRequest extends HTTPRequest {
 	 */
 	public GETHTTPRequest(Socket socket) throws Exception {
 		super(socket);
-		this.commonInit();
-		checkBody();
 	}
 
-	public void checkBody() throws Exception {
+	public void checkRequest() throws Exception {
 		// TODO Check to see if valid GET request
 		if (this.bodyPresent) {
 			// Shouldn't be a body for get request.

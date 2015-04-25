@@ -68,16 +68,6 @@ public class HTTPRequest {
 		readSocket = socket;
 	}
 
-	protected void commonInit() {
-		try {
-			this.readHeaders();
-			this.readBody();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-
 	public String getMethod() {
 		return method;
 	}
@@ -85,9 +75,13 @@ public class HTTPRequest {
 	public String getPath() {
 		return path;
 	}
+	
+	public int getBodyLength(){
+		return bodyLength;
+	}
 
 	// Read in the headers and their content and place in Map
-	public void readHeaders() throws IOException {
+	public void readHeadersAndBody() throws Exception {
 		InputStream inStream;
 		String[] requestHeader;
 
@@ -110,10 +104,42 @@ public class HTTPRequest {
 		version = requestHeader[1];
 
 		while ((line = reader.readLine()) != null) {
-			String headerKey = line.substring(0, line.indexOf(":"));
-			String headerContent = line.substring(line.indexOf(":") + 1,
-					line.length());
-			this.headers.put(headerKey, headerContent);
+			if(line.equals("")){
+				break;
+			}else{
+				String headerKey = line.substring(0, line.indexOf(":"));
+				String headerContent = line.substring(line.indexOf(":") + 2,
+						line.length());
+				this.headers.put(headerKey, headerContent);
+				System.out.println("Header key: " + headerKey + ", header content: " + headerContent);
+			}
+		}
+		
+		//Read the body
+		body = "";
+		if (!this.headers.containsKey("Content-Length")) {
+			System.out.println("No content-length header!");
+			bodyPresent = false;
+		} else {
+			String contentLength = this.headers.get("Content-Length");
+			bodyLength = Integer.parseInt(contentLength);
+			System.out.println("Content LENGTH: " + contentLength);
+			System.out.println("Body LENGTH: " + bodyLength);
+			int count = 0;
+			
+			int intChar = 0;
+			while ((intChar = reader.read()) != -1) {
+				if (count < bodyLength) {
+					char ch = (char) intChar;
+					body = body + ch;
+					count++;
+				}else{
+					//Extra content characters.
+					throw new Exception("Body is longer than expected.");
+				}
+			}
+			System.out.println("Body: " + body);
+			bodyPresent = true;
 		}
 	}
 
@@ -122,31 +148,14 @@ public class HTTPRequest {
 	}
 
 	public String getContent() {
+		System.out.println(body);
 		return body;
 	}
 
-	protected void readBody() throws IOException {
-		bodyLength = -1;
-		String contentLength = headers.get("Content-Length");
-		if (contentLength == null) {
-			bodyPresent = false;
-		} else {
-			bodyLength = Integer.parseInt(contentLength);
-
-			InputStream inStream;
-			int count = 0;
-			inStream = this.readSocket.getInputStream();
-
-			BufferedReader reader = new BufferedReader(new InputStreamReader(
-					inStream));
-
-			while (count < bodyLength) {
-				int intChar = reader.read();
-				char ch = (char) intChar;
-				body = body + ch;
-				count++;
-			}
-			bodyPresent = true;
-		}
+	/**
+	 * @throws Exception 
+	 * 
+	 */
+	public void checkRequest() throws Exception {
 	}
 }

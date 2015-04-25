@@ -41,8 +41,6 @@ public class PUTHTTPRequest extends HTTPRequest {
 	public PUTHTTPRequest(Socket socket, InputStreamReader reader)
 			throws Exception {
 		super(socket, reader);
-		this.commonInit();
-		checkRequest();
 	}
 
 	/**
@@ -53,8 +51,6 @@ public class PUTHTTPRequest extends HTTPRequest {
 	 */
 	public PUTHTTPRequest(Socket socket) throws Exception {
 		super(socket);
-		this.commonInit();
-		checkRequest();
 	}
 
 	// Check to see if valid request
@@ -64,7 +60,7 @@ public class PUTHTTPRequest extends HTTPRequest {
 			throw new Exception("Post request should have a body.");
 		}
 
-		if (this.bodyLength == this.body.length()) {
+		if (this.bodyLength != this.body.length()) {
 			throw new Exception(
 					"Put request body length is not equal to expected content length.");
 		}

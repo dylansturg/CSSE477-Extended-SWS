@@ -82,6 +82,9 @@ public class HTTPRequestFactory {
 					Socket.class, InputStreamReader.class);
 			Object instance = constructor.newInstance(socket, reader);
 			HTTPRequest httpRequestInstance = (HTTPRequest) instance;
+			
+			httpRequestInstance.readHeadersAndBody();
+			httpRequestInstance.checkRequest();
 			httpRequestInstance.method = requestVerb;
 
 			return httpRequestInstance;
