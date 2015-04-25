@@ -105,7 +105,7 @@ public class GetRequestHandler extends RequestHandler {
 				// Pass
 				// Server gave us a datetime string we couldn't understand, act
 				// like there wasn't one
-				e.printStackTrace();
+				// Chandan's class failed us
 			}
 		}
 

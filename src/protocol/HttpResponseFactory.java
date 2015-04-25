@@ -76,21 +76,6 @@ public class HttpResponseFactory {
 		return response;
 	}
 
-	private class ErrorHttpResponse extends HttpResponse {
-		public ErrorHttpResponse(String version, int status, String phrase,
-				Map<String, String> header, File file) {
-			super(version, status, phrase, header, file);
-			// TODO Auto-generated constructor stub
-		}
-
-		@Override
-		protected void writeContent(BufferedOutputStream outStream)
-				throws IOException {
-
-		}
-
-	}
-
 	public static HttpResponse createGenericSuccessfulResponse(
 			HttpStatusCode code, String connectionStyle) {
 		HttpResponse response = new HttpResponse(Protocol.VERSION,
