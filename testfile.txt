@@ -1,0 +1,11 @@
+------WebKitFormBoundarysylhg19cy59McLJP
+Content-Disposition: form-data; name="file1"; filename="plaintext.txt"
+Content-Type: text/plain
+
+I'm putting a really cool and useful file in here.
+
+It has text and strings and lots of neato things.
+
+I like files.
+
+------WebKitFormBoundarysylhg19cy59McLJP--
