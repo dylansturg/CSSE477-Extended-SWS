@@ -1,5 +1,5 @@
 /*
- * UnsupportedRequestHandler.java
+ * DeleteRequestHandler.java
  * Apr 24, 2015
  *
  * Simple Web Server (SWS) for EE407/507 and CS455/555
@@ -29,21 +29,18 @@
 package strategy.directoryoperations;
 
 import protocol.HttpResponse;
-import protocol.HttpResponseFactory;
-import protocol.HttpStatusCode;
-import protocol.Protocol;
 import request.HTTPRequest;
 
 /**
  * 
  * @author Chandan R. Rupakheti (rupakhcr@clarkson.edu)
  */
-public class UnsupportedRequestHandler extends RequestHandler {
+public class DeleteRequestHandler extends RequestHandler {
 
 	@Override
 	public HttpResponse handle(HTTPRequest request) {
-		return HttpResponseFactory.createGenericErrorResponse(
-				HttpStatusCode.METHOD_NOT_ALLOWED, Protocol.CLOSE);
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

@@ -132,7 +132,7 @@ public class ConnectionHandler implements Runnable {
 		requestTask.setStartTime(requestStartTimeStamp);
 
 		responseHandler.enqueueRequestTaskForClient(requestTask, socket);
-
+		this.stopped = true;
 	}
 
 	/**

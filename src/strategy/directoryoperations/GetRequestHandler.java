@@ -65,21 +65,14 @@ public class GetRequestHandler extends RequestHandler {
 	@Override
 	public HttpResponse handle(HTTPRequest request) {
 		// request is guaranteed to be GetHttpRequest
-		if (triggeredRoute == null) {
-			// Misconfigured Server
+
+		File requestedFile;
+		try {
+			requestedFile = lookupFileForRequestPath(request.getPath());
+		} catch (Exception e) {
+			// Due to an invalid configuration or coding error on our end
 			return handleEvaluationError(HttpStatusCode.INTERNAL_ERROR);
 		}
-
-		String rootDirectory = triggeredRoute
-				.getStrategyOption(ResourceStrategyRouteOptions.RootDirectoy);
-		if (rootDirectory == null || rootDirectory.isEmpty()) {
-			// Misconfigured Server
-			return handleEvaluationError(HttpStatusCode.INTERNAL_ERROR);
-		}
-
-		String desiredFilePath = createFilePath(rootDirectory,
-				request.getPath());
-		File requestedFile = new File(desiredFilePath);
 
 		String mayServeAsDirectory = triggeredRoute
 				.getStrategyOption(ResourceStrategyRouteOptions.ServeDirectories);
@@ -103,8 +96,8 @@ public class GetRequestHandler extends RequestHandler {
 		String conditionalGet = request.getHeader(Protocol.CONDITIONAL_GET);
 		if (conditionalGet != null && !conditionalGet.isEmpty()) {
 			try {
-				Date cachedVersion = GMTConversion
-						.fromGMTString(conditionalGet);
+				Date cachedVersion = GMTConversion.fromGMTString(conditionalGet
+						.trim());
 				long ticksSinceEpoch = requestedFile.lastModified();
 				Date modifiedDate = new Date(ticksSinceEpoch);
 
@@ -117,6 +110,7 @@ public class GetRequestHandler extends RequestHandler {
 				// Pass
 				// Server gave us a datetime string we couldn't understand, act
 				// like there wasn't one
+				e.printStackTrace();
 			}
 		}
 
@@ -127,22 +121,6 @@ public class GetRequestHandler extends RequestHandler {
 	private HttpResponse serveDirectory(File requestedDirectory,
 			HTTPRequest request) {
 		return null;
-	}
-
-	private String createFilePath(String rootDir, String path) {
-
-		String sep = Protocol.FILE_SEPERATOR;
-
-		return rootDir + path;
-		/*
-		 * if (!rootDir.endsWith(sep) && !path.startsWith(sep)) { // Neither has
-		 * the sep - add it in there return rootDir + sep + path; } else if
-		 * (rootDir.endsWith(sep) && path.startsWith(sep)) { // Both have the
-		 * sep - get rid of path's return rootDir +
-		 * path.substring(sep.length()); } else { // Exactly 1 of rootDir or
-		 * path has the separtor already return rootDir + path; }
-		 */
-
 	}
 
 	private HttpResponse handleEvaluationError(HttpStatusCode errorDescription) {
@@ -162,21 +140,24 @@ public class GetRequestHandler extends RequestHandler {
 
 			servedFile = file;
 
-			// Lets add last modified date for the file
-			long timeSinceEpoch = file.lastModified();
-			Date modifiedTime = new Date(timeSinceEpoch);
-			put(Protocol.LAST_MODIFIED, modifiedTime.toString());
+			if (file != null) {
 
-			// Lets get content length in bytes
-			long length = file.length();
-			put(Protocol.CONTENT_LENGTH, length + "");
+				// Lets add last modified date for the file
+				long timeSinceEpoch = file.lastModified();
+				Date modifiedTime = new Date(timeSinceEpoch);
+				put(Protocol.LAST_MODIFIED, modifiedTime.toString());
 
-			// Lets get MIME type for the file
-			FileNameMap fileNameMap = URLConnection.getFileNameMap();
-			String mime = fileNameMap.getContentTypeFor(file.getName());
+				// Lets get content length in bytes
+				long length = file.length();
+				put(Protocol.CONTENT_LENGTH, length + "");
 
-			if (mime != null) {
-				put(Protocol.CONTENT_TYPE, mime);
+				// Lets get MIME type for the file
+				FileNameMap fileNameMap = URLConnection.getFileNameMap();
+				String mime = fileNameMap.getContentTypeFor(file.getName());
+
+				if (mime != null) {
+					put(Protocol.CONTENT_TYPE, mime);
+				}
 			}
 		}
 
