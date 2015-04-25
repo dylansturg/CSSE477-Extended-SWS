@@ -30,6 +30,9 @@ package strategy;
 
 import configuration.ResourceStrategyRoute;
 import protocol.HttpResponse;
+import protocol.HttpResponseFactory;
+import protocol.HttpStatusCode;
+import protocol.Protocol;
 import request.HTTPRequest;
 
 /**
@@ -70,8 +73,8 @@ public class InternalErrorStrategy extends ResourceStrategyBase {
 
 		@Override
 		public HttpResponse getResponse() {
-			// TODO return HTTP 500 error
-			return null;
+			return HttpResponseFactory.createGenericErrorResponse(
+					HttpStatusCode.INTERNAL_ERROR, Protocol.CLOSE);
 		}
 
 	}
