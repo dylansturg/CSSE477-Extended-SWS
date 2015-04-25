@@ -34,9 +34,15 @@ package protocol;
  */
 public class HttpStatusCode {
 
+	// Successful status codes
 	public static final HttpStatusCode OK = Create(200, "OK");
+	public static final HttpStatusCode CREATED = Create(201, "Created");
+	public static final HttpStatusCode NO_CONTENT = Create(204, "No Content");
+
 	public static final HttpStatusCode NOT_MODIFIED = Create(304,
 			"Not Modified");
+
+	// 4xx indicates error on user/client side
 	public static final HttpStatusCode BAD_REQUEST = Create(400, "Bad Request");
 	public static final HttpStatusCode NOT_FOUND = Create(404, "Not Found");
 	public static final HttpStatusCode METHOD_NOT_ALLOWED = Create(405,
@@ -44,6 +50,8 @@ public class HttpStatusCode {
 	public static final HttpStatusCode LENGTH_REQUIRED = Create(411,
 			"Length Required");
 	public static final HttpStatusCode TEAPOT = Create(418, "I'm a Teapot");
+
+	// 5xx indicates internal failure
 	public static final HttpStatusCode INTERNAL_ERROR = Create(500,
 			"Internal Server Error");
 
