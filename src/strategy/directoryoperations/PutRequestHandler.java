@@ -1,6 +1,6 @@
 /*
- * PostRequestHandler.java
- * Apr 23, 2015
+ * PutRequestHandler.java
+ * Apr 24, 2015
  *
  * Simple Web Server (SWS) for EE407/507 and CS455/555
  * 
@@ -39,47 +39,43 @@ import protocol.Protocol;
 import request.HTTPRequest;
 
 /**
- * POST request will create a new file or overwrite an existing file in the file
- * system.
+ * PUT creates a new file, if necessary, and appends the request content to the
+ * end of the specified file.
  * 
  * @author Chandan R. Rupakheti (rupakhcr@clarkson.edu)
  */
-public class PostRequestHandler extends RequestHandler {
+public class PutRequestHandler extends RequestHandler {
 
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * strategy.directoryoperations.RequestHandler#handle(protocol.HttpRequest)
+	 * strategy.directoryoperations.RequestHandler#handle(request.HTTPRequest)
 	 */
 	@Override
 	public HttpResponse handle(HTTPRequest request) {
-
 		File requestedFile;
 		try {
 			requestedFile = lookupFileForRequestPath(request.getPath());
 		} catch (Exception e) {
-			// TODO log the exception and figure out what happened
 			return HttpResponseFactory.createGenericErrorResponse(
 					HttpStatusCode.INTERNAL_ERROR, Protocol.CLOSE);
 		}
 
 		HttpStatusCode responseCode = HttpStatusCode.OK;
 		if (!requestedFile.exists()) {
-			// Return created if the file is actually being created for the
-			// request
 			responseCode = HttpStatusCode.CREATED;
 			try {
 				requestedFile.createNewFile();
 			} catch (IOException e) {
-				// TODO log the exception
+				// TODO Log the exception
 				return HttpResponseFactory.createGenericErrorResponse(
 						HttpStatusCode.INTERNAL_ERROR, Protocol.CLOSE);
 			}
 		}
 
 		try {
-			FileWriter writer = new FileWriter(requestedFile, false);
+			FileWriter writer = new FileWriter(requestedFile, true);
 			writer.write(request.getContent());
 			writer.close();
 
@@ -87,10 +83,11 @@ public class PostRequestHandler extends RequestHandler {
 					responseCode, Protocol.CLOSE);
 
 		} catch (IOException e) {
-			// TODO Log the exception
+			// TODO log the exception
 			return HttpResponseFactory.createGenericErrorResponse(
 					HttpStatusCode.INTERNAL_ERROR, Protocol.CLOSE);
 		}
+
 	}
 
 }

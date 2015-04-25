@@ -43,7 +43,7 @@ public class UnsupportedRequestHandler extends RequestHandler {
 	@Override
 	public HttpResponse handle(HTTPRequest request) {
 		return HttpResponseFactory.createGenericErrorResponse(
-				HttpStatusCode.METHOD_NOT_ALLOWED, Protocol.CLOSE);
+				HttpStatusCode.TEAPOT, Protocol.CLOSE);
 	}
 
 }

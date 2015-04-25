@@ -29,9 +29,15 @@
 package strategy.directoryoperations;
 
 import protocol.HttpResponse;
+import protocol.HttpResponseFactory;
+import protocol.HttpStatusCode;
+import protocol.Protocol;
 import request.HTTPRequest;
+import request.HTTPRequestFactory;
 
 /**
+ * DELETE request will delete an existing file from the file system. If no such
+ * file exists, an appropriate (404) response is returned.
  * 
  * @author Chandan R. Rupakheti (rupakhcr@clarkson.edu)
  */
@@ -39,8 +45,8 @@ public class DeleteRequestHandler extends RequestHandler {
 
 	@Override
 	public HttpResponse handle(HTTPRequest request) {
-		// TODO Auto-generated method stub
-		return null;
+		return HttpResponseFactory.createGenericErrorResponse(
+				HttpStatusCode.TEAPOT, Protocol.CLOSE);
 	}
 
 }
