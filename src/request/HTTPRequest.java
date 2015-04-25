@@ -77,8 +77,8 @@ public class HTTPRequest {
 	public String getPath() {
 		return path;
 	}
-	
-	public int getBodyLength(){
+
+	public int getBodyLength() {
 		return bodyLength;
 	}
 
@@ -120,8 +120,8 @@ public class HTTPRequest {
 				this.headers.put(headerKey, headerContent);
 			}
 		}
-		
-		//Read the body
+
+		// Read the body
 		body = "";
 		if (!this.headers.containsKey("Content-Length")) {
 			System.out.println("No content-length header!");
@@ -132,20 +132,20 @@ public class HTTPRequest {
 			System.out.println("Content LENGTH: " + contentLength);
 			System.out.println("Body LENGTH: " + bodyLength);
 			int count = 0;
-			
+
 			int intChar = 0;
 			while (count < bodyLength && (intChar = reader.read()) != -1) {
 				if (count < bodyLength) {
 					char ch = (char) intChar;
 					body = body + ch;
 					count++;
-				}else{
-					//Extra content characters.
+				} else {
+					// Extra content characters.
 					throw new Exception("Body is longer than expected.");
 				}
 			}
 			System.out.println("Body: " + body);
-			bodyPresent = true;
+			bodyPresent = count > 0;
 		}
 	}
 
@@ -159,7 +159,7 @@ public class HTTPRequest {
 	}
 
 	/**
-	 * @throws Exception 
+	 * @throws Exception
 	 * 
 	 */
 	public void checkRequest() throws Exception {

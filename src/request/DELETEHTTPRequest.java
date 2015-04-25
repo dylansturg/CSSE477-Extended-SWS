@@ -35,10 +35,11 @@ import java.net.Socket;
  * 
  * @author Nathan Jarvis
  */
-//Request that is created for Delete
+// Request that is created for Delete
 public class DELETEHTTPRequest extends HTTPRequest {
 
-	public DELETEHTTPRequest(Socket socket, InputStreamReader reader) throws Exception {
+	public DELETEHTTPRequest(Socket socket, InputStreamReader reader)
+			throws Exception {
 		super(socket, reader);
 	}
 
@@ -46,7 +47,7 @@ public class DELETEHTTPRequest extends HTTPRequest {
 	 * @param socket
 	 * @param headerMap
 	 * @param verb
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public DELETEHTTPRequest(Socket socket) throws Exception {
 		super(socket);
@@ -54,6 +55,10 @@ public class DELETEHTTPRequest extends HTTPRequest {
 
 	public void checkRequest() throws Exception {
 		if (this.bodyPresent) {
+			// It's actually OK for DELETE to have a body
+			// The spec doesn't say you can't do it, just doesn't say what you
+			// do with it
+
 			// Shouldn't be a body for delete request.
 			throw new Exception("Delete request should not have body.");
 		}
