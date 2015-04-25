@@ -27,8 +27,12 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 import java.util.Map;
+
+import server.GMTConversion;
 
 /**
  * Represents a response object for HTTP.
@@ -57,12 +61,38 @@ public class HttpResponse {
 	 *            The file to be sent.
 	 */
 	public HttpResponse(String version, int status, String phrase,
+			Map<String, String> header, String connection, File file) {
+		this.version = version;
+		this.status = status;
+		this.phrase = phrase;
+		this.header = header;
+		this.file = file;
+
+		populateDefaultHeaders(connection);
+	}
+
+	public HttpResponse(String version, int status, String phrase,
 			Map<String, String> header, File file) {
 		this.version = version;
 		this.status = status;
 		this.phrase = phrase;
 		this.header = header;
 		this.file = file;
+	}
+
+	public void populateDefaultHeaders(String connectionStyle) {
+		// Lets add Connection header
+		put(Protocol.CONNECTION, connectionStyle);
+
+		// Lets add current date
+		Date date = Calendar.getInstance().getTime();
+		put(Protocol.DATE, GMTConversion.toGMTString(date));
+
+		// Lets add server info
+		put(Protocol.Server, Protocol.getServerInfo());
+
+		// Lets add extra header with provider info
+		put(Protocol.PROVIDER, Protocol.AUTHOR);
 	}
 
 	/**

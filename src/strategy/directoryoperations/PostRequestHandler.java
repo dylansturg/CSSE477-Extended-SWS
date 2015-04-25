@@ -29,6 +29,9 @@
 package strategy.directoryoperations;
 
 import protocol.HttpResponse;
+import protocol.HttpResponseFactory;
+import protocol.HttpStatusCode;
+import protocol.Protocol;
 import request.HTTPRequest;
 
 /**
@@ -46,7 +49,8 @@ public class PostRequestHandler extends RequestHandler {
 	@Override
 	public HttpResponse handle(HTTPRequest request) {
 		// TODO Auto-generated method stub
-		return null;
+		return HttpResponseFactory.createGenericErrorResponse(
+				HttpStatusCode.TEAPOT, Protocol.CLOSE);
 	}
 
 }

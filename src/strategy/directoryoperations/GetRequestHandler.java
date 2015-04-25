@@ -136,7 +136,7 @@ public class GetRequestHandler extends RequestHandler {
 		public FileHttpResponse(String version, HttpStatusCode status,
 				Map<String, String> headers, File file) {
 			super(version, status.getStatusCode(), status.getStatusMessage(),
-					headers, file);
+					headers, Protocol.CLOSE, file);
 
 			servedFile = file;
 

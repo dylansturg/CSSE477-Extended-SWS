@@ -134,7 +134,7 @@ public class HTTPRequest {
 			int count = 0;
 			
 			int intChar = 0;
-			while ((intChar = reader.read()) != -1) {
+			while (count < bodyLength && (intChar = reader.read()) != -1) {
 				if (count < bodyLength) {
 					char ch = (char) intChar;
 					body = body + ch;
