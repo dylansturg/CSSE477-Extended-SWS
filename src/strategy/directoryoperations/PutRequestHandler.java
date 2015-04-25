@@ -72,6 +72,9 @@ public class PutRequestHandler extends RequestHandler {
 				return HttpResponseFactory.createGenericErrorResponse(
 						HttpStatusCode.INTERNAL_ERROR, Protocol.CLOSE);
 			}
+		} else if (requestedFile.isDirectory()) {
+			return HttpResponseFactory.createGenericErrorResponse(
+					HttpStatusCode.METHOD_NOT_ALLOWED, Protocol.CLOSE);
 		}
 
 		try {

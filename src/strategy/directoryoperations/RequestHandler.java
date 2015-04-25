@@ -54,7 +54,8 @@ public abstract class RequestHandler {
 		triggeredRoute = route;
 	}
 
-	protected File lookupFileForRequestPath(String path) throws Exception {
+	protected File lookupFileForRequestPath(String path)
+			throws Exception {
 		if (triggeredRoute == null) {
 			// Misconfigured Server
 			throw new IllegalStateException(
@@ -73,6 +74,13 @@ public abstract class RequestHandler {
 		File requestedFile = new File(desiredFilePath);
 
 		return requestedFile;
+	}
+
+	protected boolean shouldHandleDirectories() {
+		String allowsDirectoryOperations = triggeredRoute
+				.getStrategyOption(ResourceStrategyRouteOptions.ServeDirectories);
+		return allowsDirectoryOperations != null
+				&& allowsDirectoryOperations.equalsIgnoreCase("true");
 	}
 
 	private String createFilePath(String rootDir, String path) {

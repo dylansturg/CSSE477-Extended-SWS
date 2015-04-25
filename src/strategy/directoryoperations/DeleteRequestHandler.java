@@ -28,6 +28,9 @@
 
 package strategy.directoryoperations;
 
+import java.io.File;
+
+import configuration.ResourceStrategyRouteOptions;
 import protocol.HttpResponse;
 import protocol.HttpResponseFactory;
 import protocol.HttpStatusCode;
@@ -45,8 +48,28 @@ public class DeleteRequestHandler extends RequestHandler {
 
 	@Override
 	public HttpResponse handle(HTTPRequest request) {
-		return HttpResponseFactory.createGenericErrorResponse(
-				HttpStatusCode.TEAPOT, Protocol.CLOSE);
+
+		File requestedFile;
+
+		try {
+			requestedFile = lookupFileForRequestPath(request.getPath());
+		} catch (Exception e) {
+			return HttpResponseFactory.createGenericErrorResponse(
+					HttpStatusCode.INTERNAL_ERROR, Protocol.CLOSE);
+		}
+
+		if (!requestedFile.exists()) {
+			return HttpResponseFactory.createGenericErrorResponse(
+					HttpStatusCode.NOT_FOUND, Protocol.CLOSE);
+		} else if (requestedFile.isDirectory() && !shouldHandleDirectories()) {
+			return HttpResponseFactory.createGenericErrorResponse(
+					HttpStatusCode.METHOD_NOT_ALLOWED, Protocol.CLOSE);
+		}
+
+		requestedFile.delete();
+
+		return HttpResponseFactory.createGenericSuccessfulResponse(
+				HttpStatusCode.NO_CONTENT, Protocol.CLOSE);
 	}
 
 }

@@ -74,16 +74,11 @@ public class GetRequestHandler extends RequestHandler {
 			return handleEvaluationError(HttpStatusCode.INTERNAL_ERROR);
 		}
 
-		String mayServeAsDirectory = triggeredRoute
-				.getStrategyOption(ResourceStrategyRouteOptions.ServeDirectories);
 		if (requestedFile.exists()) {
 			if (requestedFile.isFile()) {
 				return serveFile(requestedFile, request);
-			} else if (requestedFile.isDirectory()) {
-				if (mayServeAsDirectory != null
-						&& mayServeAsDirectory.equalsIgnoreCase("True")) {
-					return serveDirectory(requestedFile, request);
-				}
+			} else if (requestedFile.isDirectory() && shouldHandleDirectories()) {
+				return serveDirectory(requestedFile, request);
 			}
 		}
 
@@ -120,13 +115,50 @@ public class GetRequestHandler extends RequestHandler {
 
 	private HttpResponse serveDirectory(File requestedDirectory,
 			HTTPRequest request) {
-		return null;
+		StringBuilder responseContent = new StringBuilder(
+				"Contents of Directory - " + requestedDirectory.getName()
+						+ Protocol.CRLF);
+
+		File[] contents = requestedDirectory.listFiles();
+		for (File file : contents) {
+			responseContent.append(file.getName());
+			responseContent.append(Protocol.CRLF);
+		}
+
+		Map<String, String> headers = new HashMap<String, String>();
+		return new StaticContentResponse(Protocol.VERSION, HttpStatusCode.OK,
+				headers, responseContent.toString());
 	}
 
 	private HttpResponse handleEvaluationError(HttpStatusCode errorDescription) {
 		HttpResponse response = HttpResponseFactory.createGenericErrorResponse(
 				errorDescription, Protocol.CLOSE);
 		return response;
+	}
+
+	private class StaticContentResponse extends HttpResponse {
+
+		private String staticContent;
+
+		public StaticContentResponse(String version, HttpStatusCode status,
+				Map<String, String> headers, String content) {
+			super(version, status.getStatusCode(), status.getStatusMessage(),
+					headers, null);
+
+			staticContent = content;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see protocol.HttpResponse#writeContent(java.io.BufferedOutputStream)
+		 */
+		@Override
+		protected void writeContent(BufferedOutputStream outStream)
+				throws IOException {
+			outStream.write(staticContent.getBytes(Protocol.CHARSET));
+		}
+
 	}
 
 	private class FileHttpResponse extends HttpResponse {
