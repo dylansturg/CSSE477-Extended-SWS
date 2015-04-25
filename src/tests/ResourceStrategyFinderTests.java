@@ -36,6 +36,7 @@ import java.util.List;
 import org.junit.Test;
 
 import protocol.HttpRequest;
+import request.HTTPRequest;
 import strategy.DirectoryStrategy;
 import strategy.IResourceStrategy;
 import strategy.InternalErrorStrategy;
@@ -60,8 +61,11 @@ public class ResourceStrategyFinderTests {
 		ResourceStrategyFinder finder = new ResourceStrategyFinder(testConfig,
 				null);
 
+		ResourceStrategyRoute foundRoute = finder
+				.findRouteForRequest(new FakeHttpRequest());
+
 		IResourceStrategy strategy = finder
-				.routeRequestToStrategy(new FakeHttpRequest());
+				.getStrategyForResourceRoute(foundRoute);
 
 		assertNotNull(strategy);
 		assertTrue(strategy.getClass() == DirectoryStrategy.class);
@@ -73,8 +77,8 @@ public class ResourceStrategyFinderTests {
 		ResourceStrategyFinder finder = new ResourceStrategyFinder(testConfig,
 				null);
 
-		IResourceStrategy strategy = finder
-				.routeRequestToStrategy(new FakeHttpRequest());
+		IResourceStrategy strategy = finder.getStrategyForResourceRoute(finder
+				.findRouteForRequest(new FakeHttpRequest()));
 
 		assertNotNull(strategy);
 		assertTrue(strategy.getClass() == InternalErrorStrategy.class);
@@ -91,20 +95,15 @@ public class ResourceStrategyFinderTests {
 		return new ResourceStrategyConfiguration(configurationRoutes);
 	}
 
-	public class FakeHttpRequest extends HttpRequest {
+	public class FakeHttpRequest extends HTTPRequest {
 		public String uri = "/";
 
 		public FakeHttpRequest() {
-
+			super(null);
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see protocol.HttpRequest#getUri()
-		 */
 		@Override
-		public String getUri() {
+		public String getPath() {
 			return uri;
 		}
 	}

@@ -113,9 +113,6 @@ public class DirectoryStrategy extends ResourceStrategyBase {
 	private class DirectoryRequestTask extends RequestTaskBase {
 		private RequestHandler handler;
 
-		// Initialized when the task is complete
-		private HttpResponse response = null;
-
 		public DirectoryRequestTask(RequestHandler handler, HTTPRequest request) {
 			super(request);
 			this.handler = handler;

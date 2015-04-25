@@ -1,5 +1,5 @@
 /*
- * MalformedHTTPRequest.java
+ * DeleteRequestHandler.java
  * Apr 24, 2015
  *
  * Simple Web Server (SWS) for EE407/507 and CS455/555
@@ -26,34 +26,20 @@
  * http://clarkson.edu/~rupakhcr
  */
 
-package request;
+package strategy.directoryoperations;
 
-import java.net.Socket;
+import protocol.HttpResponse;
+import request.HTTPRequest;
 
 /**
  * 
- * @author Nathan Jarvis
+ * @author Chandan R. Rupakheti (rupakhcr@clarkson.edu)
  */
+public class DeleteRequestHandler extends RequestHandler {
 
-// A bad request that is sent back when the server receives a messed up request.
-public class MalformedHTTPRequest extends HTTPRequest {
-
-	/**
-	 * @param socket
-	 */
-
-	public MalformedHTTPRequest(Socket socket) {
-		super(socket);
-		// TODO Auto-generated constructor stub
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see request.HTTPRequest#getPath()
-	 */
 	@Override
-	public String getPath() {
+	public HttpResponse handle(HTTPRequest request) {
+		// TODO Auto-generated method stub
 		return null;
 	}
 

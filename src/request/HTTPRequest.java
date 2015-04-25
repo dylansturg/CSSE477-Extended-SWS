@@ -36,6 +36,8 @@ import java.net.Socket;
 import java.util.HashMap;
 import java.util.Map;
 
+import protocol.Protocol;
+
 /**
  * 
  * @author Nathan Jarvis
@@ -104,14 +106,18 @@ public class HTTPRequest {
 		version = requestHeader[1];
 
 		while ((line = reader.readLine()) != null) {
-			if(line.equals("")){
+			if (line.isEmpty()) {
 				break;
-			}else{
+			}
+			if (line.equals(Protocol.CRLF)) {
+				break;
+			}
+
+			if (line.contains(Protocol.SEPERATOR + "")) {
 				String headerKey = line.substring(0, line.indexOf(":"));
 				String headerContent = line.substring(line.indexOf(":") + 2,
 						line.length());
 				this.headers.put(headerKey, headerContent);
-				System.out.println("Header key: " + headerKey + ", header content: " + headerContent);
 			}
 		}
 		

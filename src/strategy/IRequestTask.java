@@ -28,6 +28,8 @@
 
 package strategy;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.net.Socket;
 import java.util.List;
 
@@ -61,6 +63,10 @@ public interface IRequestTask extends Runnable {
 
 	public Socket getRequestingClient();
 
-	public void writeResponse(Socket clientSocket);
+	public void writeResponse(OutputStream out) throws IOException;
+
+	public long getStartTime();
+
+	public void setStartTime(long timestamp);
 
 }

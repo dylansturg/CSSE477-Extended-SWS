@@ -29,6 +29,9 @@
 package strategy.directoryoperations;
 
 import protocol.HttpResponse;
+import protocol.HttpResponseFactory;
+import protocol.HttpStatusCode;
+import protocol.Protocol;
 import request.HTTPRequest;
 
 /**
@@ -37,16 +40,10 @@ import request.HTTPRequest;
  */
 public class UnsupportedRequestHandler extends RequestHandler {
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * strategy.directoryoperations.RequestHandler#handle(protocol.HttpRequest)
-	 */
 	@Override
 	public HttpResponse handle(HTTPRequest request) {
-		// TODO Auto-generated method stub
-		return null;
+		return HttpResponseFactory.createGenericErrorResponse(
+				HttpStatusCode.METHOD_NOT_ALLOWED, Protocol.CLOSE);
 	}
 
 }

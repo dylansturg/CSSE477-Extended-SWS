@@ -25,10 +25,13 @@
  * NY 13699-5722
  * http://clarkson.edu/~rupakhcr
  */
- 
+
 package configuration;
 
 /**
+ * Encapsulates information about the server's configuration. Doesn't really do
+ * anything right now, but existing so dependency injection can be setup and
+ * working for now.
  * 
  * @author Chandan R. Rupakheti (rupakhcr@clarkson.edu)
  */
