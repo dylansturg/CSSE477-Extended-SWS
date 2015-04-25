@@ -54,14 +54,6 @@ import request.PUTHTTPRequest;
  * @author Chandan R. Rupakheti (rupakhcr@clarkson.edu)
  */
 public class MalformedRequestTests {
-
-	@Test
-	public void testGetRequestWithBody() {
-		HTTPRequest testRequest = new HTTPRequestFactory()
-				.createRequest(new FakeSocket(
-						"GET /path/to/stuff HTTP/1.1\r\nHost: SomeBody.com\r\nAuthor: NotAPerson\r\nContent-Length: 10\r\n BLAh blah blah body"));
-		assertEquals(testRequest.getClass(), MalformedHTTPRequest.class);
-	}
 	
 	@Test
 	public void testGetRequest() {
@@ -106,14 +98,6 @@ public class MalformedRequestTests {
 	}
 	
 	@Test
-	public void testPostRequestWithLongBody() {
-		HTTPRequest testRequest = new HTTPRequestFactory()
-				.createRequest(new FakeSocket(
-						"POST /path/to/stuff HTTP/1.1\r\nHost: SomeBody.com\r\nAuthor: NotAPerson\r\nContent-Length: 5\r\n\r\n12345blah blah blah"));
-		assertEquals(testRequest.getClass(), MalformedHTTPRequest.class);
-	}
-	
-	@Test
 	public void testPostRequestWithShortBody() {
 		HTTPRequest testRequest = new HTTPRequestFactory()
 				.createRequest(new FakeSocket(
@@ -136,14 +120,6 @@ public class MalformedRequestTests {
 		HTTPRequest testRequest = new HTTPRequestFactory()
 				.createRequest(new FakeSocket(
 						"PUT /path/to/stuff HTTP/1.1\r\nHost: SomeBody.com\r\nAuthor: NotAPerson\r\n"));
-		assertEquals(testRequest.getClass(), MalformedHTTPRequest.class);
-	}
-	
-	@Test
-	public void testPutRequestWithLongBody() {
-		HTTPRequest testRequest = new HTTPRequestFactory()
-				.createRequest(new FakeSocket(
-						"PUT /path/to/stuff HTTP/1.1\r\nHost: SomeBody.com\r\nAuthor: NotAPerson\r\nContent-Length: 5\r\n\r\n12345blah blah blah"));
 		assertEquals(testRequest.getClass(), MalformedHTTPRequest.class);
 	}
 	
