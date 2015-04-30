@@ -28,6 +28,8 @@
 
 package configuration;
 
+import java.util.List;
+
 /**
  * 
  * @author Chandan R. Rupakheti (rupakhcr@clarkson.edu)
@@ -35,6 +37,7 @@ package configuration;
 public class ServletData {
 	protected String classPath;
 	protected String relativeUrl;
+	protected List<String> expectedMethods;
 
 	/**
 	 * @return the classPath
@@ -64,6 +67,21 @@ public class ServletData {
 	 */
 	public void setRelativeUrl(String relativeUrl) {
 		this.relativeUrl = relativeUrl;
+	}
+
+	/**
+	 * @return the expectedMethods
+	 */
+	public List<String> getExpectedMethods() {
+		return expectedMethods;
+	}
+
+	/**
+	 * @param expectedMethods
+	 *            the expectedMethods to set
+	 */
+	public void setExpectedMethods(List<String> expectedMethods) {
+		this.expectedMethods = expectedMethods;
 	}
 
 }
