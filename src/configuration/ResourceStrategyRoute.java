@@ -28,6 +28,8 @@
 
 package configuration;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -43,19 +45,30 @@ public class ResourceStrategyRoute {
 	public static final ResourceStrategyRoute None = new ResourceStrategyRouteNone(
 			null, null, null);
 
-	private String strategyClass;
+	private Class<?> strategyClass;
 	private String routeMatch;
-	private String pathToContainingJar;
+	private List<String> methods;
 	private Map<String, String> strategyOptions;
 
-	public ResourceStrategyRoute(String strategy, String route,
+	public ResourceStrategyRoute(Class<?> strategy, String route,
 			Map<String, String> options) {
 		strategyClass = strategy;
 		routeMatch = route;
 		strategyOptions = options;
+
+		methods = new ArrayList<String>();
+		methods.add("GET");
 	}
 
-	public String getStrategyClass() {
+	public ResourceStrategyRoute(Class<?> strategy, String route,
+			List<String> methods, Map<String, String> options) {
+		strategyClass = strategy;
+		routeMatch = route;
+		this.methods = methods;
+		strategyOptions = options;
+	}
+
+	public Class<?> getStrategyClass() {
 		return strategyClass;
 	}
 
@@ -65,18 +78,5 @@ public class ResourceStrategyRoute {
 
 	public String getStrategyOption(String option) {
 		return strategyOptions.get(option);
-	}
-
-	/**
-	 * Currently unused, but available for potential future extension. Designed
-	 * to allow pluggable ResourceStrategy classes through extensions in the
-	 * server.
-	 * 
-	 * Always returns null for now.
-	 * 
-	 * @return a path to a jar with the ResourceStrategy implementation
-	 */
-	public String getContainingJarPath() {
-		return pathToContainingJar;
 	}
 }

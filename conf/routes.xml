@@ -1,0 +1,9 @@
+<routes>
+	<route>
+		<plugin>MyPlugin</plugin>
+		<path>/myplugin/</path>
+		<options>
+			<max-threads>3</max-threads>
+		</options>
+	</route>
+</routes>
