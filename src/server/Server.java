@@ -23,12 +23,15 @@ package server;
 
 import gui.WebServer;
 
+import java.io.File;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+
 import request.HTTPRequestFactory;
 import response.ResponseHandler;
 import strategy.ResourceStrategyFinder;
+import configuration.InvalidConfigurationException;
 import configuration.ResourceStrategyConfiguration;
 import configuration.ServerConfiguration;
 
@@ -56,7 +59,8 @@ public class Server implements Runnable {
 	 * @param rootDirectory
 	 * @param port
 	 */
-	public Server(String rootDirectory, int port, WebServer window) {
+	public Server(String rootDirectory, String configFile, int port,
+			WebServer window) throws InvalidConfigurationException {
 		this.rootDirectory = rootDirectory;
 		this.port = port;
 		this.stop = false;
@@ -67,7 +71,7 @@ public class Server implements Runnable {
 		resourcesConfiguration = new ResourceStrategyConfiguration();
 		configuration = new ServerConfiguration(resourcesConfiguration);
 
-		// TODO parse user selected configuration file
+		configuration.parseConfiguration(new File(configFile));
 
 	}
 
