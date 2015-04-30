@@ -51,7 +51,7 @@ import com.thoughtworks.xstream.*;
  * @author Chandan R. Rupakheti (rupakhcr@clarkson.edu)
  */
 public class ServerConfiguration implements IPluginAddedListener,
-		IPluginRemovedListener {
+		IPluginRemovedListener, IConfigurationChangedListener {
 
 	protected static final String MATCH_ALL_REGEX = "(.*?)";
 	protected static final String ROUTE_REGEX = "^/%s/%s/";
@@ -231,5 +231,10 @@ public class ServerConfiguration implements IPluginAddedListener,
 		public String toString() {
 			return description;
 		}
+	}
+
+	@Override
+	public void addedConfiguration(File configuration) throws InvalidConfigurationException {
+		parseConfiguration(configuration);
 	}
 }
