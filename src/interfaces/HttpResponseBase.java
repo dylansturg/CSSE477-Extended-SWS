@@ -1,19 +1,49 @@
 package interfaces;
 
 import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 import protocol.HttpStatusCode;
 import protocol.Protocol;
+import server.GMTConversion;
 
 public abstract class HttpResponseBase implements IHttpResponse {
+
+	private boolean hasPopulatedServerHeaders = false;
 
 	protected String version;
 	protected Map<String, String> headers = new HashMap<String, String>();
 	protected HttpStatusCode status;
+
+	@Override
+	public String getVersion() {
+		return version;
+	}
+
+	@Override
+	public HttpStatusCode getStatus() {
+		return status;
+	}
+
+	public void setStatus(HttpStatusCode status) {
+		this.status = status;
+	}
+
+	@Override
+	public String getStatusPhrase() {
+		return status.getStatusMessage();
+	}
+
+	@Override
+	public int getStatusCode() {
+		return status.getStatusCode();
+	}
 
 	@Override
 	public String getHeader(String key) {
@@ -25,6 +55,19 @@ public abstract class HttpResponseBase implements IHttpResponse {
 		headers.put(key, value);
 	}
 
+	@Override
+	public void populateServerDefaultHeaders() {
+		hasPopulatedServerHeaders = true;
+
+		// Lets add current date
+		Date date = Calendar.getInstance().getTime();
+		putHeader(Protocol.DATE, GMTConversion.toGMTString(date));
+		// Lets add server info
+		putHeader(Protocol.Server, Protocol.getServerInfo());
+		// Lets add extra header with provider info
+		putHeader(Protocol.PROVIDER, Protocol.AUTHOR);
+	}
+
 	/**
 	 * Cannot be overwritten by Servlet's implementation. Enforces strict
 	 * ordering on writing out the data into the stream.
@@ -33,6 +76,10 @@ public abstract class HttpResponseBase implements IHttpResponse {
 	public final void write(OutputStream outStream) throws IOException {
 		BufferedOutputStream out = new BufferedOutputStream(outStream,
 				Protocol.CHUNK_LENGTH);
+
+		if (!hasPopulatedServerHeaders) {
+			populateServerDefaultHeaders();
+		}
 
 		writeStatusLine(out);
 		writeHeaders(out);
@@ -73,6 +120,23 @@ public abstract class HttpResponseBase implements IHttpResponse {
 	 * Perform any logic specific to writing out the body of the response here.
 	 * Intended to be implemented in subclasses (created by Servlets).
 	 */
-	protected abstract void writeContent(BufferedOutputStream outStream)
+	abstract protected void writeContent(BufferedOutputStream outStream)
 			throws IOException;
+
+	@Override
+	public String toString() {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("----------------------------------\n");
+
+		ByteArrayOutputStream bytesOut = new ByteArrayOutputStream();
+		try {
+			this.write(bytesOut);
+			buffer.append(bytesOut.toString());
+		} catch (IOException e) {
+			// #YOLO
+		}
+
+		buffer.append("\n----------------------------------\n");
+		return buffer.toString();
+	}
 }

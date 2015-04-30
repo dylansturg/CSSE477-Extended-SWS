@@ -37,12 +37,11 @@ public class Protocol {
 	public static final char CR = '\r';
 	public static final char LF = '\n';
 	public static final String CRLF = "" + CR + LF;
-	
 
 	// Some useful protocol elements
 	public static final String VERSION = "HTTP/1.1";
 	public static final String GET = "GET";
-	
+
 	public static final String CHARSET = "UTF-8";
 
 	// Some useful http codes and text
@@ -84,8 +83,8 @@ public class Protocol {
 
 	// Server information that we want to send in "Server:" header field
 	public static final String SERVER_INFO = "SimpleWebServer(SWS)/1.0.0";
-	public static final String PROVIDER = "Provider";
-	public static final String AUTHOR = "Chandan R. Rupakheti";
+	public static final String PROVIDER = "Providers";
+	public static final String AUTHOR = "sturgedl and jarvisnw";
 	public static final String CLOSE = "Close";
 	public static final String OPEN = "Keep-Alive";
 	public static final String DEFAULT_FILE = "index.html";
