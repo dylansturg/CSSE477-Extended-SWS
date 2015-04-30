@@ -28,11 +28,12 @@
 
 package strategy.directoryoperations;
 
+import interfaces.HttpResponseBase;
+
 import java.io.File;
 
 import configuration.ResourceStrategyRoute;
 import configuration.ResourceStrategyRouteOptions;
-import protocol.HttpResponse;
 import protocol.HttpStatusCode;
 import protocol.Protocol;
 import request.HTTPRequest;
@@ -44,7 +45,7 @@ import request.HTTPRequest;
 public abstract class RequestHandler {
 	protected ResourceStrategyRoute triggeredRoute;
 
-	public abstract HttpResponse handle(HTTPRequest request);
+	public abstract HttpResponseBase handle(HTTPRequest request);
 
 	public ResourceStrategyRoute getTriggeredRoute() {
 		return triggeredRoute;
@@ -54,13 +55,13 @@ public abstract class RequestHandler {
 		triggeredRoute = route;
 	}
 
-	protected File lookupFileForRequestPath(String path)
-			throws Exception {
+	protected File lookupFileForRequestPath(String path) throws Exception {
 		if (triggeredRoute == null) {
 			// Misconfigured Server
 			throw new IllegalStateException(
 					"Misconfigured Server Route - Handling request without a route");
 		}
+		String filePath = "/" + path.replace(triggeredRoute.getRouteMatch(), "");
 
 		String rootDirectory = triggeredRoute
 				.getStrategyOption(ResourceStrategyRouteOptions.RootDirectoy);
@@ -70,7 +71,7 @@ public abstract class RequestHandler {
 					"Misconfigured Server Route - DirectoryStrategy without a RootDirectory");
 		}
 
-		String desiredFilePath = createFilePath(rootDirectory, path);
+		String desiredFilePath = createFilePath(rootDirectory, filePath);
 		File requestedFile = new File(desiredFilePath);
 
 		return requestedFile;

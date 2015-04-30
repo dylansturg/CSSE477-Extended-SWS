@@ -56,16 +56,20 @@ public class ResourceStrategyConfiguration {
 		activeRoutes = routes;
 	}
 
+	public void addRoute(ResourceStrategyRoute route) {
+		activeRoutes.add(route);
+	}
+
 	public ResourceStrategyRoute findRouteForResourcePath(String path,
 			String method) {
 		if (path == null) {
-			return ResourceStrategyRouteNone.None;
+			return ResourceStrategyRoute.INVALID;
 		}
 
 		try {
 			for (ResourceStrategyRoute resourceStrategyRoute : activeRoutes) {
 				String routeRegex = resourceStrategyRoute.getRouteMatch();
-				if (routeRegex != null && path.matches(routeRegex)) {
+				if (routeRegex != null && path.startsWith(routeRegex)) {
 					if (resourceStrategyRoute.respondsToMethod(method)) {
 						return resourceStrategyRoute;
 					}
@@ -75,6 +79,6 @@ public class ResourceStrategyConfiguration {
 			// Pass
 		}
 
-		return ResourceStrategyRouteNone.None;
+		return ResourceStrategyRoute.None;
 	}
 }

@@ -43,6 +43,7 @@ import java.util.Map;
 public class ResourceStrategyRoute {
 
 	public static final ResourceStrategyRoute None = new ResourceStrategyRouteNone();
+	public static final ResourceStrategyRoute INVALID = new ResourceStrategyRouteInvalid();
 
 	private Class<?> strategyClass;
 	private String routeMatch;

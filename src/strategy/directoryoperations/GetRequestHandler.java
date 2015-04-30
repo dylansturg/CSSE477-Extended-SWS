@@ -28,12 +28,13 @@
 
 package strategy.directoryoperations;
 
+import interfaces.HttpResponseBase;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.net.FileNameMap;
 import java.net.URLConnection;
 import java.text.ParseException;
@@ -41,8 +42,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import configuration.ResourceStrategyRouteOptions;
-import protocol.HttpResponse;
 import protocol.HttpResponseFactory;
 import protocol.HttpStatusCode;
 import protocol.Protocol;
@@ -63,7 +62,7 @@ public class GetRequestHandler extends RequestHandler {
 	 * strategy.directoryoperations.RequestHandler#handle(protocol.HttpRequest)
 	 */
 	@Override
-	public HttpResponse handle(HTTPRequest request) {
+	public HttpResponseBase handle(HTTPRequest request) {
 		// request is guaranteed to be GetHttpRequest
 
 		File requestedFile;
@@ -85,7 +84,7 @@ public class GetRequestHandler extends RequestHandler {
 		return handleEvaluationError(HttpStatusCode.NOT_FOUND);
 	}
 
-	private HttpResponse serveFile(File requestedFile, HTTPRequest request) {
+	private HttpResponseBase serveFile(File requestedFile, HTTPRequest request) {
 		Map<String, String> headers = new HashMap<String, String>();
 
 		String conditionalGet = request.getHeader(Protocol.CONDITIONAL_GET);
@@ -113,7 +112,7 @@ public class GetRequestHandler extends RequestHandler {
 				headers, requestedFile);
 	}
 
-	private HttpResponse serveDirectory(File requestedDirectory,
+	private HttpResponseBase serveDirectory(File requestedDirectory,
 			HTTPRequest request) {
 		StringBuilder responseContent = new StringBuilder(
 				"Contents of Directory - " + requestedDirectory.getName()
@@ -130,21 +129,20 @@ public class GetRequestHandler extends RequestHandler {
 				headers, responseContent.toString());
 	}
 
-	private HttpResponse handleEvaluationError(HttpStatusCode errorDescription) {
-		HttpResponse response = HttpResponseFactory.createGenericErrorResponse(
-				errorDescription, Protocol.CLOSE);
+	private HttpResponseBase handleEvaluationError(
+			HttpStatusCode errorDescription) {
+		HttpResponseBase response = HttpResponseFactory
+				.createGenericErrorResponse(errorDescription, Protocol.CLOSE);
 		return response;
 	}
 
-	private class StaticContentResponse extends HttpResponse {
+	private class StaticContentResponse extends HttpResponseBase {
 
 		private String staticContent;
 
 		public StaticContentResponse(String version, HttpStatusCode status,
 				Map<String, String> headers, String content) {
-			super(version, status.getStatusCode(), status.getStatusMessage(),
-					headers, null);
-
+			super(version, status, headers);
 			staticContent = content;
 		}
 
@@ -161,14 +159,13 @@ public class GetRequestHandler extends RequestHandler {
 
 	}
 
-	private class FileHttpResponse extends HttpResponse {
+	private class FileHttpResponse extends HttpResponseBase {
 
 		protected File servedFile;
 
 		public FileHttpResponse(String version, HttpStatusCode status,
 				Map<String, String> headers, File file) {
-			super(version, status.getStatusCode(), status.getStatusMessage(),
-					headers, Protocol.CLOSE, file);
+			super(version, status, headers);
 
 			servedFile = file;
 
@@ -177,23 +174,22 @@ public class GetRequestHandler extends RequestHandler {
 				// Lets add last modified date for the file
 				long timeSinceEpoch = file.lastModified();
 				Date modifiedTime = new Date(timeSinceEpoch);
-				put(Protocol.LAST_MODIFIED, modifiedTime.toString());
+				putHeader(Protocol.LAST_MODIFIED, modifiedTime.toString());
 
 				// Lets get content length in bytes
 				long length = file.length();
-				put(Protocol.CONTENT_LENGTH, length + "");
+				putHeader(Protocol.CONTENT_LENGTH, length + "");
 
 				// Lets get MIME type for the file
 				FileNameMap fileNameMap = URLConnection.getFileNameMap();
 				String mime = fileNameMap.getContentTypeFor(file.getName());
 
 				if (mime != null) {
-					put(Protocol.CONTENT_TYPE, mime);
+					putHeader(Protocol.CONTENT_TYPE, mime);
 				}
 			}
 		}
 
-		@Override
 		public File getFile() {
 			return servedFile;
 		}
@@ -208,7 +204,8 @@ public class GetRequestHandler extends RequestHandler {
 			}
 
 			// We are reading a file
-			if (this.getStatus() == Protocol.OK_CODE && requestedFile != null) {
+			if (this.getStatusCode() == Protocol.OK_CODE
+					&& requestedFile != null) {
 				// Process text documents
 				FileInputStream fileInStream = new FileInputStream(
 						requestedFile);

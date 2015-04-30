@@ -29,6 +29,7 @@
 package configuration;
 
 import strategy.BadRequestStrategy;
+import strategy.NoRouteStrategy;
 
 /**
  * 
@@ -52,7 +53,7 @@ public class ResourceStrategyRouteNone extends ResourceStrategyRoute {
 	 */
 	@Override
 	public Class<?> getStrategyClass() {
-		return BadRequestStrategy.class;
+		return NoRouteStrategy.class;
 	}
 
 }

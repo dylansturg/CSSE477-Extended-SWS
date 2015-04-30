@@ -21,6 +21,14 @@ public abstract class HttpResponseBase implements IHttpResponse {
 	protected Map<String, String> headers = new HashMap<String, String>();
 	protected HttpStatusCode status;
 
+	public HttpResponseBase(String version, HttpStatusCode status,
+			Map<String, String> headers) {
+		super();
+		this.version = version;
+		this.headers = headers;
+		this.status = status;
+	}
+
 	@Override
 	public String getVersion() {
 		return version;

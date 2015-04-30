@@ -1,5 +1,5 @@
 /*
-s * HttpResponseFactory.java
+s * HttpResponseBaseFactory.java
  * Oct 7, 2012
  *
  * Simple Web Server (SWS) for CSSE 477
@@ -21,6 +21,8 @@ s * HttpResponseFactory.java
 
 package protocol;
 
+import interfaces.HttpResponseBase;
+
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -33,165 +35,26 @@ import java.util.Map;
 
 import javax.net.ssl.SSLEngineResult.Status;
 
+import response.DefaultHttpResponse;
+
 /**
  * This is a factory to produce various kind of HTTP responses.
  * 
  * @author Chandan R. Rupakheti (rupakhet@rose-hulman.edu)
  */
 public class HttpResponseFactory {
-	/**
-	 * Convenience method for adding general header to the supplied response
-	 * object.
-	 * 
-	 * @param response
-	 *            The {@link HttpResponse} object whose header needs to be
-	 *            filled in.
-	 * @param connection
-	 *            Supported values are {@link Protocol#OPEN} and
-	 *            {@link Protocol#CLOSE}.
-	 */
-	private static void fillGeneralHeader(HttpResponse response,
-			String connection) {
-		// Lets add Connection header
-		response.put(Protocol.CONNECTION, connection);
 
-		// Lets add current date
-		Date date = Calendar.getInstance().getTime();
-		response.put(Protocol.DATE, date.toString());
-
-		// Lets add server info
-		response.put(Protocol.Server, Protocol.getServerInfo());
-
-		// Lets add extra header with provider info
-		response.put(Protocol.PROVIDER, Protocol.AUTHOR);
-	}
-
-	public static HttpResponse createGenericErrorResponse(HttpStatusCode code,
-			String connectionStyle) {
-		HttpResponse response = new HttpResponse(Protocol.VERSION,
-				code.getStatusCode(), code.getStatusMessage(),
-				new HashMap<String, String>(), null);
-		fillGeneralHeader(response, connectionStyle);
-
-		return response;
-	}
-
-	public static HttpResponse createGenericSuccessfulResponse(
+	public static HttpResponseBase createGenericErrorResponse(
 			HttpStatusCode code, String connectionStyle) {
-		HttpResponse response = new HttpResponse(Protocol.VERSION,
-				code.getStatusCode(), code.getStatusMessage(),
-				new HashMap<String, String>(), null);
-		fillGeneralHeader(response, connectionStyle);
-
+		HttpResponseBase response = new DefaultHttpResponse(Protocol.VERSION,
+				code, new HashMap<String, String>());
 		return response;
 	}
 
-	/**
-	 * Creates a {@link HttpResponse} object for sending the supplied file with
-	 * supplied connection parameter.
-	 * 
-	 * @param file
-	 *            The {@link File} to be sent.
-	 * @param connection
-	 *            Supported values are {@link Protocol#OPEN} and
-	 *            {@link Protocol#CLOSE}.
-	 * @return A {@link HttpResponse} object represent 200 status.
-	 */
-	public static HttpResponse create200OK(File file, String connection) {
-		HttpResponse response = new HttpResponse(Protocol.VERSION,
-				Protocol.OK_CODE, Protocol.OK_TEXT,
-				new HashMap<String, String>(), file);
-
-		// Lets fill up header fields with more information
-		fillGeneralHeader(response, connection);
-
-		// Lets add last modified date for the file
-		long timeSinceEpoch = file.lastModified();
-		Date modifiedTime = new Date(timeSinceEpoch);
-		response.put(Protocol.LAST_MODIFIED, modifiedTime.toString());
-
-		// Lets get content length in bytes
-		long length = file.length();
-		response.put(Protocol.CONTENT_LENGTH, length + "");
-
-		// Lets get MIME type for the file
-		FileNameMap fileNameMap = URLConnection.getFileNameMap();
-		String mime = fileNameMap.getContentTypeFor(file.getName());
-		// The fileNameMap cannot find mime type for all of the documents, e.g.
-		// doc, odt, etc.
-		// So we will not add this field if we cannot figure out what a mime
-		// type is for the file.
-		// Let browser do this job by itself.
-		if (mime != null) {
-			response.put(Protocol.CONTENT_TYPE, mime);
-		}
-
+	public static HttpResponseBase createGenericSuccessfulResponse(
+			HttpStatusCode code, String connectionStyle) {
+		HttpResponseBase response = new DefaultHttpResponse(Protocol.VERSION,
+				code, new HashMap<String, String>());
 		return response;
-	}
-
-	/**
-	 * Creates a {@link HttpResponse} object for sending bad request response.
-	 * 
-	 * @param connection
-	 *            Supported values are {@link Protocol#OPEN} and
-	 *            {@link Protocol#CLOSE}.
-	 * @return A {@link HttpResponse} object represent 400 status.
-	 */
-	public static HttpResponse create400BadRequest(String connection) {
-		HttpResponse response = new HttpResponse(Protocol.VERSION,
-				Protocol.BAD_REQUEST_CODE, Protocol.BAD_REQUEST_TEXT,
-				new HashMap<String, String>(), null);
-
-		// Lets fill up header fields with more information
-		fillGeneralHeader(response, connection);
-
-		return response;
-	}
-
-	/**
-	 * Creates a {@link HttpResponse} object for sending not found response.
-	 * 
-	 * @param connection
-	 *            Supported values are {@link Protocol#OPEN} and
-	 *            {@link Protocol#CLOSE}.
-	 * @return A {@link HttpResponse} object represent 404 status.
-	 */
-	public static HttpResponse create404NotFound(String connection) {
-		HttpResponse response = new HttpResponse(Protocol.VERSION,
-				Protocol.NOT_FOUND_CODE, Protocol.NOT_FOUND_TEXT,
-				new HashMap<String, String>(), null);
-
-		// Lets fill up the header fields with more information
-		fillGeneralHeader(response, connection);
-
-		return response;
-	}
-
-	/**
-	 * Creates a {@link HttpResponse} object for sending version not supported
-	 * response.
-	 * 
-	 * @param connection
-	 *            Supported values are {@link Protocol#OPEN} and
-	 *            {@link Protocol#CLOSE}.
-	 * @return A {@link HttpResponse} object represent 505 status.
-	 */
-	public static HttpResponse create505NotSupported(String connection) {
-		// TODO fill in this method
-		return null;
-	}
-
-	/**
-	 * Creates a {@link HttpResponse} object for sending file not modified
-	 * response.
-	 * 
-	 * @param connection
-	 *            Supported values are {@link Protocol#OPEN} and
-	 *            {@link Protocol#CLOSE}.
-	 * @return A {@link HttpResponse} object represent 304 status.
-	 */
-	public static HttpResponse create304NotModified(String connection) {
-		// TODO fill in this method
-		return null;
 	}
 }

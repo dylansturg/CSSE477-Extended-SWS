@@ -53,8 +53,10 @@ import com.thoughtworks.xstream.*;
 public class ServerConfiguration implements IPluginAddedListener,
 		IPluginRemovedListener, IConfigurationChangedListener {
 
-	protected static final String MATCH_ALL_REGEX = "(.*?)";
-	protected static final String ROUTE_REGEX = "^/%s/%s/";
+	protected static final String MATCH_ALL_REGEX = "";
+	protected static final String ROUTE_REGEX = "/%s/%s/";
+
+	protected Map<String, String> configuration;
 
 	protected Map<String, PluginData> availablePlugins;
 	protected ResourceStrategyConfiguration managedResourceConfiguration;
@@ -63,6 +65,7 @@ public class ServerConfiguration implements IPluginAddedListener,
 			ResourceStrategyConfiguration managedResouceConfig) {
 		managedResourceConfiguration = managedResouceConfig;
 		availablePlugins = new HashMap<String, PluginData>();
+		configuration = new HashMap<String, String>();
 	}
 
 	/**
@@ -70,6 +73,10 @@ public class ServerConfiguration implements IPluginAddedListener,
 	 */
 	public ResourceStrategyConfiguration getManagedResourceConfiguration() {
 		return managedResourceConfiguration;
+	}
+
+	public void setConfigurationOption(String key, String value) {
+		configuration.put(key, value);
 	}
 
 	/**
@@ -164,10 +171,15 @@ public class ServerConfiguration implements IPluginAddedListener,
 					String servletRouteMatcher = formatServletRoute(
 							serverRoute.getPath(), servlet.getRelativeUrl());
 
+					// Includes server's defaults
+					Map<String, String> options = new HashMap<String, String>(
+							configuration);
+					// Will override server defaults with route specific
+					options.putAll(serverRoute.getOptions());
+
 					ResourceStrategyRoute servletRoute = new ResourceStrategyRoute(
 							servClass, servletRouteMatcher,
-							servlet.getExpectedMethods(),
-							serverRoute.getOptions());
+							servlet.getExpectedMethods(), options);
 					routes.add(servletRoute);
 
 				} catch (ClassNotFoundException e) {
@@ -197,6 +209,10 @@ public class ServerConfiguration implements IPluginAddedListener,
 			pluginBase = pluginBase.substring(0, pluginBase.length() - 1);
 		}
 
+		if (servletRelative == null || servletRelative.isEmpty()) {
+			return String.format("/%s/", pluginBase);
+		}
+
 		if (servletRelative.startsWith("/")) {
 			servletRelative = servletRelative.substring(1);
 		}
@@ -220,6 +236,12 @@ public class ServerConfiguration implements IPluginAddedListener,
 		availablePlugins.put(plugin.getPluginName(), plugin);
 	}
 
+	@Override
+	public void addedConfiguration(File configuration)
+			throws InvalidConfigurationException {
+		parseConfiguration(configuration);
+	}
+
 	class ConfigurationWarning {
 		String description;
 
@@ -231,10 +253,5 @@ public class ServerConfiguration implements IPluginAddedListener,
 		public String toString() {
 			return description;
 		}
-	}
-
-	@Override
-	public void addedConfiguration(File configuration) throws InvalidConfigurationException {
-		parseConfiguration(configuration);
 	}
 }

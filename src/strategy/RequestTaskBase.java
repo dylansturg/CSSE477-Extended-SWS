@@ -28,13 +28,15 @@
 
 package strategy;
 
+import interfaces.HttpResponseBase;
+import interfaces.IHttpResponse;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
-import protocol.HttpResponse;
 import request.HTTPRequest;
 
 /**
@@ -49,7 +51,7 @@ public abstract class RequestTaskBase implements IRequestTask {
 
 	protected long startTimestamp;
 
-	protected HttpResponse response;
+	protected HttpResponseBase response;
 
 	public RequestTaskBase(HTTPRequest request) {
 		this.request = request;
@@ -79,7 +81,7 @@ public abstract class RequestTaskBase implements IRequestTask {
 	}
 
 	@Override
-	public HttpResponse getResponse() {
+	public HttpResponseBase getResponse() {
 		return response;
 	}
 
@@ -95,7 +97,7 @@ public abstract class RequestTaskBase implements IRequestTask {
 	 */
 	@Override
 	public void writeResponse(OutputStream out) throws IOException {
-		HttpResponse response = getResponse();
+		IHttpResponse response = getResponse();
 		response.write(out);
 	}
 

@@ -55,7 +55,7 @@ public class ResourceStrategyFinderTests {
 	public void testResourceFinderCanCreateDirectoryStrategy() {
 		List<ResourceStrategyRoute> testRoutes = new ArrayList<ResourceStrategyRoute>();
 		testRoutes.add(new ResourceStrategyRoute(DirectoryStrategy.class,
-				"(.*?)", Arrays.asList(new String[] { "GET" }), null));
+				"", Arrays.asList(new String[] { "GET" }), null));
 		ResourceStrategyConfiguration testConfig = new ResourceStrategyConfiguration(
 				testRoutes);
 
@@ -106,6 +106,11 @@ public class ResourceStrategyFinderTests {
 		@Override
 		public String getPath() {
 			return uri;
+		}
+
+		@Override
+		public String getMethod() {
+			return "GET";
 		}
 	}
 
