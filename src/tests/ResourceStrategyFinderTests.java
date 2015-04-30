@@ -31,6 +31,7 @@ package tests;
 import static org.junit.Assert.*;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Test;
@@ -54,7 +55,7 @@ public class ResourceStrategyFinderTests {
 	public void testResourceFinderCanCreateDirectoryStrategy() {
 		List<ResourceStrategyRoute> testRoutes = new ArrayList<ResourceStrategyRoute>();
 		testRoutes.add(new ResourceStrategyRoute(DirectoryStrategy.class,
-				"(.*?)", null));
+				"(.*?)", Arrays.asList(new String[] { "GET" }), null));
 		ResourceStrategyConfiguration testConfig = new ResourceStrategyConfiguration(
 				testRoutes);
 

@@ -32,6 +32,6 @@ package configuration;
  * 
  * @author Chandan R. Rupakheti (rupakhcr@clarkson.edu)
  */
-public interface IPluginRemovedLIstener {
+public interface IPluginRemovedListener {
 	public void removedPlugin(PluginData plugin);
 }

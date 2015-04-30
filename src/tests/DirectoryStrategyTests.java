@@ -38,6 +38,7 @@ import java.io.OutputStream;
 import java.lang.reflect.Field;
 import java.net.Socket;
 import java.nio.charset.Charset;
+import java.util.Arrays;
 import java.util.HashMap;
 
 import org.junit.Test;
@@ -64,7 +65,9 @@ public class DirectoryStrategyTests {
 				.createRequest(new FakeSocket(
 						"GET /path/to/stuff HTTP/1.1\r\nHost: SomeBody.com\r\nAuthor: NotAPerson\r\n"));
 		ResourceStrategyRoute testRoute = new ResourceStrategyRoute(
-				DirectoryStrategy.class, "(.*?)", new HashMap<String, String>());
+				DirectoryStrategy.class, "(.*?)",
+				Arrays.asList(new String[] { "GET" }),
+				new HashMap<String, String>());
 
 		IRequestTask task = testStrategy.prepareEvaluation(testRequest,
 				testRoute);

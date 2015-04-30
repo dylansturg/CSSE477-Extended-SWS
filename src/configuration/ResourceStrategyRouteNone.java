@@ -37,7 +37,7 @@ import strategy.BadRequestStrategy;
 public class ResourceStrategyRouteNone extends ResourceStrategyRoute {
 
 	public ResourceStrategyRouteNone() {
-		super(null, null, null);
+		super(null, null, null, null);
 	}
 
 	@Override

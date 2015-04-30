@@ -51,7 +51,7 @@ import com.thoughtworks.xstream.*;
  * @author Chandan R. Rupakheti (rupakhcr@clarkson.edu)
  */
 public class ServerConfiguration implements IPluginAddedListener,
-		IPluginRemovedLIstener {
+		IPluginRemovedListener {
 
 	protected static final String MATCH_ALL_REGEX = "(.*?)";
 	protected static final String ROUTE_REGEX = "^/%s/%s/";
@@ -166,6 +166,7 @@ public class ServerConfiguration implements IPluginAddedListener,
 
 					ResourceStrategyRoute servletRoute = new ResourceStrategyRoute(
 							servClass, servletRouteMatcher,
+							servlet.getExpectedMethods(),
 							serverRoute.getOptions());
 					routes.add(servletRoute);
 

@@ -6,10 +6,13 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+
 import org.junit.BeforeClass;
 import org.junit.Test;
+
 import request.HTTPRequest;
 import strategy.IRequestTask;
 import strategy.IResourceStrategy;
@@ -47,6 +50,39 @@ public class ServerConfigurationParsingTests {
 		} catch (Exception exp) {
 			fail("Creating example xml file failed - is your file system working?");
 		}
+	}
+
+	@Test
+	public void testServerRespectsServletDeclaredMethod()
+			throws InvalidConfigurationException {
+		File testConfig = new File(TEST_FILE_PATH);
+		ServerConfiguration tester = new ServerConfiguration(
+				new TestRouteConfig());
+
+		List<ServletData> myServlets = new ArrayList<ServletData>();
+		myServlets.add(new ServletData(TestServlet.class.getName(),
+				"fancyservlet", Arrays.asList(new String[] { "POST" })));
+		myServlets.add(new ServletData(TestServlet.class.getName(),
+				"morefancyservlet", Arrays.asList(new String[] { "PUT" })));
+
+		PluginData myPlugin = new PluginData("myplugin", null, myServlets);
+		tester.addPlugin(myPlugin);
+
+		tester.parseConfiguration(testConfig);
+
+		ResourceStrategyRoute testRoute = tester
+				.getManagedResourceConfiguration().findRouteForResourcePath(
+						"/path/to/myplugin/fancyservlet/", "get");
+
+		assertNotNull(testRoute);
+		assertEquals(testRoute, ResourceStrategyRoute.None);
+
+		testRoute = tester.getManagedResourceConfiguration()
+				.findRouteForResourcePath("/path/to/myplugin/fancyservlet/",
+						"post");
+
+		assertNotNull(testRoute);
+		assertEquals(testRoute.getStrategyClass(), TestServlet.class);
 	}
 
 	@Test
@@ -95,16 +131,16 @@ public class ServerConfigurationParsingTests {
 
 		List<ServletData> myServlets = new ArrayList<ServletData>();
 		myServlets.add(new ServletData(TestServlet.class.getName(),
-				"fancyservlet", null));
+				"fancyservlet", Arrays.asList(new String[] { "GET" })));
 		myServlets.add(new ServletData(TestServlet.class.getName(),
-				"morefancyservlet", null));
+				"morefancyservlet", Arrays.asList(new String[] { "GET" })));
 
 		PluginData myPlugin = new PluginData("myplugin", null, myServlets);
 		tester.addPlugin(myPlugin);
 
 		List<ServletData> otherServlets = new ArrayList<ServletData>();
 		otherServlets.add(new ServletData(TestServlet.class.getName(),
-				"fancyservlet", null));
+				"fancyservlet", Arrays.asList(new String[] { "GET" })));
 
 		PluginData otherPlugin = new PluginData("otherplugin", null,
 				otherServlets);
@@ -119,13 +155,13 @@ public class ServerConfigurationParsingTests {
 
 		ResourceStrategyRoute testRoute = tester
 				.getManagedResourceConfiguration().findRouteForResourcePath(
-						"/path/to/myplugin/fancyservlet/");
+						"/path/to/myplugin/fancyservlet/", "get");
 
 		assertNotNull(testRoute);
 		assertEquals(testRoute.getStrategyClass(), TestServlet.class);
 
 		testRoute = tester.getManagedResourceConfiguration()
-				.findRouteForResourcePath("/otherplugin/fancyservlet/");
+				.findRouteForResourcePath("/otherplugin/fancyservlet/", "get");
 		assertNotNull(testRoute);
 		assertEquals(testRoute.getStrategyClass(), TestServlet.class);
 	}

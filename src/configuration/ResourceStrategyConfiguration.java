@@ -56,7 +56,8 @@ public class ResourceStrategyConfiguration {
 		activeRoutes = routes;
 	}
 
-	public ResourceStrategyRoute findRouteForResourcePath(String path) {
+	public ResourceStrategyRoute findRouteForResourcePath(String path,
+			String method) {
 		if (path == null) {
 			return ResourceStrategyRouteNone.None;
 		}
@@ -65,7 +66,9 @@ public class ResourceStrategyConfiguration {
 			for (ResourceStrategyRoute resourceStrategyRoute : activeRoutes) {
 				String routeRegex = resourceStrategyRoute.getRouteMatch();
 				if (routeRegex != null && path.matches(routeRegex)) {
-					return resourceStrategyRoute;
+					if (resourceStrategyRoute.respondsToMethod(method)) {
+						return resourceStrategyRoute;
+					}
 				}
 			}
 		} catch (Exception e) {
