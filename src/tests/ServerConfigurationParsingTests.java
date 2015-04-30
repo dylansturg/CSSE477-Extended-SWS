@@ -95,16 +95,16 @@ public class ServerConfigurationParsingTests {
 
 		List<ServletData> myServlets = new ArrayList<ServletData>();
 		myServlets.add(new ServletData(TestServlet.class.getName(),
-				"fancyservlet"));
+				"fancyservlet", null));
 		myServlets.add(new ServletData(TestServlet.class.getName(),
-				"morefancyservlet"));
+				"morefancyservlet", null));
 
 		PluginData myPlugin = new PluginData("myplugin", null, myServlets);
 		tester.addPlugin(myPlugin);
 
 		List<ServletData> otherServlets = new ArrayList<ServletData>();
 		otherServlets.add(new ServletData(TestServlet.class.getName(),
-				"fancyservlet"));
+				"fancyservlet", null));
 
 		PluginData otherPlugin = new PluginData("otherplugin", null,
 				otherServlets);
