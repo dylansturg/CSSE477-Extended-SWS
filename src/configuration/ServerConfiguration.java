@@ -33,9 +33,13 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.jar.JarFile;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import strategy.IResourceStrategy;
 
 import com.thoughtworks.xstream.*;
 
@@ -50,68 +54,157 @@ public class ServerConfiguration implements IPluginAddedListener,
 		IPluginRemovedLIstener {
 
 	protected static final String MATCH_ALL_REGEX = "(.*?)";
-	protected static final String ROUTE_REGEX = "^/{0}/{1}/";
+	protected static final String ROUTE_REGEX = "^/%s/%s/";
 
 	protected Map<String, PluginData> availablePlugins;
+	protected ResourceStrategyConfiguration managedResourceConfiguration;
 
-	public void parseConfiguration(File configFile) {
+	public ServerConfiguration(
+			ResourceStrategyConfiguration managedResouceConfig) {
+		managedResourceConfiguration = managedResouceConfig;
+		availablePlugins = new HashMap<String, PluginData>();
+	}
+
+	/**
+	 * @return the managedResourceConfiguration
+	 */
+	public ResourceStrategyConfiguration getManagedResourceConfiguration() {
+		return managedResourceConfiguration;
+	}
+
+	/**
+	 * @param managedResourceConfiguration
+	 *            the managedResourceConfiguration to set
+	 */
+	public void setManagedResourceConfiguration(
+			ResourceStrategyConfiguration managedResourceConfiguration) {
+		this.managedResourceConfiguration = managedResourceConfiguration;
+	}
+
+	public void parseConfiguration(File configFile)
+			throws InvalidConfigurationException {
+		if (!configFile.exists() || !configFile.isFile()) {
+			throw new InvalidConfigurationException(
+					"Attempt to request configuration parse with nonfile not allowed.");
+		}
+
 		XStream parser = new XStream();
 
 		parser.alias("route", ServerRoute.class);
 		parser.alias("options", Map.class);
-		parser.alias("routes", List.class);
 
-		if (configFile.exists()) {
-			boolean exists = true;
-		} else {
-			boolean exists = false;
-		}
+		try {
+			Object result = parser.fromXML(configFile);
+			@SuppressWarnings("unchecked")
+			List<ServerRoute> parsedRoutes = (List<ServerRoute>) result;
 
-		Object result = parser.fromXML(configFile);
-		List<ServerRoute> parsedRoutes = (List<ServerRoute>) result;
+			List<ConfigurationWarning> warnings = new ArrayList<ConfigurationWarning>();
+			List<ResourceStrategyRoute> resourceRoutes = new ArrayList<ResourceStrategyRoute>();
+			for (ServerRoute serverRoute : parsedRoutes) {
+				String pluginName = serverRoute.getPlugin();
 
-		List<ConfigurationWarning> warnings = new ArrayList<ConfigurationWarning>();
-		List<ResourceStrategyRoute> resourceRoutes = new ArrayList<ResourceStrategyRoute>();
-		for (ServerRoute serverRoute : parsedRoutes) {
-			String pluginName = serverRoute.getPlugin();
-			String path = serverRoute.getPath();
-
-			if (!availablePlugins.containsKey(pluginName)) {
-				warnings.add(new ConfigurationWarning(String.format(
-						"Failed to find plugin named {0}", pluginName)));
-				continue;
-			}
-			PluginData plugin = availablePlugins.get(pluginName);
-
-			try {
-				URL[] urls = { new URL("jar:file:" + plugin.getJarPath() + "!/") };
-				URLClassLoader classLoader = URLClassLoader.newInstance(urls);
-
-				for (ServletData servlet : plugin.getServlets()) {
-					try {
-						Class<?> servClass = Class.forName(
-								servlet.getClassPath(), true, classLoader);
-						String servletRouteMatcher = String.format();
-
-						ResourceStrategyRoute servletRoute = new ResourceStrategyRoute(
-								servClass, servlet.getRelativeUrl(),
-								serverRoute.getOptions());
-
-					} catch (ClassNotFoundException e) {
-						warnings.add(new ConfigurationWarning(
-								String.format(
-										"Failed to create Servlet class named {0} when register routes for plugin {1}",
-										servlet.getClassPath(), pluginName)));
-						continue;
-					}
+				if (!availablePlugins.containsKey(pluginName)) {
+					warnings.add(new ConfigurationWarning(String.format(
+							"Failed to find plugin named %s", pluginName)));
+					continue;
 				}
 
-			} catch (MalformedURLException badJarPath) {
+				PluginData plugin = availablePlugins.get(pluginName);
 
+				resourceRoutes.addAll(getRoutesForPlugin(warnings, serverRoute,
+						plugin));
 			}
 
+			for (ConfigurationWarning configurationWarning : warnings) {
+				Logger.getGlobal().log(Level.WARNING,
+						configurationWarning.toString());
+			}
+
+			managedResourceConfiguration.setNewRoutes(resourceRoutes);
+		} catch (Exception exp) {
+			throw new InvalidConfigurationException(
+					"Parsing configuration file failed - appears to be invalid file.",
+					exp);
 		}
 
+	}
+
+	private List<ResourceStrategyRoute> getRoutesForPlugin(
+			List<ConfigurationWarning> warnings, ServerRoute serverRoute,
+			PluginData plugin) {
+
+		List<ResourceStrategyRoute> routes = new ArrayList<ResourceStrategyRoute>();
+		String pluginName = plugin.getPluginName();
+
+		try {
+			ClassLoader loader;
+			String jarPath = plugin.getJarPath();
+			if (jarPath != null && !jarPath.isEmpty()) {
+				URL[] urls = { new URL("jar:file:" + jarPath + "!/") };
+				loader = URLClassLoader.newInstance(urls);
+			} else {
+				// Try to use whatever the current class loader is
+				// it might work out
+				loader = this.getClass().getClassLoader();
+			}
+
+			for (ServletData servlet : plugin.getServlets()) {
+				try {
+					Class<?> servClass = Class.forName(servlet.getClassPath(),
+							true, loader);
+
+					if (!IResourceStrategy.class.isAssignableFrom(servClass)) {
+						warnings.add(new ConfigurationWarning(
+								String.format(
+										"Servlet class %s does not implement IResourceStrategy and is not valid",
+										servClass.getName())));
+						continue;
+					}
+
+					String servletRouteMatcher = formatServletRoute(
+							serverRoute.getPath(), servlet.getRelativeUrl());
+
+					ResourceStrategyRoute servletRoute = new ResourceStrategyRoute(
+							servClass, servletRouteMatcher,
+							serverRoute.getOptions());
+					routes.add(servletRoute);
+
+				} catch (ClassNotFoundException e) {
+					warnings.add(new ConfigurationWarning(
+							String.format(
+									"Failed to create Servlet class named %s when register routes for plugin %s",
+									servlet.getClassPath(), pluginName)));
+					continue;
+				}
+			}
+
+		} catch (MalformedURLException badJarPath) {
+			warnings.add(new ConfigurationWarning(String.format(
+					"Failed to load servlet classes for plugin named %s",
+					pluginName)));
+		}
+
+		return routes;
+	}
+
+	private String formatServletRoute(String pluginBase, String servletRelative) {
+		// transform a pluginBase of form /my/plugin/path/ to my/plugin/path
+		if (pluginBase.startsWith("/")) {
+			pluginBase = pluginBase.substring(1);
+		}
+		if (pluginBase.endsWith("/")) {
+			pluginBase = pluginBase.substring(0, pluginBase.length() - 1);
+		}
+
+		if (servletRelative.startsWith("/")) {
+			servletRelative = servletRelative.substring(1);
+		}
+		if (servletRelative.endsWith("/")) {
+			servletRelative = servletRelative.substring(0,
+					servletRelative.length() - 1);
+		}
+
+		return String.format(ROUTE_REGEX, pluginBase, servletRelative);
 	}
 
 	@Override

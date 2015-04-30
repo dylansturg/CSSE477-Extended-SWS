@@ -35,15 +35,14 @@ import java.util.List;
 
 import org.junit.Test;
 
-import protocol.HttpRequest;
 import request.HTTPRequest;
 import strategy.BadRequestStrategy;
 import strategy.DirectoryStrategy;
 import strategy.IResourceStrategy;
-import strategy.InternalErrorStrategy;
 import strategy.ResourceStrategyFinder;
 import configuration.ResourceStrategyConfiguration;
 import configuration.ResourceStrategyRoute;
+import configuration.ServerConfiguration;
 
 /**
  * 
@@ -54,13 +53,13 @@ public class ResourceStrategyFinderTests {
 	@Test
 	public void testResourceFinderCanCreateDirectoryStrategy() {
 		List<ResourceStrategyRoute> testRoutes = new ArrayList<ResourceStrategyRoute>();
-		testRoutes.add(new ResourceStrategyRoute("strategy.DirectoryStrategy",
+		testRoutes.add(new ResourceStrategyRoute(DirectoryStrategy.class,
 				"(.*?)", null));
 		ResourceStrategyConfiguration testConfig = new ResourceStrategyConfiguration(
 				testRoutes);
 
-		ResourceStrategyFinder finder = new ResourceStrategyFinder(testConfig,
-				null);
+		ResourceStrategyFinder finder = new ResourceStrategyFinder(
+				new ServerConfiguration(testConfig));
 
 		ResourceStrategyRoute foundRoute = finder
 				.findRouteForRequest(new FakeHttpRequest());
@@ -75,8 +74,8 @@ public class ResourceStrategyFinderTests {
 	@Test
 	public void testResourceFinderServesInternalErrorForUnMappedRoute() {
 		ResourceStrategyConfiguration testConfig = createConfigurationForRoutes();
-		ResourceStrategyFinder finder = new ResourceStrategyFinder(testConfig,
-				null);
+		ResourceStrategyFinder finder = new ResourceStrategyFinder(
+				new ServerConfiguration(testConfig));
 
 		IResourceStrategy strategy = finder.getStrategyForResourceRoute(finder
 				.findRouteForRequest(new FakeHttpRequest()));

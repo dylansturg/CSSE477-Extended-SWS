@@ -64,8 +64,7 @@ public class DirectoryStrategyTests {
 				.createRequest(new FakeSocket(
 						"GET /path/to/stuff HTTP/1.1\r\nHost: SomeBody.com\r\nAuthor: NotAPerson\r\n"));
 		ResourceStrategyRoute testRoute = new ResourceStrategyRoute(
-				"strategy.DirectoryStrategy", "(.*?)",
-				new HashMap<String, String>());
+				DirectoryStrategy.class, "(.*?)", new HashMap<String, String>());
 
 		IRequestTask task = testStrategy.prepareEvaluation(testRequest,
 				testRoute);

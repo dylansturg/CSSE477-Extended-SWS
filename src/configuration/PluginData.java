@@ -39,6 +39,17 @@ public class PluginData {
 	protected String jarPath;
 	protected List<ServletData> servlets;
 
+	public PluginData() {
+	}
+
+	public PluginData(String pluginName, String jarPath,
+			List<ServletData> servlets) {
+		super();
+		this.pluginName = pluginName;
+		this.jarPath = jarPath;
+		this.servlets = servlets;
+	}
+
 	/**
 	 * @return the pluginName
 	 */

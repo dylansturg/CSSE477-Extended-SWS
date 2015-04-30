@@ -28,8 +28,6 @@
 
 package configuration;
 
-import java.util.Map;
-
 import strategy.BadRequestStrategy;
 
 /**
@@ -38,14 +36,8 @@ import strategy.BadRequestStrategy;
  */
 public class ResourceStrategyRouteNone extends ResourceStrategyRoute {
 
-	/**
-	 * @param strategy
-	 * @param route
-	 * @param options
-	 */
-	public ResourceStrategyRouteNone(String strategy, String route,
-			Map<String, String> options) {
-		super(strategy, route, options);
+	public ResourceStrategyRouteNone() {
+		super(null, null, null);
 	}
 
 	@Override
@@ -59,8 +51,8 @@ public class ResourceStrategyRouteNone extends ResourceStrategyRoute {
 	 * @see configuration.ResourceStrategyRoute#getStrategyClass()
 	 */
 	@Override
-	public String getStrategyClass() {
-		return BadRequestStrategy.class.getName();
+	public Class<?> getStrategyClass() {
+		return BadRequestStrategy.class;
 	}
 
 }

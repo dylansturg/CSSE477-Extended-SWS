@@ -29,9 +29,7 @@
 package configuration;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Designed to receive a parsed configuration for all possible ResourceStrategy
@@ -44,9 +42,17 @@ import java.util.Map;
  * @author Chandan R. Rupakheti (rupakhcr@clarkson.edu)
  */
 public class ResourceStrategyConfiguration {
-	private List<ResourceStrategyRoute> activeRoutes;
+	protected List<ResourceStrategyRoute> activeRoutes;
+
+	public ResourceStrategyConfiguration() {
+		activeRoutes = new ArrayList<ResourceStrategyRoute>();
+	}
 
 	public ResourceStrategyConfiguration(List<ResourceStrategyRoute> routes) {
+		activeRoutes = routes;
+	}
+
+	protected void setNewRoutes(List<ResourceStrategyRoute> routes) {
 		activeRoutes = routes;
 	}
 

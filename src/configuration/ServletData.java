@@ -35,6 +35,15 @@ package configuration;
 public class ServletData {
 	protected String classPath;
 	protected String relativeUrl;
+	
+	public ServletData() {
+	}
+	
+	public ServletData(String classPath, String relativeUrl) {
+		super();
+		this.classPath = classPath;
+		this.relativeUrl = relativeUrl;
+	}
 
 	/**
 	 * @return the classPath

@@ -33,7 +33,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import request.HTTPRequest;
-import configuration.ResourceStrategyConfiguration;
 import configuration.ResourceStrategyRoute;
 import configuration.ServerConfiguration;
 
@@ -45,36 +44,33 @@ import configuration.ServerConfiguration;
  * @author Chandan R. Rupakheti (rupakhcr@clarkson.edu)
  */
 public class ResourceStrategyFinder {
-	private ResourceStrategyConfiguration configuration;
 	private ServerConfiguration serverConfiguration;
 
 	private static Map<String, IResourceStrategy> CACHED_STRATEGIES = new HashMap<String, IResourceStrategy>();
 
-	public ResourceStrategyFinder(ResourceStrategyConfiguration config,
-			ServerConfiguration server) {
-		configuration = config;
+	public ResourceStrategyFinder(ServerConfiguration server) {
 		serverConfiguration = server;
 	}
 
 	public ResourceStrategyRoute findRouteForRequest(HTTPRequest request) {
-		return configuration.findRouteForResourcePath(request.getPath());
+		return serverConfiguration.getManagedResourceConfiguration()
+				.findRouteForResourcePath(request.getPath());
 	}
 
 	public IResourceStrategy getStrategyForResourceRoute(
 			ResourceStrategyRoute resourceRoute) {
 
-		String strategyName = resourceRoute.getStrategyClass();
+		Class<?> strategyClass = resourceRoute.getStrategyClass();
 
-		if (CACHED_STRATEGIES.containsKey(strategyName)) {
-			return CACHED_STRATEGIES.get(strategyName);
+		if (CACHED_STRATEGIES.containsKey(strategyClass.getName())) {
+			return CACHED_STRATEGIES.get(strategyClass.getName());
 		}
 
 		try {
-			Class<?> strategyClass = Class.forName(strategyName);
 			Constructor<?> strategyCtor = strategyClass.getConstructor();
 			IResourceStrategy strategy = (IResourceStrategy) strategyCtor
 					.newInstance();
-			CACHED_STRATEGIES.put(strategyName, strategy);
+			CACHED_STRATEGIES.put(strategyClass.getName(), strategy);
 			return strategy;
 
 		} catch (Exception e) {

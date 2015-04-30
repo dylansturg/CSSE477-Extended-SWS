@@ -26,16 +26,10 @@ import gui.WebServer;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
 import request.HTTPRequestFactory;
 import response.ResponseHandler;
 import strategy.ResourceStrategyFinder;
 import configuration.ResourceStrategyConfiguration;
-import configuration.ResourceStrategyRoute;
-import configuration.ResourceStrategyRouteOptions;
 import configuration.ServerConfiguration;
 
 /**
@@ -70,23 +64,11 @@ public class Server implements Runnable {
 		this.serviceTime = 0;
 		this.window = window;
 
-		configuration = new ServerConfiguration();
+		resourcesConfiguration = new ResourceStrategyConfiguration();
+		configuration = new ServerConfiguration(resourcesConfiguration);
 
-		List<ResourceStrategyRoute> routes = new ArrayList<ResourceStrategyRoute>();
+		// TODO parse user selected configuration file
 
-		HashMap<String, String> directoryOperationsSettings = new HashMap<String, String>();
-		directoryOperationsSettings.put(
-				ResourceStrategyRouteOptions.AllowPersistentConnections,
-				"False");
-		directoryOperationsSettings.put(
-				ResourceStrategyRouteOptions.RootDirectoy, rootDirectory);
-		directoryOperationsSettings.put(
-				ResourceStrategyRouteOptions.ServeDirectories, "True");
-
-		routes.add(new ResourceStrategyRoute("strategy.DirectoryStrategy",
-				"(.*?)", directoryOperationsSettings));
-
-		resourcesConfiguration = new ResourceStrategyConfiguration(routes);
 	}
 
 	/**
@@ -164,7 +146,7 @@ public class Server implements Runnable {
 						configuration, this);
 				HTTPRequestFactory connectionRequestFactory = new HTTPRequestFactory();
 				ResourceStrategyFinder connectionResourceMapper = new ResourceStrategyFinder(
-						resourcesConfiguration, configuration);
+						configuration);
 
 				ConnectionHandler handler = new ConnectionHandler(this,
 						connectionResponseHandler, connectionRequestFactory,
