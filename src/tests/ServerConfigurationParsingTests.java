@@ -4,14 +4,12 @@ import static org.junit.Assert.*;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.OutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
+import org.junit.BeforeClass;
 import org.junit.Test;
-
 import request.HTTPRequest;
 import strategy.IRequestTask;
 import strategy.IResourceStrategy;
@@ -27,9 +25,11 @@ import configuration.ServerRoute;
 import configuration.ServletData;
 
 public class ServerConfigurationParsingTests {
+	private static final String TEST_FILE_PATH = "conf/test_routes.xml";
 
-	public void createExampleXMLFile(String path) {
-		File testConfig = new File(path);
+	@BeforeClass
+	public static void createExampleXMLFile() {
+		File testConfig = new File(TEST_FILE_PATH);
 		XStream streamer = new XStream();
 
 		HashMap<String, String> options = new HashMap<String, String>();
@@ -47,15 +47,49 @@ public class ServerConfigurationParsingTests {
 		} catch (Exception exp) {
 			fail("Creating example xml file failed - is your file system working?");
 		}
-
 	}
 
 	@Test
-	public void testServerParsesXml() {
-		String path = "conf/example.xml";
-		createExampleXMLFile(path);
+	public void testServerParseConfigWithoutPluginsInstalled()
+			throws InvalidConfigurationException {
+		// valid config exists there
+		File testFile = new File(TEST_FILE_PATH);
 
-		File testConfig = new File(path);
+		ServerConfiguration tester = new ServerConfiguration(
+				new TestRouteConfig());
+		tester.parseConfiguration(testFile);
+
+		List<ResourceStrategyRoute> parsedRoutes = ((TestRouteConfig) tester
+				.getManagedResourceConfiguration()).getRoutes();
+		assertNotNull(parsedRoutes);
+		assertEquals(parsedRoutes.size(), 0);
+	}
+
+	@Test(expected = InvalidConfigurationException.class)
+	public void testServerRejectsInvalidFile()
+			throws InvalidConfigurationException, IOException {
+		File emptyTestFile = new File(TEST_FILE_PATH + ".empty");
+		emptyTestFile.createNewFile();
+
+		new ServerConfiguration(new ResourceStrategyConfiguration())
+				.parseConfiguration(emptyTestFile);
+		fail();
+	}
+
+	@Test(expected = InvalidConfigurationException.class)
+	public void testServerRejectsNonFile() throws InvalidConfigurationException {
+		File badTestConfig = new File(
+				"/NOFREAKING/WAY/THIS/FILE/SHOULD/EVER/EXIST/ON/YOUR/SYSTEM/AND/IF/IT/FAILS/WTF/ARE/ARE/YOU/DOING/WITH/YOUR/COMPUTJER/?????/routes.xml");
+		new ServerConfiguration(new ResourceStrategyConfiguration())
+				.parseConfiguration(badTestConfig);
+
+		fail();
+	}
+
+	@Test
+	public void testServerParsesXmlAndResolvesRoutes() {
+
+		File testConfig = new File(TEST_FILE_PATH);
 		ServerConfiguration tester = new ServerConfiguration(
 				new TestRouteConfig());
 
