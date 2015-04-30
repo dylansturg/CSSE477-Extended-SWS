@@ -68,7 +68,7 @@ public class BadRequestStrategy extends ResourceStrategyBase {
 		@Override
 		public HttpResponse getResponse() {
 			return HttpResponseFactory.createGenericErrorResponse(
-					HttpStatusCode.BAD_REQUEST, Protocol.CLOSE);
+					HttpStatusCode.NOT_FOUND, Protocol.CLOSE);
 		}
 	}
 }
