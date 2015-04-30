@@ -4,6 +4,8 @@ import static org.junit.Assert.*;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -19,6 +21,7 @@ import strategy.IResourceStrategy;
 import configuration.PluginData;
 import configuration.ResourceStrategyRoute;
 import configuration.ServletData;
+import configuration.ServletMonitor;
 
 public class ServletDataParsingTests {
 	private static final String TEST_FILE_PATH = "conf/servlet_test.xml";
@@ -60,6 +63,17 @@ public class ServletDataParsingTests {
 		Object result = streamer.fromXML(config);
 		
 		System.out.println(result);
+		
+	}
+	
+	@Test
+	public void testFindingExistingPlugin(){
+		ServletMonitor monitor = new ServletMonitor();
+		Path folder = Paths.get("plugins");
+		monitor.findExistingFiles(folder);
+		
+		ArrayList<PluginData> plugins = monitor.getPlugins();
+		assertEquals("fancyplugin", plugins.get(0).getPluginName());
 		
 	}
 
