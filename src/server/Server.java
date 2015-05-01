@@ -42,6 +42,7 @@ import configuration.ResourceStrategyRoute;
 import configuration.ResourceStrategyRouteOptions;
 import configuration.ServerConfiguration;
 import configuration.ServletData;
+import configuration.ServletMonitor;
 
 /**
  * This represents a welcoming server for the incoming TCP request from a HTTP
@@ -61,6 +62,7 @@ public class Server implements Runnable {
 	private WebServer window;
 
 	private ServerConfiguration configuration;
+	private ServletMonitor monitor;
 	private ResourceStrategyConfiguration resourcesConfiguration;
 
 	/**
@@ -78,6 +80,11 @@ public class Server implements Runnable {
 
 		resourcesConfiguration = new ResourceStrategyConfiguration();
 		configuration = new ServerConfiguration(resourcesConfiguration);
+		monitor = new ServletMonitor();
+		monitor.registerAddedListener(configuration);
+		(new Thread(monitor)).start();
+		
+		
 		configuration.setConfigurationOption(
 				ResourceStrategyRouteOptions.RootDirectoy, rootDirectory);
 		configuration.parseConfiguration(new File(configFile));
