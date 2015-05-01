@@ -43,6 +43,7 @@ import configuration.ResourceStrategyRouteOptions;
 import configuration.ServerConfiguration;
 import configuration.ServletData;
 import configuration.ServletMonitor;
+import configuration.ServletMonitor.IInitialParseCompleteListener;
 
 /**
  * This represents a welcoming server for the incoming TCP request from a HTTP
@@ -69,7 +70,7 @@ public class Server implements Runnable {
 	 * @param rootDirectory
 	 * @param port
 	 */
-	public Server(String rootDirectory, String configFile, int port,
+	public Server(String rootDirectory, final String configFile, int port,
 			WebServer window) throws InvalidConfigurationException {
 		this.rootDirectory = rootDirectory;
 		this.port = port;
@@ -80,22 +81,23 @@ public class Server implements Runnable {
 
 		resourcesConfiguration = new ResourceStrategyConfiguration();
 		configuration = new ServerConfiguration(resourcesConfiguration);
-		monitor = new ServletMonitor();
+		monitor = new ServletMonitor(new IInitialParseCompleteListener() {
+			@Override
+			public void pluginsParsed() {
+				try {
+					configuration.parseConfiguration(new File(configFile));
+				} catch (InvalidConfigurationException configExp) {
+					
+				}
+			}
+		});
 		monitor.registerAddedListener(configuration);
 		(new Thread(monitor)).start();
 
-		ServletData dirops = new ServletData(DirectoryStrategy.class.getName(),
-				"",
-				Arrays.asList(new String[] { "GET", "POST", "PUT", "DELETE" }));
-		PluginData dirPlugin = new PluginData("dirops", null,
-				Arrays.asList(new ServletData[] { dirops }));
-
-		configuration.addPlugin(dirPlugin);
-
+		// Sets a default root directory as picked by user - servlets specific
+		// can be set in server config xml
 		configuration.setConfigurationOption(
 				ResourceStrategyRouteOptions.RootDirectoy, rootDirectory);
-
-		configuration.parseConfiguration(new File(configFile));
 
 		Map<String, String> options = new HashMap<String, String>();
 		options.put(ResourceStrategyRouteOptions.RootDirectoy, rootDirectory);

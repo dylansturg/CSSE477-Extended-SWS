@@ -69,7 +69,7 @@ public class ServletDataParsingTests {
 	
 	@Test
 	public void testFindingExistingPlugin(){
-		ServletMonitor monitor = new ServletMonitor();
+		ServletMonitor monitor = new ServletMonitor(null);
 		Path folder = Paths.get("plugins");
 		monitor.findExistingFiles(folder);
 		

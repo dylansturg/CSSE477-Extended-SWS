@@ -41,6 +41,8 @@ import org.junit.Test;
 import request.HTTPRequest;
 import strategy.BadRequestStrategy;
 import strategy.DirectoryStrategy;
+import strategy.InternalErrorStrategy;
+import strategy.NoRouteStrategy;
 import strategy.ResourceStrategyFinder;
 import configuration.ResourceStrategyConfiguration;
 import configuration.ResourceStrategyRoute;
@@ -83,7 +85,7 @@ public class ResourceStrategyFinderTests {
 				.findRouteForRequest(new FakeHttpRequest()));
 
 		assertNotNull(strategy);
-		assertTrue(strategy.getClass() == BadRequestStrategy.class);
+		assertTrue(strategy.getClass() == NoRouteStrategy.class);
 
 	}
 

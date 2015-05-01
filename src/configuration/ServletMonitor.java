@@ -32,11 +32,9 @@ import static java.nio.file.LinkOption.NOFOLLOW_LINKS;
 import static java.nio.file.StandardWatchEventKinds.ENTRY_CREATE;
 import static java.nio.file.StandardWatchEventKinds.OVERFLOW;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.nio.file.FileSystem;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -58,17 +56,25 @@ import com.thoughtworks.xstream.XStream;
  * @author Nathan Jarvis
  */
 public class ServletMonitor implements Runnable {
+	
+	public interface IInitialParseCompleteListener{
+		public void pluginsParsed();
+	}
+	
 	private List<IPluginAddedListener> addedListeners;
 	private List<IPluginRemovedListener> removedListeners;
 	private static String extensionToUse = ".jar";
-	private static final String CONFIG_FILE_NAME = "servlet_test.xml";
+	private static final String CONFIG_FILE_NAME = "plugin.xml";
+	
+	private IInitialParseCompleteListener parseCompleteListener;
 	
 	private ArrayList<PluginData> plugins;
 
-	public ServletMonitor() {
+	public ServletMonitor(IInitialParseCompleteListener completeListener) {
 		addedListeners = new ArrayList<IPluginAddedListener>();
 		removedListeners = new ArrayList<IPluginRemovedListener>();
 		plugins = new ArrayList<PluginData>();
+		parseCompleteListener = completeListener;
 	}
 	
 	public ArrayList<PluginData> getPlugins(){
@@ -94,6 +100,10 @@ public class ServletMonitor implements Runnable {
 			// Checking dir.isDirectory() above would not be sufficient
 			// to avoid race conditions with another process that deletes
 			// directories.
+		}
+		
+		if(parseCompleteListener != null){
+			parseCompleteListener.pluginsParsed();
 		}
 	}
 
