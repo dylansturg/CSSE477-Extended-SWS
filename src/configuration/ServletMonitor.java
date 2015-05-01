@@ -57,9 +57,9 @@ import com.thoughtworks.xstream.XStream;
  * 
  * @author Nathan Jarvis
  */
-public class ServletMonitor {
+public class ServletMonitor implements Runnable {
 	private List<IPluginAddedListener> addedListeners;
-	private List<IPluginRemovedLIstener> removedListeners;
+	private List<IPluginRemovedListener> removedListeners;
 	private static String extensionToUse = ".jar";
 	private static final String CONFIG_FILE_NAME = "servlet_test.xml";
 	
@@ -67,7 +67,7 @@ public class ServletMonitor {
 
 	public ServletMonitor() {
 		addedListeners = new ArrayList<IPluginAddedListener>();
-		removedListeners = new ArrayList<IPluginRemovedLIstener>();
+		removedListeners = new ArrayList<IPluginRemovedListener>();
 		plugins = new ArrayList<PluginData>();
 	}
 	
@@ -229,11 +229,11 @@ public class ServletMonitor {
 		this.addedListeners.remove(listener);
 	}
 
-	public void registerRemovedListener(IPluginRemovedLIstener listener) {
+	public void registerRemovedListener(IPluginRemovedListener listener) {
 		this.removedListeners.add(listener);
 	}
 
-	public void unregisterRemovedListener(IPluginRemovedLIstener listener) {
+	public void unregisterRemovedListener(IPluginRemovedListener listener) {
 		this.removedListeners.remove(listener);
 	}
 	
