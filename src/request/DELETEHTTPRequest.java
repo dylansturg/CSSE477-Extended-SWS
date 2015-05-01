@@ -54,13 +54,6 @@ public class DELETEHTTPRequest extends HTTPRequest {
 	}
 
 	public void checkRequest() throws Exception {
-		if (this.bodyPresent) {
-			// It's actually OK for DELETE to have a body
-			// The spec doesn't say you can't do it, just doesn't say what you
-			// do with it
 
-			// Shouldn't be a body for delete request.
-			throw new Exception("Delete request should not have body.");
-		}
 	}
 }

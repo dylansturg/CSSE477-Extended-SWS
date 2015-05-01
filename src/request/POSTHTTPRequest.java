@@ -55,11 +55,6 @@ public class POSTHTTPRequest extends HTTPRequest {
 
 	// Check to see if valid request
 	public void checkRequest() throws Exception {
-		if (!this.bodyPresent) {
-			// There should be a body for a post request
-			throw new Exception("Post request should have a body.");
-		}
-
 		if (this.bodyLength != this.body.length()) {
 			throw new Exception(
 					"Post request body length is not equal to expected content length.");
