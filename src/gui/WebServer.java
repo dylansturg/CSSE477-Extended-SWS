@@ -57,6 +57,7 @@ public class WebServer extends JFrame {
 	private JPanel panelInput;
 	private JButton butStartServer;
 	private JButton butStopServer;
+	private JButton butReloadServer;
 	private JLabel lblServiceRate;
 	private JTextField txtServiceRate;
 
@@ -145,7 +146,9 @@ public class WebServer extends JFrame {
 		this.panelRunServer = new JPanel();
 		this.butStartServer = new JButton("Start Simple Web Server");
 		this.butStopServer = new JButton("Stop Simple Web Server");
+		this.butReloadServer = new JButton("Reload Server");
 		this.butStopServer.setEnabled(false);
+		this.butReloadServer.setEnabled(false);
 		this.lblServiceRate = new JLabel(
 				"Service Rate (Connections Serviced/Second)");
 		this.txtServiceRate = new JTextField("Unknown");
@@ -156,11 +159,13 @@ public class WebServer extends JFrame {
 		this.panelRunServer.setLayout(new SpringLayout());
 		this.panelRunServer.add(this.butStartServer);
 		this.panelRunServer.add(this.butStopServer);
+		this.panelRunServer.add(this.butReloadServer);
 		this.panelRunServer.add(this.lblServiceRate);
 		this.panelRunServer.add(this.txtServiceRate);
+		this.panelRunServer.add(new JPanel());
 
 		// Compact the grid
-		SpringUtilities.makeCompactGrid(this.panelRunServer, 2, 2, 5, 5, 5, 5);
+		SpringUtilities.makeCompactGrid(this.panelRunServer, 2, 3, 5, 5, 5, 5);
 
 		JPanel contentPane = (JPanel) this.getContentPane();
 		contentPane.add(this.panelInput, BorderLayout.CENTER);
@@ -277,6 +282,15 @@ public class WebServer extends JFrame {
 			}
 		});
 
+		this.butReloadServer.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (server != null && !server.isStoped()) {
+					server.reloadServerConfiguration();
+				}
+			}
+		});
+
 		// Make sure the web server is stopped before closing the window
 		this.addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
@@ -293,6 +307,7 @@ public class WebServer extends JFrame {
 		this.butSelect.setEnabled(false);
 		this.butStartServer.setEnabled(false);
 		this.butStopServer.setEnabled(true);
+		this.butReloadServer.setEnabled(true);
 	}
 
 	private void enableWidgets() {
@@ -300,6 +315,7 @@ public class WebServer extends JFrame {
 		this.butSelect.setEnabled(true);
 		this.butStartServer.setEnabled(true);
 		this.butStopServer.setEnabled(false);
+		this.butReloadServer.setEnabled(false);
 	}
 
 	/**

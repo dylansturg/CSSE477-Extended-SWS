@@ -53,6 +53,7 @@ import configuration.ServletMonitor.IInitialParseCompleteListener;
  */
 public class Server implements Runnable {
 	private String rootDirectory;
+	private String configurationFile;
 	private int port;
 	private boolean stop;
 	private ServerSocket welcomeSocket;
@@ -73,6 +74,7 @@ public class Server implements Runnable {
 	public Server(String rootDirectory, final String configFile, int port,
 			WebServer window) throws InvalidConfigurationException {
 		this.rootDirectory = rootDirectory;
+		this.configurationFile = configFile;
 		this.port = port;
 		this.stop = false;
 		this.connections = 0;
@@ -87,7 +89,7 @@ public class Server implements Runnable {
 				try {
 					configuration.parseConfiguration(new File(configFile));
 				} catch (InvalidConfigurationException configExp) {
-					
+
 				}
 			}
 		});
@@ -120,6 +122,16 @@ public class Server implements Runnable {
 	 */
 	public int getPort() {
 		return port;
+	}
+
+	public void reloadServerConfiguration() {
+		if (configuration != null && configurationFile != null) {
+			try {
+				configuration.parseConfiguration(new File(configurationFile));
+			} catch (InvalidConfigurationException exp) {
+				
+			}
+		}
 	}
 
 	/**
