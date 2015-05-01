@@ -83,26 +83,22 @@ public class Server implements Runnable {
 		monitor = new ServletMonitor();
 		monitor.registerAddedListener(configuration);
 		(new Thread(monitor)).start();
-		
-		
-		configuration.setConfigurationOption(
-				ResourceStrategyRouteOptions.RootDirectoy, rootDirectory);
-		configuration.parseConfiguration(new File(configFile));
 
 		ServletData dirops = new ServletData(DirectoryStrategy.class.getName(),
-				"get", Arrays.asList(new String[] { "GET", "POST", "PUT",
-						"DELETE" }));
+				"",
+				Arrays.asList(new String[] { "GET", "POST", "PUT", "DELETE" }));
 		PluginData dirPlugin = new PluginData("dirops", null,
 				Arrays.asList(new ServletData[] { dirops }));
 
 		configuration.addPlugin(dirPlugin);
 
+		configuration.setConfigurationOption(
+				ResourceStrategyRouteOptions.RootDirectoy, rootDirectory);
+
+		configuration.parseConfiguration(new File(configFile));
+
 		Map<String, String> options = new HashMap<String, String>();
 		options.put(ResourceStrategyRouteOptions.RootDirectoy, rootDirectory);
-		
-		resourcesConfiguration.addRoute(new ResourceStrategyRoute(
-				DirectoryStrategy.class, "/dirops/", dirops
-						.getExpectedMethods(), options));
 
 	}
 
