@@ -54,6 +54,6 @@ public interface IResourceStrategy {
 	 * @return Runnable to execute on a thread which will generate a
 	 *         HTTPResponse
 	 */
-	public IRequestTask prepareEvaluation(HTTPRequest request,
-			ResourceStrategyRoute fromRoute);
+	public IRequestTask prepareEvaluation(IHttpRequest request,
+			IResourceRoute fromRoute);
 }

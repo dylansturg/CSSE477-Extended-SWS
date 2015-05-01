@@ -29,6 +29,7 @@
 package strategy.directoryoperations;
 
 import interfaces.HttpResponseBase;
+import interfaces.IHttpRequest;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -54,7 +55,7 @@ public class PostRequestHandler extends RequestHandler {
 	 * strategy.directoryoperations.RequestHandler#handle(protocol.HttpRequest)
 	 */
 	@Override
-	public HttpResponseBase handle(HTTPRequest request) {
+	public HttpResponseBase handle(IHttpRequest request) {
 
 		File requestedFile;
 		try {

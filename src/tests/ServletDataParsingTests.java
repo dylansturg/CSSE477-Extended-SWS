@@ -1,7 +1,9 @@
 package tests;
 
 import static org.junit.Assert.*;
+import interfaces.IHttpRequest;
 import interfaces.IRequestTask;
+import interfaces.IResourceRoute;
 import interfaces.IResourceStrategy;
 
 import java.io.File;
@@ -19,7 +21,6 @@ import com.thoughtworks.xstream.XStream;
 
 import request.HTTPRequest;
 import configuration.PluginData;
-import configuration.ResourceStrategyRoute;
 import configuration.ServletData;
 import configuration.ServletMonitor;
 
@@ -80,8 +81,8 @@ public class ServletDataParsingTests {
 	public class TestServlet implements IResourceStrategy {
 
 		@Override
-		public IRequestTask prepareEvaluation(HTTPRequest request,
-				ResourceStrategyRoute fromRoute) {
+		public IRequestTask prepareEvaluation(IHttpRequest request,
+				IResourceRoute fromRoute) {
 			// TODO Auto-generated method stub
 			return null;
 		}

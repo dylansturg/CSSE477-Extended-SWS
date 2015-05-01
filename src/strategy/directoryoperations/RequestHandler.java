@@ -29,10 +29,11 @@
 package strategy.directoryoperations;
 
 import interfaces.HttpResponseBase;
+import interfaces.IHttpRequest;
+import interfaces.IResourceRoute;
 
 import java.io.File;
 
-import configuration.ResourceStrategyRoute;
 import configuration.ResourceStrategyRouteOptions;
 import protocol.HttpStatusCode;
 import protocol.Protocol;
@@ -43,15 +44,15 @@ import request.HTTPRequest;
  * @author Chandan R. Rupakheti (rupakhcr@clarkson.edu)
  */
 public abstract class RequestHandler {
-	protected ResourceStrategyRoute triggeredRoute;
+	protected IResourceRoute triggeredRoute;
 
-	public abstract HttpResponseBase handle(HTTPRequest request);
+	public abstract HttpResponseBase handle(IHttpRequest request);
 
-	public ResourceStrategyRoute getTriggeredRoute() {
+	public IResourceRoute getTriggeredRoute() {
 		return triggeredRoute;
 	}
 
-	public void setTriggeredRoute(ResourceStrategyRoute route) {
+	public void setTriggeredRoute(IResourceRoute route) {
 		triggeredRoute = route;
 	}
 

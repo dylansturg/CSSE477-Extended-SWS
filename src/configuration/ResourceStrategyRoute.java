@@ -28,6 +28,8 @@
 
 package configuration;
 
+import interfaces.IResourceRoute;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -40,10 +42,10 @@ import java.util.Map;
  * 
  * @author Chandan R. Rupakheti (rupakhcr@clarkson.edu)
  */
-public class ResourceStrategyRoute {
+public class ResourceStrategyRoute implements IResourceRoute {
 
-	public static final ResourceStrategyRoute None = new ResourceStrategyRouteNone();
-	public static final ResourceStrategyRoute INVALID = new ResourceStrategyRouteInvalid();
+	public static final IResourceRoute None = new ResourceStrategyRouteNone();
+	public static final IResourceRoute INVALID = new ResourceStrategyRouteInvalid();
 
 	private Class<?> strategyClass;
 	private String routeMatch;
@@ -58,22 +60,42 @@ public class ResourceStrategyRoute {
 		strategyOptions = options;
 	}
 
+	/* (non-Javadoc)
+	 * @see configuration.IResourceRoute#getStrategyClass()
+	 */
+	@Override
 	public Class<?> getStrategyClass() {
 		return strategyClass;
 	}
 
+	/* (non-Javadoc)
+	 * @see configuration.IResourceRoute#getRouteMatch()
+	 */
+	@Override
 	public String getRouteMatch() {
 		return routeMatch;
 	}
 
+	/* (non-Javadoc)
+	 * @see configuration.IResourceRoute#getStrategyOption(java.lang.String)
+	 */
+	@Override
 	public String getStrategyOption(String option) {
 		return strategyOptions.get(option);
 	}
 
+	/* (non-Javadoc)
+	 * @see configuration.IResourceRoute#getMethods()
+	 */
+	@Override
 	public List<String> getMethods() {
 		return methods;
 	}
 
+	/* (non-Javadoc)
+	 * @see configuration.IResourceRoute#respondsToMethod(java.lang.String)
+	 */
+	@Override
 	public boolean respondsToMethod(String method) {
 		for (String checkMethod : methods) {
 			if (checkMethod.equalsIgnoreCase(method)) {

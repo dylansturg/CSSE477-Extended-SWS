@@ -29,6 +29,7 @@
 package tests;
 
 import static org.junit.Assert.*;
+import interfaces.IResourceRoute;
 import interfaces.IResourceStrategy;
 
 import java.util.ArrayList;
@@ -62,7 +63,7 @@ public class ResourceStrategyFinderTests {
 		ResourceStrategyFinder finder = new ResourceStrategyFinder(
 				new ServerConfiguration(testConfig));
 
-		ResourceStrategyRoute foundRoute = finder
+		IResourceRoute foundRoute = finder
 				.findRouteForRequest(new FakeHttpRequest());
 
 		IResourceStrategy strategy = finder

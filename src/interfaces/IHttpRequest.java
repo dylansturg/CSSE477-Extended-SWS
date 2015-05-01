@@ -41,4 +41,8 @@ public interface IHttpRequest {
 	public void readHeadersAndBody() throws Exception;
 
 	public void checkRequest() throws Exception;
+
+	public String getMethod();
+
+	public String getPath();
 }

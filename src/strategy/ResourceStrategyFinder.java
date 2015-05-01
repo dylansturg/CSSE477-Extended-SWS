@@ -28,6 +28,7 @@
 
 package strategy;
 
+import interfaces.IResourceRoute;
 import interfaces.IResourceStrategy;
 
 import java.lang.reflect.Constructor;
@@ -35,7 +36,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import request.HTTPRequest;
-import configuration.ResourceStrategyRoute;
 import configuration.ServerConfiguration;
 
 /**
@@ -54,13 +54,13 @@ public class ResourceStrategyFinder {
 		serverConfiguration = server;
 	}
 
-	public ResourceStrategyRoute findRouteForRequest(HTTPRequest request) {
+	public IResourceRoute findRouteForRequest(HTTPRequest request) {
 		return serverConfiguration.getManagedResourceConfiguration()
 				.findRouteForResourcePath(request.getPath(), request.getMethod());
 	}
 
 	public IResourceStrategy getStrategyForResourceRoute(
-			ResourceStrategyRoute resourceRoute) {
+			IResourceRoute resourceRoute) {
 
 		Class<?> strategyClass = resourceRoute.getStrategyClass();
 

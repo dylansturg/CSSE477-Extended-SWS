@@ -28,6 +28,8 @@
 
 package configuration;
 
+import interfaces.IResourceRoute;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -60,14 +62,14 @@ public class ResourceStrategyConfiguration {
 		activeRoutes.add(route);
 	}
 
-	public ResourceStrategyRoute findRouteForResourcePath(String path,
+	public IResourceRoute findRouteForResourcePath(String path,
 			String method) {
 		if (path == null) {
 			return ResourceStrategyRoute.INVALID;
 		}
 
 		try {
-			for (ResourceStrategyRoute resourceStrategyRoute : activeRoutes) {
+			for (IResourceRoute resourceStrategyRoute : activeRoutes) {
 				String routeRegex = resourceStrategyRoute.getRouteMatch();
 				if (routeRegex != null && path.startsWith(routeRegex)) {
 					if (resourceStrategyRoute.respondsToMethod(method)) {

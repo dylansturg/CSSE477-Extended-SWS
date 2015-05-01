@@ -29,6 +29,7 @@
 package strategy.directoryoperations;
 
 import interfaces.HttpResponseBase;
+import interfaces.IHttpRequest;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -62,7 +63,7 @@ public class GetRequestHandler extends RequestHandler {
 	 * strategy.directoryoperations.RequestHandler#handle(protocol.HttpRequest)
 	 */
 	@Override
-	public HttpResponseBase handle(HTTPRequest request) {
+	public HttpResponseBase handle(IHttpRequest request) {
 		// request is guaranteed to be GetHttpRequest
 
 		File requestedFile;
@@ -84,7 +85,7 @@ public class GetRequestHandler extends RequestHandler {
 		return handleEvaluationError(HttpStatusCode.NOT_FOUND);
 	}
 
-	private HttpResponseBase serveFile(File requestedFile, HTTPRequest request) {
+	private HttpResponseBase serveFile(File requestedFile, IHttpRequest request) {
 		Map<String, String> headers = new HashMap<String, String>();
 
 		String conditionalGet = request.getHeader(Protocol.CONDITIONAL_GET);
@@ -113,7 +114,7 @@ public class GetRequestHandler extends RequestHandler {
 	}
 
 	private HttpResponseBase serveDirectory(File requestedDirectory,
-			HTTPRequest request) {
+			IHttpRequest request) {
 		StringBuilder responseContent = new StringBuilder(
 				"Contents of Directory - " + requestedDirectory.getName()
 						+ Protocol.CRLF);

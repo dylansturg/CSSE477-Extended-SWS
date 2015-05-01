@@ -22,6 +22,7 @@
 package server;
 
 import interfaces.IRequestTask;
+import interfaces.IResourceRoute;
 import interfaces.IResourceStrategy;
 
 import java.io.IOException;
@@ -32,7 +33,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import configuration.ResourceStrategyRoute;
 import protocol.HttpRequest;
 import request.HTTPRequest;
 import request.HTTPRequestFactory;
@@ -115,7 +115,7 @@ public class ConnectionHandler implements Runnable {
 		// time
 
 		long requestStartTimeStamp = System.currentTimeMillis();
-		ResourceStrategyRoute requestRoute = resourceStrategyMapper
+		IResourceRoute requestRoute = resourceStrategyMapper
 				.findRouteForRequest(incomingRequest);
 		IResourceStrategy strategyForRequest = resourceStrategyMapper
 				.getStrategyForResourceRoute(requestRoute);

@@ -28,7 +28,9 @@
 
 package strategy;
 
+import interfaces.IHttpRequest;
 import interfaces.IRequestTask;
+import interfaces.IResourceRoute;
 
 import java.lang.reflect.Constructor;
 import java.net.Socket;
@@ -38,7 +40,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import configuration.ResourceStrategyRoute;
 import protocol.HttpRequest;
 import protocol.HttpResponseFactory;
 import request.HTTPRequest;
@@ -72,8 +73,8 @@ public class DirectoryStrategy extends ResourceStrategyBase {
 	 * strategy.ResourceStrategyBase#prepareEvaluation(protocol.HttpRequest)
 	 */
 	@Override
-	public IRequestTask prepareEvaluation(HTTPRequest request,
-			ResourceStrategyRoute fromRoute) {
+	public IRequestTask prepareEvaluation(IHttpRequest request,
+			IResourceRoute fromRoute) {
 
 		RequestHandler handler = null;
 
@@ -114,7 +115,7 @@ public class DirectoryStrategy extends ResourceStrategyBase {
 	private class DirectoryRequestTask extends RequestTaskBase {
 		private RequestHandler handler;
 
-		public DirectoryRequestTask(RequestHandler handler, HTTPRequest request) {
+		public DirectoryRequestTask(RequestHandler handler, IHttpRequest request) {
 			super(request);
 			this.handler = handler;
 		}

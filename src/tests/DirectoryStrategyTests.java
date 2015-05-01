@@ -30,6 +30,7 @@ package tests;
 
 import static org.junit.Assert.*;
 import interfaces.IRequestTask;
+import interfaces.IResourceRoute;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -64,7 +65,7 @@ public class DirectoryStrategyTests {
 		HTTPRequest testRequest = new HTTPRequestFactory()
 				.createRequest(new FakeSocket(
 						"GET /path/to/stuff HTTP/1.1\r\nHost: SomeBody.com\r\nAuthor: NotAPerson\r\n"));
-		ResourceStrategyRoute testRoute = new ResourceStrategyRoute(
+		IResourceRoute testRoute = new ResourceStrategyRoute(
 				DirectoryStrategy.class, "",
 				Arrays.asList(new String[] { "GET" }),
 				new HashMap<String, String>());

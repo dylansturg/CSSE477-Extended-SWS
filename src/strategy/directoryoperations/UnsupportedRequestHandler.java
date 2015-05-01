@@ -29,6 +29,7 @@
 package strategy.directoryoperations;
 
 import interfaces.HttpResponseBase;
+import interfaces.IHttpRequest;
 import protocol.HttpResponseFactory;
 import protocol.HttpStatusCode;
 import protocol.Protocol;
@@ -41,7 +42,7 @@ import request.HTTPRequest;
 public class UnsupportedRequestHandler extends RequestHandler {
 
 	@Override
-	public HttpResponseBase handle(HTTPRequest request) {
+	public HttpResponseBase handle(IHttpRequest request) {
 		return HttpResponseFactory.createGenericErrorResponse(
 				HttpStatusCode.TEAPOT, Protocol.CLOSE);
 	}

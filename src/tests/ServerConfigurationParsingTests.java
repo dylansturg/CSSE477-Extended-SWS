@@ -1,7 +1,9 @@
 package tests;
 
 import static org.junit.Assert.*;
+import interfaces.IHttpRequest;
 import interfaces.IRequestTask;
+import interfaces.IResourceRoute;
 import interfaces.IResourceStrategy;
 
 import java.io.File;
@@ -70,7 +72,7 @@ public class ServerConfigurationParsingTests {
 
 		tester.parseConfiguration(testConfig);
 
-		ResourceStrategyRoute testRoute = tester
+		IResourceRoute testRoute = tester
 				.getManagedResourceConfiguration().findRouteForResourcePath(
 						"/path/to/myplugin/fancyservlet/", "get");
 
@@ -153,7 +155,7 @@ public class ServerConfigurationParsingTests {
 			fail();
 		}
 
-		ResourceStrategyRoute testRoute = tester
+		IResourceRoute testRoute = tester
 				.getManagedResourceConfiguration().findRouteForResourcePath(
 						"/path/to/myplugin/fancyservlet/", "get");
 
@@ -175,8 +177,8 @@ public class ServerConfigurationParsingTests {
 	public class TestServlet implements IResourceStrategy {
 
 		@Override
-		public IRequestTask prepareEvaluation(HTTPRequest request,
-				ResourceStrategyRoute fromRoute) {
+		public IRequestTask prepareEvaluation(IHttpRequest request,
+				IResourceRoute fromRoute) {
 			return null;
 		}
 

@@ -29,12 +29,12 @@
 package strategy;
 
 import interfaces.HttpResponseBase;
+import interfaces.IHttpRequest;
 import interfaces.IRequestTask;
+import interfaces.IResourceRoute;
 import protocol.HttpResponseFactory;
 import protocol.HttpStatusCode;
 import protocol.Protocol;
-import request.HTTPRequest;
-import configuration.ResourceStrategyRoute;
 
 /**
  * 
@@ -43,14 +43,14 @@ import configuration.ResourceStrategyRoute;
 public class BadRequestStrategy extends ResourceStrategyBase {
 
 	@Override
-	public IRequestTask prepareEvaluation(HTTPRequest request,
-			ResourceStrategyRoute fromRoute) {
+	public IRequestTask prepareEvaluation(IHttpRequest request,
+			IResourceRoute fromRoute) {
 		return new BadRequestTask(request);
 	}
 
 	private class BadRequestTask extends RequestTaskBase {
 
-		public BadRequestTask(HTTPRequest request) {
+		public BadRequestTask(IHttpRequest request) {
 			super(request);
 		}
 

@@ -29,6 +29,7 @@
 package strategy;
 
 import interfaces.HttpResponseBase;
+import interfaces.IHttpRequest;
 import interfaces.IHttpResponse;
 import interfaces.IRequestTask;
 
@@ -46,7 +47,7 @@ import request.HTTPRequest;
  */
 public abstract class RequestTaskBase implements IRequestTask {
 	protected List<IRequestTaskCompletionListener> completionListeners;
-	protected HTTPRequest request;
+	protected IHttpRequest request;
 	protected boolean completed = false;
 	protected Socket client;
 
@@ -54,7 +55,7 @@ public abstract class RequestTaskBase implements IRequestTask {
 
 	protected HttpResponseBase response;
 
-	public RequestTaskBase(HTTPRequest request) {
+	public RequestTaskBase(IHttpRequest request) {
 		this.request = request;
 		completionListeners = new ArrayList<IRequestTask.IRequestTaskCompletionListener>();
 	}

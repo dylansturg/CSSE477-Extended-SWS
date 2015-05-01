@@ -4,20 +4,21 @@ import protocol.HttpResponseFactory;
 import protocol.HttpStatusCode;
 import protocol.Protocol;
 import interfaces.HttpResponseBase;
+import interfaces.IHttpRequest;
 import interfaces.IRequestTask;
+import interfaces.IResourceRoute;
 import request.HTTPRequest;
-import configuration.ResourceStrategyRoute;
 
 public class NoRouteStrategy extends ResourceStrategyBase {
 	@Override
-	public IRequestTask prepareEvaluation(HTTPRequest request,
-			ResourceStrategyRoute fromRoute) {
+	public IRequestTask prepareEvaluation(IHttpRequest request,
+			IResourceRoute fromRoute) {
 		return new NoRouteTask(request);
 	}
 
 	class NoRouteTask extends RequestTaskBase {
 
-		public NoRouteTask(HTTPRequest request) {
+		public NoRouteTask(IHttpRequest request) {
 			super(request);
 		}
 		
