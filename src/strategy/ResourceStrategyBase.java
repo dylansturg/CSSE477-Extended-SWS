@@ -28,6 +28,8 @@
 
 package strategy;
 
+import interfaces.IRequestTask;
+import interfaces.IResourceStrategy;
 import configuration.ResourceStrategyRoute;
 import request.HTTPRequest;
 

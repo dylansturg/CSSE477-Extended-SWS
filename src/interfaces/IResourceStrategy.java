@@ -26,7 +26,7 @@
  * http://clarkson.edu/~rupakhcr
  */
 
-package strategy;
+package interfaces;
 
 import configuration.ResourceStrategyRoute;
 import request.HTTPRequest;

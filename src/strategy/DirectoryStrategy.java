@@ -28,6 +28,8 @@
 
 package strategy;
 
+import interfaces.IRequestTask;
+
 import java.lang.reflect.Constructor;
 import java.net.Socket;
 import java.util.ArrayList;

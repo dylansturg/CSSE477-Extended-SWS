@@ -28,6 +28,8 @@
 
 package request;
 
+import interfaces.IHttpRequest;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -44,7 +46,7 @@ import protocol.Protocol;
  */
 
 // HTTP base request that specific requests extend.
-public class HTTPRequest {
+public class HTTPRequest implements IHttpRequest {
 
 	protected Socket readSocket;
 	protected Socket writeSocket;

@@ -29,6 +29,7 @@
 package strategy;
 
 import interfaces.HttpResponseBase;
+import interfaces.IRequestTask;
 import configuration.ResourceStrategyRoute;
 import protocol.HttpResponseFactory;
 import protocol.HttpStatusCode;

@@ -1,5 +1,5 @@
 /*
- * BadRequestStrategy.java
+ * IRequestTask.java
  * Apr 24, 2015
  *
  * Simple Web Server (SWS) for EE407/507 and CS455/555
@@ -26,50 +26,44 @@
  * http://clarkson.edu/~rupakhcr
  */
 
-package strategy;
+package interfaces;
 
-import interfaces.HttpResponseBase;
-import interfaces.IRequestTask;
-import protocol.HttpResponseFactory;
-import protocol.HttpStatusCode;
-import protocol.Protocol;
-import request.HTTPRequest;
-import configuration.ResourceStrategyRoute;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.net.Socket;
 
 /**
+ * Wrapper around Runnable to represent the action necesary for a HTTPRequest to
+ * be evaluated and generate a HTTPResponse to be sent to the client.
+ * 
+ * Utilizes a listener to notify any observers of its completion through
+ * IRequestTaskCompletionListener.
+ * 
+ * Should be executed on a background thread.
  * 
  * @author Chandan R. Rupakheti (rupakhcr@clarkson.edu)
  */
-public class BadRequestStrategy extends ResourceStrategyBase {
+public interface IRequestTask extends Runnable {
 
-	@Override
-	public IRequestTask prepareEvaluation(HTTPRequest request,
-			ResourceStrategyRoute fromRoute) {
-		return new BadRequestTask(request);
+	public interface IRequestTaskCompletionListener {
+		public void taskComplete(IRequestTask completed);
 	}
 
-	private class BadRequestTask extends RequestTaskBase {
+	public void registerCompletionListener(
+			IRequestTaskCompletionListener listener);
 
-		public BadRequestTask(HTTPRequest request) {
-			super(request);
-		}
+	public boolean isComplete();
 
-		@Override
-		public void run() {
-			completed = true;
+	public HttpResponseBase getResponse();
 
-			super.run();
-		}
+	public void setRequestingClient(Socket client);
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see strategy.RequestTaskBase#getResponse()
-		 */
-		@Override
-		public HttpResponseBase getResponse() {
-			return HttpResponseFactory.createGenericErrorResponse(
-					HttpStatusCode.BAD_REQUEST, Protocol.CLOSE);
-		}
-	}
+	public Socket getRequestingClient();
+
+	public void writeResponse(OutputStream out) throws IOException;
+
+	public long getStartTime();
+
+	public void setStartTime(long timestamp);
+
 }

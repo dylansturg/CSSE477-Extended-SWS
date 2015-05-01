@@ -28,6 +28,8 @@
 
 package strategy;
 
+import interfaces.IResourceStrategy;
+
 import java.lang.reflect.Constructor;
 import java.util.HashMap;
 import java.util.Map;

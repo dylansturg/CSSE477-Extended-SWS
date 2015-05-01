@@ -29,6 +29,7 @@
 package tests;
 
 import static org.junit.Assert.*;
+import interfaces.IResourceStrategy;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -39,7 +40,6 @@ import org.junit.Test;
 import request.HTTPRequest;
 import strategy.BadRequestStrategy;
 import strategy.DirectoryStrategy;
-import strategy.IResourceStrategy;
 import strategy.ResourceStrategyFinder;
 import configuration.ResourceStrategyConfiguration;
 import configuration.ResourceStrategyRoute;

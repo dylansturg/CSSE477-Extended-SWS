@@ -21,6 +21,9 @@
 
 package server;
 
+import interfaces.IRequestTask;
+import interfaces.IResourceStrategy;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -34,8 +37,6 @@ import protocol.HttpRequest;
 import request.HTTPRequest;
 import request.HTTPRequestFactory;
 import response.ResponseHandler;
-import strategy.IRequestTask;
-import strategy.IResourceStrategy;
 import strategy.ResourceStrategyFinder;
 
 /**

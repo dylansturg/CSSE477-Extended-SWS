@@ -30,6 +30,7 @@ package strategy;
 
 import interfaces.HttpResponseBase;
 import interfaces.IHttpResponse;
+import interfaces.IRequestTask;
 
 import java.io.IOException;
 import java.io.OutputStream;

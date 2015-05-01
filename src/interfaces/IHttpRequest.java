@@ -1,6 +1,6 @@
 /*
- * IRequestTask.java
- * Apr 24, 2015
+ * IHttpRequest.java
+ * May 1, 2015
  *
  * Simple Web Server (SWS) for EE407/507 and CS455/555
  * 
@@ -26,46 +26,19 @@
  * http://clarkson.edu/~rupakhcr
  */
 
-package strategy;
-
-import interfaces.HttpResponseBase;
-
-import java.io.IOException;
-import java.io.OutputStream;
-import java.net.Socket;
+package interfaces;
 
 /**
- * Wrapper around Runnable to represent the action necesary for a HTTPRequest to
- * be evaluated and generate a HTTPResponse to be sent to the client.
- * 
- * Utilizes a listener to notify any observers of its completion through
- * IRequestTaskCompletionListener.
- * 
- * Should be executed on a background thread.
  * 
  * @author Chandan R. Rupakheti (rupakhcr@clarkson.edu)
  */
-public interface IRequestTask extends Runnable {
+public interface IHttpRequest {
 
-	public interface IRequestTaskCompletionListener {
-		public void taskComplete(IRequestTask completed);
-	}
+	public String getHeader(String key);
 
-	public void registerCompletionListener(
-			IRequestTaskCompletionListener listener);
+	public String getContent();
 
-	public boolean isComplete();
+	public void readHeadersAndBody() throws Exception;
 
-	public HttpResponseBase getResponse();
-
-	public void setRequestingClient(Socket client);
-
-	public Socket getRequestingClient();
-
-	public void writeResponse(OutputStream out) throws IOException;
-
-	public long getStartTime();
-
-	public void setStartTime(long timestamp);
-
+	public void checkRequest() throws Exception;
 }

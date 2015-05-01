@@ -4,6 +4,7 @@ import protocol.HttpResponseFactory;
 import protocol.HttpStatusCode;
 import protocol.Protocol;
 import interfaces.HttpResponseBase;
+import interfaces.IRequestTask;
 import request.HTTPRequest;
 import configuration.ResourceStrategyRoute;
 

@@ -28,6 +28,8 @@
 
 package configuration;
 
+import interfaces.IResourceStrategy;
+
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -38,8 +40,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import strategy.IResourceStrategy;
 
 import com.thoughtworks.xstream.*;
 

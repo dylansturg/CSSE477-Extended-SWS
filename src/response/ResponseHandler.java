@@ -28,6 +28,9 @@
 
 package response;
 
+import interfaces.IRequestTask;
+import interfaces.IRequestTask.IRequestTaskCompletionListener;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.Socket;
@@ -46,8 +49,6 @@ import java.util.concurrent.TimeUnit;
 
 import configuration.ServerConfiguration;
 import server.Server;
-import strategy.IRequestTask;
-import strategy.IRequestTask.IRequestTaskCompletionListener;
 
 /**
  * Implements handling of IRequestTask instances to serve a collection of

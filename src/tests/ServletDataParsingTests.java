@@ -1,6 +1,8 @@
 package tests;
 
 import static org.junit.Assert.*;
+import interfaces.IRequestTask;
+import interfaces.IResourceStrategy;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -16,8 +18,6 @@ import org.junit.Test;
 import com.thoughtworks.xstream.XStream;
 
 import request.HTTPRequest;
-import strategy.IRequestTask;
-import strategy.IResourceStrategy;
 import configuration.PluginData;
 import configuration.ResourceStrategyRoute;
 import configuration.ServletData;

@@ -29,6 +29,7 @@
 package tests;
 
 import static org.junit.Assert.*;
+import interfaces.IRequestTask;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -48,7 +49,6 @@ import request.GETHTTPRequest;
 import request.HTTPRequest;
 import request.HTTPRequestFactory;
 import strategy.DirectoryStrategy;
-import strategy.IRequestTask;
 import strategy.directoryoperations.GetRequestHandler;
 import strategy.directoryoperations.RequestHandler;
 
