@@ -27,13 +27,21 @@ import java.io.File;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 import request.HTTPRequestFactory;
 import response.ResponseHandler;
+import strategy.DirectoryStrategy;
 import strategy.ResourceStrategyFinder;
 import configuration.InvalidConfigurationException;
+import configuration.PluginData;
 import configuration.ResourceStrategyConfiguration;
+import configuration.ResourceStrategyRoute;
+import configuration.ResourceStrategyRouteOptions;
 import configuration.ServerConfiguration;
+import configuration.ServletData;
 
 /**
  * This represents a welcoming server for the incoming TCP request from a HTTP
@@ -70,8 +78,24 @@ public class Server implements Runnable {
 
 		resourcesConfiguration = new ResourceStrategyConfiguration();
 		configuration = new ServerConfiguration(resourcesConfiguration);
-
+		configuration.setConfigurationOption(
+				ResourceStrategyRouteOptions.RootDirectoy, rootDirectory);
 		configuration.parseConfiguration(new File(configFile));
+
+		ServletData dirops = new ServletData(DirectoryStrategy.class.getName(),
+				"get", Arrays.asList(new String[] { "GET", "POST", "PUT",
+						"DELETE" }));
+		PluginData dirPlugin = new PluginData("dirops", null,
+				Arrays.asList(new ServletData[] { dirops }));
+
+		configuration.addPlugin(dirPlugin);
+
+		Map<String, String> options = new HashMap<String, String>();
+		options.put(ResourceStrategyRouteOptions.RootDirectoy, rootDirectory);
+		
+		resourcesConfiguration.addRoute(new ResourceStrategyRoute(
+				DirectoryStrategy.class, "/dirops/", dirops
+						.getExpectedMethods(), options));
 
 	}
 

@@ -28,11 +28,12 @@
 
 package strategy.directoryoperations;
 
+import interfaces.HttpResponseBase;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
-import protocol.HttpResponse;
 import protocol.HttpResponseFactory;
 import protocol.HttpStatusCode;
 import protocol.Protocol;
@@ -53,7 +54,7 @@ public class PutRequestHandler extends RequestHandler {
 	 * strategy.directoryoperations.RequestHandler#handle(request.HTTPRequest)
 	 */
 	@Override
-	public HttpResponse handle(HTTPRequest request) {
+	public HttpResponseBase handle(HTTPRequest request) {
 		File requestedFile;
 		try {
 			requestedFile = lookupFileForRequestPath(request.getPath());

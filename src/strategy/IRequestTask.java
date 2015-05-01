@@ -28,12 +28,11 @@
 
 package strategy;
 
+import interfaces.HttpResponseBase;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.Socket;
-import java.util.List;
-
-import protocol.HttpResponse;
 
 /**
  * Wrapper around Runnable to represent the action necesary for a HTTPRequest to
@@ -57,7 +56,7 @@ public interface IRequestTask extends Runnable {
 
 	public boolean isComplete();
 
-	public HttpResponse getResponse();
+	public HttpResponseBase getResponse();
 
 	public void setRequestingClient(Socket client);
 

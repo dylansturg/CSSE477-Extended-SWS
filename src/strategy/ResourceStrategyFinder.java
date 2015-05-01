@@ -54,7 +54,7 @@ public class ResourceStrategyFinder {
 
 	public ResourceStrategyRoute findRouteForRequest(HTTPRequest request) {
 		return serverConfiguration.getManagedResourceConfiguration()
-				.findRouteForResourcePath(request.getPath());
+				.findRouteForResourcePath(request.getPath(), request.getMethod());
 	}
 
 	public IResourceStrategy getStrategyForResourceRoute(

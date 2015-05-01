@@ -43,21 +43,12 @@ import java.util.Map;
 public class ResourceStrategyRoute {
 
 	public static final ResourceStrategyRoute None = new ResourceStrategyRouteNone();
+	public static final ResourceStrategyRoute INVALID = new ResourceStrategyRouteInvalid();
 
 	private Class<?> strategyClass;
 	private String routeMatch;
 	private List<String> methods;
 	private Map<String, String> strategyOptions;
-
-	public ResourceStrategyRoute(Class<?> strategy, String route,
-			Map<String, String> options) {
-		strategyClass = strategy;
-		routeMatch = route;
-		strategyOptions = options;
-
-		methods = new ArrayList<String>();
-		methods.add("GET");
-	}
 
 	public ResourceStrategyRoute(Class<?> strategy, String route,
 			List<String> methods, Map<String, String> options) {
@@ -77,5 +68,18 @@ public class ResourceStrategyRoute {
 
 	public String getStrategyOption(String option) {
 		return strategyOptions.get(option);
+	}
+
+	public List<String> getMethods() {
+		return methods;
+	}
+
+	public boolean respondsToMethod(String method) {
+		for (String checkMethod : methods) {
+			if (checkMethod.equalsIgnoreCase(method)) {
+				return true;
+			}
+		}
+		return false;
 	}
 }

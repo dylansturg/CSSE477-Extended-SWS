@@ -28,15 +28,14 @@
 
 package strategy.directoryoperations;
 
+import interfaces.HttpResponseBase;
+
 import java.io.File;
 
-import configuration.ResourceStrategyRouteOptions;
-import protocol.HttpResponse;
 import protocol.HttpResponseFactory;
 import protocol.HttpStatusCode;
 import protocol.Protocol;
 import request.HTTPRequest;
-import request.HTTPRequestFactory;
 
 /**
  * DELETE request will delete an existing file from the file system. If no such
@@ -47,7 +46,7 @@ import request.HTTPRequestFactory;
 public class DeleteRequestHandler extends RequestHandler {
 
 	@Override
-	public HttpResponse handle(HTTPRequest request) {
+	public HttpResponseBase handle(HTTPRequest request) {
 
 		File requestedFile;
 
