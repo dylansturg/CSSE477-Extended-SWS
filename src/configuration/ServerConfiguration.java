@@ -97,6 +97,7 @@ public class ServerConfiguration implements IPluginAddedListener,
 
 		XStream parser = new XStream();
 
+		parser.alias("routes", ArrayList.class);
 		parser.alias("route", ServerRoute.class);
 		parser.alias("options", Map.class);
 

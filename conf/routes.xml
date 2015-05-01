@@ -1,5 +1,5 @@
-<list>
-  <configuration.ServerRoute>
+<routes>
+  <route>
     <plugin>myplugin</plugin>
     <path>/path/to/myplugin/</path>
     <options>
@@ -12,10 +12,10 @@
         <string>web/</string>
       </entry>
     </options>
-  </configuration.ServerRoute>
-  <configuration.ServerRoute>
+  </route>
+  <route>
     <plugin>otherplugin</plugin>
     <path>/otherplugin/</path>
-    <options reference="../../configuration.ServerRoute/options"/>
-  </configuration.ServerRoute>
-</list>
+    <options reference="../../route/options"/>
+  </route>
+</routes>
