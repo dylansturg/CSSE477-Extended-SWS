@@ -20,6 +20,12 @@ public class NoRouteStrategy extends ResourceStrategyBase {
 		public NoRouteTask(HTTPRequest request) {
 			super(request);
 		}
+		
+		@Override
+		public void run() {
+			completed = true;
+			super.run();
+		}
 
 		@Override
 		public HttpResponseBase getResponse() {

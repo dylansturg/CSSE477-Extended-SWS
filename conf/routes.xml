@@ -1,7 +1,7 @@
 <routes>
   <route>
-    <plugin>myplugin</plugin>
-    <path>/path/to/myplugin/</path>
+    <plugin>dirops</plugin>
+    <path>/dirops/</path>
     <options>
       <entry>
         <string>MaxThreads</string>
@@ -12,10 +12,5 @@
         <string>web/</string>
       </entry>
     </options>
-  </route>
-  <route>
-    <plugin>otherplugin</plugin>
-    <path>/otherplugin/</path>
-    <options reference="../../route/options"/>
   </route>
 </routes>
