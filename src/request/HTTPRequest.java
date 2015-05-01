@@ -73,8 +73,8 @@ public class HTTPRequest implements IHttpRequest {
 		headers = new HashMap<String, String>();
 		readSocket = socket;
 	}
-	
-	public String getQueryString(String key){
+
+	public String getQueryString(String key) {
 		return queryString.get(key);
 	}
 
@@ -114,18 +114,20 @@ public class HTTPRequest implements IHttpRequest {
 		queryText = requestHeader[0].split("\\?");
 		path = queryText[0];
 		version = requestHeader[1];
-				
-        for (String pair : queryText[1].split("&")) {
-            int idxOfEqual = pair.indexOf("=");
 
-            if (idxOfEqual < 0) {
-                queryString.put(pair, "");
-            } else {
-                String key = pair.substring(0, idxOfEqual);
-                String value = pair.substring(idxOfEqual + 1);
-                queryString.put(key, value);
-            }
-        }
+		if (queryText.length > 1) {
+			for (String pair : queryText[1].split("&")) {
+				int idxOfEqual = pair.indexOf("=");
+
+				if (idxOfEqual < 0) {
+					queryString.put(pair, "");
+				} else {
+					String key = pair.substring(0, idxOfEqual);
+					String value = pair.substring(idxOfEqual + 1);
+					queryString.put(key, value);
+				}
+			}
+		}
 
 		while ((line = reader.readLine()) != null) {
 			if (line.isEmpty()) {
