@@ -57,6 +57,7 @@ public class HTTPRequest implements IHttpRequest {
 	String path;
 	String version;
 	Map<String, String> headers;
+	Map<String, String> queryString;
 	String body;
 	Boolean bodyPresent;
 	int bodyLength;
@@ -65,11 +66,16 @@ public class HTTPRequest implements IHttpRequest {
 		headers = new HashMap<String, String>();
 		readSocket = socket;
 		streamReader = inStreamReader;
+		queryString = new HashMap<String, String>();
 	}
 
 	public HTTPRequest(Socket socket) {
 		headers = new HashMap<String, String>();
 		readSocket = socket;
+	}
+	
+	public String getQueryString(String key){
+		return queryString.get(key);
 	}
 
 	public String getMethod() {
@@ -88,6 +94,7 @@ public class HTTPRequest implements IHttpRequest {
 	public void readHeadersAndBody() throws Exception {
 		InputStream inStream;
 		String[] requestHeader;
+		String[] queryText;
 
 		BufferedReader reader = null;
 		if (streamReader == null) {
@@ -104,8 +111,21 @@ public class HTTPRequest implements IHttpRequest {
 		System.out.println("Requested path: " + requestHeader[0]
 				+ ", Request version: " + requestHeader[1] + "\n");
 
-		path = requestHeader[0];
+		queryText = requestHeader[0].split("\\?");
+		path = queryText[0];
 		version = requestHeader[1];
+				
+        for (String pair : queryText[1].split("&")) {
+            int idxOfEqual = pair.indexOf("=");
+
+            if (idxOfEqual < 0) {
+                queryString.put(pair, "");
+            } else {
+                String key = pair.substring(0, idxOfEqual);
+                String value = pair.substring(idxOfEqual + 1);
+                queryString.put(key, value);
+            }
+        }
 
 		while ((line = reader.readLine()) != null) {
 			if (line.isEmpty()) {
