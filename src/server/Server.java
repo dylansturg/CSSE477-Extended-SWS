@@ -23,20 +23,25 @@ package server;
 
 import gui.WebServer;
 
+import java.io.File;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
+import java.util.Map;
 
 import request.HTTPRequestFactory;
 import response.ResponseHandler;
+import strategy.DirectoryStrategy;
 import strategy.ResourceStrategyFinder;
+import configuration.InvalidConfigurationException;
+import configuration.PluginData;
 import configuration.ResourceStrategyConfiguration;
 import configuration.ResourceStrategyRoute;
 import configuration.ResourceStrategyRouteOptions;
 import configuration.ServerConfiguration;
+import configuration.ServletData;
 
 /**
  * This represents a welcoming server for the incoming TCP request from a HTTP
@@ -62,7 +67,8 @@ public class Server implements Runnable {
 	 * @param rootDirectory
 	 * @param port
 	 */
-	public Server(String rootDirectory, int port, WebServer window) {
+	public Server(String rootDirectory, String configFile, int port,
+			WebServer window) throws InvalidConfigurationException {
 		this.rootDirectory = rootDirectory;
 		this.port = port;
 		this.stop = false;
@@ -70,23 +76,27 @@ public class Server implements Runnable {
 		this.serviceTime = 0;
 		this.window = window;
 
-		configuration = new ServerConfiguration();
-
-		List<ResourceStrategyRoute> routes = new ArrayList<ResourceStrategyRoute>();
-
-		HashMap<String, String> directoryOperationsSettings = new HashMap<String, String>();
-		directoryOperationsSettings.put(
-				ResourceStrategyRouteOptions.AllowPersistentConnections,
-				"False");
-		directoryOperationsSettings.put(
+		resourcesConfiguration = new ResourceStrategyConfiguration();
+		configuration = new ServerConfiguration(resourcesConfiguration);
+		configuration.setConfigurationOption(
 				ResourceStrategyRouteOptions.RootDirectoy, rootDirectory);
-		directoryOperationsSettings.put(
-				ResourceStrategyRouteOptions.ServeDirectories, "True");
+		configuration.parseConfiguration(new File(configFile));
 
-		routes.add(new ResourceStrategyRoute("strategy.DirectoryStrategy",
-				"(.*?)", directoryOperationsSettings));
+		ServletData dirops = new ServletData(DirectoryStrategy.class.getName(),
+				"get", Arrays.asList(new String[] { "GET", "POST", "PUT",
+						"DELETE" }));
+		PluginData dirPlugin = new PluginData("dirops", null,
+				Arrays.asList(new ServletData[] { dirops }));
 
-		resourcesConfiguration = new ResourceStrategyConfiguration(routes);
+		configuration.addPlugin(dirPlugin);
+
+		Map<String, String> options = new HashMap<String, String>();
+		options.put(ResourceStrategyRouteOptions.RootDirectoy, rootDirectory);
+		
+		resourcesConfiguration.addRoute(new ResourceStrategyRoute(
+				DirectoryStrategy.class, "/dirops/", dirops
+						.getExpectedMethods(), options));
+
 	}
 
 	/**
@@ -164,7 +174,7 @@ public class Server implements Runnable {
 						configuration, this);
 				HTTPRequestFactory connectionRequestFactory = new HTTPRequestFactory();
 				ResourceStrategyFinder connectionResourceMapper = new ResourceStrategyFinder(
-						resourcesConfiguration, configuration);
+						configuration);
 
 				ConnectionHandler handler = new ConnectionHandler(this,
 						connectionResponseHandler, connectionRequestFactory,

@@ -38,6 +38,16 @@ public class ServletData {
 	protected String classPath;
 	protected String relativeUrl;
 	protected List<String> expectedMethods;
+	
+	public ServletData() {
+	}
+	
+	public ServletData(String classPath, String relativeUrl, List<String> methods) {
+		super();
+		this.classPath = classPath;
+		this.relativeUrl = relativeUrl;
+		this.expectedMethods = methods;
+	}
 
 	/**
 	 * @return the classPath

@@ -28,7 +28,7 @@
 
 package strategy;
 
-import protocol.HttpResponse;
+import interfaces.HttpResponseBase;
 import protocol.HttpResponseFactory;
 import protocol.HttpStatusCode;
 import protocol.Protocol;
@@ -66,7 +66,7 @@ public class BadRequestStrategy extends ResourceStrategyBase {
 		 * @see strategy.RequestTaskBase#getResponse()
 		 */
 		@Override
-		public HttpResponse getResponse() {
+		public HttpResponseBase getResponse() {
 			return HttpResponseFactory.createGenericErrorResponse(
 					HttpStatusCode.BAD_REQUEST, Protocol.CLOSE);
 		}

@@ -29,9 +29,7 @@
 package configuration;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Designed to receive a parsed configuration for all possible ResourceStrategy
@@ -44,28 +42,43 @@ import java.util.Map;
  * @author Chandan R. Rupakheti (rupakhcr@clarkson.edu)
  */
 public class ResourceStrategyConfiguration {
-	private List<ResourceStrategyRoute> activeRoutes;
+	protected List<ResourceStrategyRoute> activeRoutes;
+
+	public ResourceStrategyConfiguration() {
+		activeRoutes = new ArrayList<ResourceStrategyRoute>();
+	}
 
 	public ResourceStrategyConfiguration(List<ResourceStrategyRoute> routes) {
 		activeRoutes = routes;
 	}
 
-	public ResourceStrategyRoute findRouteForResourcePath(String path) {
+	protected void setNewRoutes(List<ResourceStrategyRoute> routes) {
+		activeRoutes = routes;
+	}
+
+	public void addRoute(ResourceStrategyRoute route) {
+		activeRoutes.add(route);
+	}
+
+	public ResourceStrategyRoute findRouteForResourcePath(String path,
+			String method) {
 		if (path == null) {
-			return ResourceStrategyRouteNone.None;
+			return ResourceStrategyRoute.INVALID;
 		}
 
 		try {
 			for (ResourceStrategyRoute resourceStrategyRoute : activeRoutes) {
 				String routeRegex = resourceStrategyRoute.getRouteMatch();
-				if (routeRegex != null && path.matches(routeRegex)) {
-					return resourceStrategyRoute;
+				if (routeRegex != null && path.startsWith(routeRegex)) {
+					if (resourceStrategyRoute.respondsToMethod(method)) {
+						return resourceStrategyRoute;
+					}
 				}
 			}
 		} catch (Exception e) {
 			// Pass
 		}
 
-		return ResourceStrategyRouteNone.None;
+		return ResourceStrategyRoute.None;
 	}
 }

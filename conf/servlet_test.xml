@@ -1,0 +1,31 @@
+<plugin>
+  <pluginName>fancyplugin</pluginName>
+  <servlets>
+    <servlet>
+      <classPath>tests.ServletDataParsingTests$TestServlet</classPath>
+      <relativeUrl>/serv1/</relativeUrl>
+      <expectedMethods>
+        <string>GET</string>
+        <string>POST</string>
+        <string>PUT</string>
+      </expectedMethods>
+    </servlet>
+    <servlet>
+      <classPath>tests.ServletDataParsingTests$TestServlet</classPath>
+      <relativeUrl>/more/fancy/path/serv2/</relativeUrl>
+      <expectedMethods>
+        <string>GET</string>
+        <string>POST</string>
+        <string>HEAD</string>
+        <string>DELETE</string>
+      </expectedMethods>
+    </servlet>
+    <servlet>
+      <classPath>tests.ServletDataParsingTests$TestServlet</classPath>
+      <relativeUrl>/serv3/</relativeUrl>
+      <expectedMethods>
+        <string>GET</string>
+      </expectedMethods>
+    </servlet>
+  </servlets>
+</plugin>

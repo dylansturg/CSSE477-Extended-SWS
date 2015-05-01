@@ -25,7 +25,7 @@
  * NY 13699-5722
  * http://clarkson.edu/~rupakhcr
  */
- 
+
 package configuration;
 
 /**
@@ -33,5 +33,18 @@ package configuration;
  * @author Chandan R. Rupakheti (rupakhcr@clarkson.edu)
  */
 public class InvalidConfigurationException extends Exception {
-	
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -651724102235581218L;
+
+	public InvalidConfigurationException(String explanation) {
+		super(explanation);
+	}
+
+	public InvalidConfigurationException(String explanation, Throwable e) {
+		super(explanation, e);
+	}
+
 }

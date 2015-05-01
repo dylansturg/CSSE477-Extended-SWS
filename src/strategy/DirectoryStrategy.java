@@ -38,7 +38,6 @@ import java.util.Map;
 
 import configuration.ResourceStrategyRoute;
 import protocol.HttpRequest;
-import protocol.HttpResponse;
 import protocol.HttpResponseFactory;
 import request.HTTPRequest;
 import strategy.directoryoperations.RequestHandler;

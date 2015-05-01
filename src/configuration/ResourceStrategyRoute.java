@@ -28,6 +28,8 @@
 
 package configuration;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -40,22 +42,23 @@ import java.util.Map;
  */
 public class ResourceStrategyRoute {
 
-	public static final ResourceStrategyRoute None = new ResourceStrategyRouteNone(
-			null, null, null);
+	public static final ResourceStrategyRoute None = new ResourceStrategyRouteNone();
+	public static final ResourceStrategyRoute INVALID = new ResourceStrategyRouteInvalid();
 
-	private String strategyClass;
+	private Class<?> strategyClass;
 	private String routeMatch;
-	private String pathToContainingJar;
+	private List<String> methods;
 	private Map<String, String> strategyOptions;
 
-	public ResourceStrategyRoute(String strategy, String route,
-			Map<String, String> options) {
+	public ResourceStrategyRoute(Class<?> strategy, String route,
+			List<String> methods, Map<String, String> options) {
 		strategyClass = strategy;
 		routeMatch = route;
+		this.methods = methods;
 		strategyOptions = options;
 	}
 
-	public String getStrategyClass() {
+	public Class<?> getStrategyClass() {
 		return strategyClass;
 	}
 
@@ -67,16 +70,16 @@ public class ResourceStrategyRoute {
 		return strategyOptions.get(option);
 	}
 
-	/**
-	 * Currently unused, but available for potential future extension. Designed
-	 * to allow pluggable ResourceStrategy classes through extensions in the
-	 * server.
-	 * 
-	 * Always returns null for now.
-	 * 
-	 * @return a path to a jar with the ResourceStrategy implementation
-	 */
-	public String getContainingJarPath() {
-		return pathToContainingJar;
+	public List<String> getMethods() {
+		return methods;
+	}
+
+	public boolean respondsToMethod(String method) {
+		for (String checkMethod : methods) {
+			if (checkMethod.equalsIgnoreCase(method)) {
+				return true;
+			}
+		}
+		return false;
 	}
 }

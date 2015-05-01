@@ -1,6 +1,6 @@
 /*
- * UnsupportedRequestHandler.java
- * Apr 24, 2015
+ * ServerRoute.java
+ * Apr 30, 2015
  *
  * Simple Web Server (SWS) for EE407/507 and CS455/555
  * 
@@ -26,24 +26,74 @@
  * http://clarkson.edu/~rupakhcr
  */
 
-package strategy.directoryoperations;
+package configuration;
 
-import interfaces.HttpResponseBase;
-import protocol.HttpResponseFactory;
-import protocol.HttpStatusCode;
-import protocol.Protocol;
-import request.HTTPRequest;
+import java.util.Map;
 
 /**
  * 
  * @author Chandan R. Rupakheti (rupakhcr@clarkson.edu)
  */
-public class UnsupportedRequestHandler extends RequestHandler {
+public class ServerRoute {
+	protected String plugin;
+	protected String path;
+	protected Map<String, String> options;
 
-	@Override
-	public HttpResponseBase handle(HTTPRequest request) {
-		return HttpResponseFactory.createGenericErrorResponse(
-				HttpStatusCode.TEAPOT, Protocol.CLOSE);
+	/**
+	 * Default Ctor for Xstream
+	 */
+	public ServerRoute() {
+	}
+
+	public ServerRoute(String plugin, String path, Map<String, String> options) {
+		this.plugin = plugin;
+		this.path = path;
+		this.options = options;
+	}
+
+	/**
+	 * @return the plugin
+	 */
+	public String getPlugin() {
+		return plugin;
+	}
+
+	/**
+	 * @param plugin
+	 *            the plugin to set
+	 */
+	public void setPlugin(String plugin) {
+		this.plugin = plugin;
+	}
+
+	/**
+	 * @return the path
+	 */
+	public String getPath() {
+		return path;
+	}
+
+	/**
+	 * @param path
+	 *            the path to set
+	 */
+	public void setPath(String path) {
+		this.path = path;
+	}
+
+	/**
+	 * @return the options
+	 */
+	public Map<String, String> getOptions() {
+		return options;
+	}
+
+	/**
+	 * @param options
+	 *            the options to set
+	 */
+	public void setOptions(Map<String, String> options) {
+		this.options = options;
 	}
 
 }
