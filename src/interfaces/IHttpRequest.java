@@ -35,6 +35,8 @@ package interfaces;
 public interface IHttpRequest {
 
 	public String getHeader(String key);
+	
+	public String getQueryString(String key);
 
 	public String getContent();
 
