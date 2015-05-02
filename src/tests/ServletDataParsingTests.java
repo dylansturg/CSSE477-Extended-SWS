@@ -66,17 +66,6 @@ public class ServletDataParsingTests {
 		System.out.println(result);
 		
 	}
-	
-	@Test
-	public void testFindingExistingPlugin(){
-		ServletMonitor monitor = new ServletMonitor(null);
-		Path folder = Paths.get("plugins");
-		monitor.findExistingFiles(folder);
-		
-		ArrayList<PluginData> plugins = monitor.getPlugins();
-		assertEquals("fancyplugin", plugins.get(0).getPluginName());
-		
-	}
 
 	public class TestServlet implements IResourceStrategy {
 

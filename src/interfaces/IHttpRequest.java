@@ -28,6 +28,8 @@
 
 package interfaces;
 
+import java.util.Map;
+
 /**
  * 
  * @author Chandan R. Rupakheti (rupakhcr@clarkson.edu)
@@ -35,6 +37,8 @@ package interfaces;
 public interface IHttpRequest {
 
 	public String getHeader(String key);
+	
+	public Map<String, String> getQueryStrings();
 	
 	public String getQueryString(String key);
 

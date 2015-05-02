@@ -73,6 +73,10 @@ public class HTTPRequest implements IHttpRequest {
 		headers = new HashMap<String, String>();
 		readSocket = socket;
 	}
+	
+	public Map<String, String> getQueryStrings(){
+		return queryString;
+	}
 
 	public String getQueryString(String key) {
 		return queryString.get(key);
