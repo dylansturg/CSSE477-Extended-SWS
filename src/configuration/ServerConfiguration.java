@@ -31,6 +31,8 @@ package configuration;
 import interfaces.IResourceStrategy;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -57,6 +59,8 @@ public class ServerConfiguration implements IPluginAddedListener,
 	protected static final String ROUTE_REGEX = "/%s/%s/";
 
 	protected Map<String, String> configuration;
+	protected ArrayList<String> blacklist;
+	protected String blacklistFile;
 
 	protected Map<String, PluginData> availablePlugins;
 	protected ResourceStrategyConfiguration managedResourceConfiguration;
@@ -66,6 +70,7 @@ public class ServerConfiguration implements IPluginAddedListener,
 		managedResourceConfiguration = managedResouceConfig;
 		availablePlugins = new HashMap<String, PluginData>();
 		configuration = new HashMap<String, String>();
+		blacklist = new ArrayList<String>();
 	}
 
 	/**
@@ -75,6 +80,26 @@ public class ServerConfiguration implements IPluginAddedListener,
 		return managedResourceConfiguration;
 	}
 
+	public void setBlacklist(ArrayList<String> list, String file){
+		this.blacklist = list;
+		this.blacklistFile = file;
+	}
+	
+	public void updateBlacklist(){
+		File blacklistConfig = new File(blacklistFile);
+		XStream streamer = new XStream();
+
+		try {
+			blacklistConfig.createNewFile();
+			FileOutputStream out = new FileOutputStream(blacklistConfig);
+			streamer.toXML(this.blacklist, out);
+			out.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
 	public void setConfigurationOption(String key, String value) {
 		configuration.put(key, value);
 	}
