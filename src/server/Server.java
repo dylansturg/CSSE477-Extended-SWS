@@ -32,6 +32,7 @@ import java.util.Map;
 
 import request.HTTPRequestFactory;
 import response.ResponseHandler;
+import strategy.RequestDurationCache;
 import strategy.ResourceStrategyFinder;
 import configuration.InvalidConfigurationException;
 import configuration.ResourceStrategyConfiguration;
@@ -61,8 +62,10 @@ public class Server implements Runnable {
 	private ServerConfiguration configuration;
 	private ServletMonitor monitor;
 	private ResourceStrategyConfiguration resourcesConfiguration;
-	
+
 	private ResponseHandler sharedResponseHandler;
+
+	private RequestDurationCache requestDurationEstimator;
 
 	/**
 	 * @param rootDirectory
@@ -101,6 +104,9 @@ public class Server implements Runnable {
 		Map<String, String> options = new HashMap<String, String>();
 		options.put(ResourceStrategyRouteOptions.RootDirectoy, rootDirectory);
 
+		// CONSIDER utilizing a Map that has a maximum size and/or expiration
+		requestDurationEstimator = new RequestDurationCache();
+
 	}
 
 	/**
@@ -126,7 +132,7 @@ public class Server implements Runnable {
 			try {
 				configuration.parseConfiguration(new File(configurationFile));
 			} catch (InvalidConfigurationException exp) {
-				
+
 			}
 		}
 	}
@@ -183,9 +189,10 @@ public class Server implements Runnable {
 				// Come out of the loop if the stop flag is set
 				if (this.stop)
 					break;
-				
-				if(sharedResponseHandler == null){
-					sharedResponseHandler = new ResponseHandler(configuration, this);
+
+				if (sharedResponseHandler == null) {
+					sharedResponseHandler = new ResponseHandler(configuration,
+							this);
 					new Thread(sharedResponseHandler).start();
 				}
 
@@ -204,7 +211,7 @@ public class Server implements Runnable {
 				// ConnectionHandler handler = new ConnectionHandler(this,
 				// connectionSocket);
 				new Thread(handler).start();
-				
+
 			}
 			this.welcomeSocket.close();
 		} catch (Exception e) {
