@@ -71,6 +71,11 @@ public class Server implements Runnable {
 		return requestDurationEstimator;
 	}
 
+	public Server() {
+		// Don't do anything... probably shouldn't use this one unless you're
+		// testing
+	}
+
 	/**
 	 * @param rootDirectory
 	 * @param port

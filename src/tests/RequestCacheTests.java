@@ -75,7 +75,7 @@ public class RequestCacheTests {
 		assertEquals(3, estimate, TEST_DELTA);
 	}
 
-	public class FakeHttpRequest implements IHttpRequest {
+	public static class FakeHttpRequest implements IHttpRequest {
 
 		private String method = "";
 		private String path = "";
