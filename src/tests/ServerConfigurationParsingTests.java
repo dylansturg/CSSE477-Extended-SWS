@@ -7,6 +7,7 @@ import interfaces.IHttpRequest;
 import interfaces.IRequestTask;
 import interfaces.IResourceRoute;
 import interfaces.IResourceStrategy;
+import interfaces.RequestTaskBase;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -72,9 +73,9 @@ public class ServerConfigurationParsingTests {
 
 		tester.parseConfiguration(testConfig);
 
-		IResourceRoute testRoute = tester
-				.getManagedResourceConfiguration().findRouteForResourcePath(
-						"/path/to/myplugin/fancyservlet/", "get");
+		IResourceRoute testRoute = tester.getManagedResourceConfiguration()
+				.findRouteForResourcePath("/path/to/myplugin/fancyservlet/",
+						"get");
 
 		assertNotNull(testRoute);
 		assertEquals(testRoute, ResourceStrategyRoute.None);
@@ -155,9 +156,9 @@ public class ServerConfigurationParsingTests {
 			fail();
 		}
 
-		IResourceRoute testRoute = tester
-				.getManagedResourceConfiguration().findRouteForResourcePath(
-						"/path/to/myplugin/fancyservlet/", "get");
+		IResourceRoute testRoute = tester.getManagedResourceConfiguration()
+				.findRouteForResourcePath("/path/to/myplugin/fancyservlet/",
+						"get");
 
 		assertNotNull(testRoute);
 		assertEquals(testRoute.getStrategyClass(), TestServlet.class);
@@ -177,7 +178,7 @@ public class ServerConfigurationParsingTests {
 	public class TestServlet implements IResourceStrategy {
 
 		@Override
-		public IRequestTask prepareEvaluation(IHttpRequest request,
+		public RequestTaskBase prepareEvaluation(IHttpRequest request,
 				IResourceRoute fromRoute) {
 			return null;
 		}

@@ -51,7 +51,7 @@ public class InternalErrorStrategy extends ResourceStrategyBase {
 	 * configuration.ResourceStrategyRoute)
 	 */
 	@Override
-	public IRequestTask prepareEvaluation(IHttpRequest request,
+	public RequestTaskBase prepareEvaluation(IHttpRequest request,
 			IResourceRoute fromRoute) {
 
 		return new InternalErrorRequestTask(request);

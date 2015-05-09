@@ -59,7 +59,7 @@ public class DirectoryStrategy extends ResourceStrategyBase {
 	 * strategy.ResourceStrategyBase#prepareEvaluation(protocol.HttpRequest)
 	 */
 	@Override
-	public IRequestTask prepareEvaluation(IHttpRequest request,
+	public RequestTaskBase prepareEvaluation(IHttpRequest request,
 			IResourceRoute fromRoute) {
 
 		RequestHandler handler = null;

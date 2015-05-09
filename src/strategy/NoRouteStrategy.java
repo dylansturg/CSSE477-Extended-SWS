@@ -11,7 +11,7 @@ import protocol.Protocol;
 
 public class NoRouteStrategy extends ResourceStrategyBase {
 	@Override
-	public IRequestTask prepareEvaluation(IHttpRequest request,
+	public RequestTaskBase prepareEvaluation(IHttpRequest request,
 			IResourceRoute fromRoute) {
 		return new NoRouteTask(request);
 	}
@@ -21,7 +21,7 @@ public class NoRouteStrategy extends ResourceStrategyBase {
 		public NoRouteTask(IHttpRequest request) {
 			super(request);
 		}
-		
+
 		@Override
 		public void run() {
 			completed = true;

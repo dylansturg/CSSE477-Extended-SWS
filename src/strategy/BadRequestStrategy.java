@@ -44,7 +44,7 @@ import protocol.Protocol;
 public class BadRequestStrategy extends ResourceStrategyBase {
 
 	@Override
-	public IRequestTask prepareEvaluation(IHttpRequest request,
+	public RequestTaskBase prepareEvaluation(IHttpRequest request,
 			IResourceRoute fromRoute) {
 		return new BadRequestTask(request);
 	}

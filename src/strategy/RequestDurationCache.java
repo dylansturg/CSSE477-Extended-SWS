@@ -19,7 +19,7 @@ public class RequestDurationCache {
 	 * @author dylans
 	 *
 	 */
-	public class RequestKey {
+	protected class RequestKey {
 		public String method;
 		public String path;
 
@@ -80,7 +80,7 @@ public class RequestDurationCache {
 		}
 	}
 
-	public class RequestStatistics {
+	protected class RequestStatistics {
 		public int successCount;
 		public int failureCount;
 		public double executionTimeSum;
