@@ -21,9 +21,9 @@
 
 package server;
 
-import interfaces.IRequestTask;
 import interfaces.IResourceRoute;
 import interfaces.IResourceStrategy;
+import interfaces.RequestTaskBase;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -121,7 +121,7 @@ public class ConnectionHandler implements Runnable {
 			IResourceStrategy strategyForRequest = resourceStrategyMapper
 					.getStrategyForResourceRoute(requestRoute);
 
-			IRequestTask requestTask = strategyForRequest.prepareEvaluation(
+			RequestTaskBase requestTask = strategyForRequest.prepareEvaluation(
 					incomingRequest, requestRoute);
 			requestTask.setStartTime(requestStartTimeStamp);
 

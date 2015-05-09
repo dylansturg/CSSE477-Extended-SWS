@@ -29,7 +29,6 @@
 package strategy;
 
 import interfaces.IHttpRequest;
-import interfaces.IRequestTask;
 import interfaces.IResourceRoute;
 import interfaces.RequestTaskBase;
 
@@ -109,7 +108,7 @@ public class DirectoryStrategy extends ResourceStrategyBase {
 		@Override
 		public void run() {
 			try {
-				response = handler.handle(request);
+				response = handler.handle(getRequest());
 			} catch (Exception exp) {
 				// Internal Server Error
 

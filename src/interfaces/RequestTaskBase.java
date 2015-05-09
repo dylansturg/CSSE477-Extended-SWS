@@ -34,6 +34,9 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+
+import server.Server;
 
 /**
  * 
@@ -42,9 +45,13 @@ import java.util.List;
 public abstract class RequestTaskBase implements IRequestTask,
 		Comparable<RequestTaskBase> {
 	protected List<IRequestTaskCompletionListener> completionListeners;
-	protected IHttpRequest request;
+	private IHttpRequest request;
 	protected boolean completed = false;
+	protected boolean successful = false;
 	protected Socket client;
+
+	// Not accessible in implementation
+	private Server server;
 
 	protected long startTimestamp;
 
@@ -55,6 +62,10 @@ public abstract class RequestTaskBase implements IRequestTask,
 	public RequestTaskBase(IHttpRequest request) {
 		this.request = request;
 		completionListeners = new ArrayList<IRequestTask.IRequestTaskCompletionListener>();
+	}
+
+	public final void setServer(Server serv) {
+		server = serv;
 	}
 
 	@Override
@@ -80,6 +91,11 @@ public abstract class RequestTaskBase implements IRequestTask,
 	}
 
 	@Override
+	public final IHttpRequest getRequest() {
+		return request;
+	}
+
+	@Override
 	public HttpResponseBase getResponse() {
 		return response;
 	}
@@ -89,15 +105,25 @@ public abstract class RequestTaskBase implements IRequestTask,
 		return completed;
 	}
 
+	@Override
+	public boolean wasSuccessful() {
+		return successful;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see strategy.IRequestTask#writeResponse(java.io.OutputStream)
 	 */
 	@Override
-	public void writeResponse(OutputStream out) throws IOException {
+	public final void writeResponse(OutputStream out) throws IOException {
 		IHttpResponse response = getResponse();
 		response.write(out);
+
+		if (response.getStatusCode() < 400) {
+			// 100s, 200s, and 300s indicate success (of some sort)
+			successful = true;
+		}
 	}
 
 	@Override
@@ -120,6 +146,21 @@ public abstract class RequestTaskBase implements IRequestTask,
 		this.startTimestamp = timestamp;
 	}
 
+	private long timeDifference(Date first, Date second, TimeUnit unit) {
+		long milis = second.getTime() - first.getTime();
+		return unit.convert(milis, TimeUnit.MILLISECONDS);
+	}
+
+	private double getWaitingTime(Date now) {
+		return (double) timeDifference(receivedTimeStamp, now,
+				TimeUnit.MILLISECONDS);
+	}
+
+	private double getEstimatedRunTime() {
+		return server != null ? server.getRequestDurationEstimator()
+				.estimateExecutionTimeForRequest(request) : -1;
+	}
+
 	@Override
 	public int compareTo(RequestTaskBase o) {
 		if (o == null) {
@@ -127,11 +168,27 @@ public abstract class RequestTaskBase implements IRequestTask,
 					"Attempt to compare to null IRequestTask");
 		}
 
-		// TODO implement a weighting based on the expected time to finish this
-		// request weight the priority such that after a breakpoint, the oldest
-		// request will be served regardless of the time expected to complete
-		// the oldest request
-		return receivedTimeStamp.compareTo(o.receivedTimeStamp);
+		/**
+		 * Use the estimated request time as a benchmark. If the request has
+		 * been waiting longer than its estimate time to execute, then order as
+		 * FIFO. Otherwise, order as shortest duration to compute first.
+		 */
+
+		double myEstimate = getEstimatedRunTime();
+		double otherEstimate = o.getEstimatedRunTime();
+
+		Date now = new Date();
+		double myWait = getWaitingTime(now);
+		double otherWait = o.getWaitingTime(now);
+
+		if (myEstimate < myWait || otherEstimate < otherWait) {
+			// if a wait time ever exceeds the estimate for runtime, order as
+			// FIFO
+			return receivedTimeStamp.compareTo(o.receivedTimeStamp);
+		}
+
+		// Longify for most precision, then intify for conformance
+		return (int) ((long) myEstimate - (long) otherEstimate);
 
 	}
 }

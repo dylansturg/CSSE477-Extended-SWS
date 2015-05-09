@@ -30,6 +30,7 @@ package response;
 
 import interfaces.IRequestTask;
 import interfaces.IRequestTask.IRequestTaskCompletionListener;
+import interfaces.RequestTaskBase;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -43,7 +44,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.PriorityBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -167,7 +167,7 @@ public class ResponseHandler implements Runnable,
 	 *             if the specified client is not already served by
 	 *             ResponseHandler. Try calling addClientToServed first.
 	 */
-	public void enqueueRequestTaskForClient(IRequestTask task, Socket client) {
+	public void enqueueRequestTaskForClient(RequestTaskBase task, Socket client) {
 		synchronized (clients) {
 			if (!clients.contains(client)) {
 				// We aren't serving that client, and we don't want to.
@@ -189,6 +189,7 @@ public class ResponseHandler implements Runnable,
 
 			clientsQueue.add(task);
 			task.registerCompletionListener(this);
+			task.setServer(server);
 
 			// ThreadPoolExecutor will handle scheduling and running the task
 			activeTaskThreadPool.execute(task);
@@ -265,8 +266,13 @@ public class ResponseHandler implements Runnable,
 				// TODO Log the exception, and close the socket
 			}
 
-			server.incrementServiceTime(System.currentTimeMillis()
-					- currentTask.getStartTime());
+			long startedTimeStamp = currentTask.getStartTime();
+			long finishedTimeStamp = System.currentTimeMillis();
+			server.incrementServiceTime(finishedTimeStamp - startedTimeStamp);
+			server.getRequestDurationEstimator().requestCompleted(
+					finishedTimeStamp - startedTimeStamp,
+					currentTask.wasSuccessful(), currentTask.getRequest());
+
 		}
 		return tasks.isEmpty();
 	}

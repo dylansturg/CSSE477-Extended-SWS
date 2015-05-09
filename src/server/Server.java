@@ -67,6 +67,10 @@ public class Server implements Runnable {
 
 	private RequestDurationCache requestDurationEstimator;
 
+	public RequestDurationCache getRequestDurationEstimator() {
+		return requestDurationEstimator;
+	}
+
 	/**
 	 * @param rootDirectory
 	 * @param port
