@@ -32,13 +32,15 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
  * 
  * @author Chandan R. Rupakheti (rupakhcr@clarkson.edu)
  */
-public abstract class RequestTaskBase implements IRequestTask {
+public abstract class RequestTaskBase implements IRequestTask,
+		Comparable<RequestTaskBase> {
 	protected List<IRequestTaskCompletionListener> completionListeners;
 	protected IHttpRequest request;
 	protected boolean completed = false;
@@ -47,6 +49,8 @@ public abstract class RequestTaskBase implements IRequestTask {
 	protected long startTimestamp;
 
 	protected HttpResponseBase response;
+
+	private Date receivedTimeStamp = new Date();
 
 	public RequestTaskBase(IHttpRequest request) {
 		this.request = request;
@@ -114,5 +118,20 @@ public abstract class RequestTaskBase implements IRequestTask {
 	@Override
 	public void setStartTime(long timestamp) {
 		this.startTimestamp = timestamp;
+	}
+
+	@Override
+	public int compareTo(RequestTaskBase o) {
+		if (o == null) {
+			throw new NullPointerException(
+					"Attempt to compare to null IRequestTask");
+		}
+
+		// TODO implement a weighting based on the expected time to finish this
+		// request weight the priority such that after a breakpoint, the oldest
+		// request will be served regardless of the time expected to complete
+		// the oldest request
+		return receivedTimeStamp.compareTo(o.receivedTimeStamp);
+
 	}
 }
