@@ -46,7 +46,6 @@ import java.util.Map;
 import protocol.HttpResponseFactory;
 import protocol.HttpStatusCode;
 import protocol.Protocol;
-import request.HTTPRequest;
 import server.GMTConversion;
 
 /**

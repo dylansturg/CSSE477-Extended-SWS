@@ -56,18 +56,18 @@ import com.thoughtworks.xstream.XStream;
  * @author Nathan Jarvis
  */
 public class ServletMonitor implements Runnable {
-	
-	public interface IInitialParseCompleteListener{
+
+	public interface IInitialParseCompleteListener {
 		public void pluginsParsed();
 	}
-	
+
 	private List<IPluginAddedListener> addedListeners;
 	private List<IPluginRemovedListener> removedListeners;
 	private static String extensionToUse = ".jar";
 	private static final String CONFIG_FILE_NAME = "plugin.xml";
-	
+
 	private IInitialParseCompleteListener parseCompleteListener;
-	
+
 	private ArrayList<PluginData> plugins;
 
 	public ServletMonitor(IInitialParseCompleteListener completeListener) {
@@ -76,8 +76,8 @@ public class ServletMonitor implements Runnable {
 		plugins = new ArrayList<PluginData>();
 		parseCompleteListener = completeListener;
 	}
-	
-	public ArrayList<PluginData> getPlugins(){
+
+	public ArrayList<PluginData> getPlugins() {
 		return plugins;
 	}
 
@@ -101,8 +101,8 @@ public class ServletMonitor implements Runnable {
 			// to avoid race conditions with another process that deletes
 			// directories.
 		}
-		
-		if(parseCompleteListener != null){
+
+		if (parseCompleteListener != null) {
 			parseCompleteListener.pluginsParsed();
 		}
 	}
@@ -147,12 +147,13 @@ public class ServletMonitor implements Runnable {
 						continue; // loop
 					} else if (ENTRY_CREATE == kind) {
 						// A new Path was created
+						@SuppressWarnings("unchecked")
 						Path newPath = ((WatchEvent<Path>) watchEvent)
 								.context();
 						// Output
 						if (newPath.toString().contains(extensionToUse)) {
 							System.out.println("New path created: " + newPath);
-							//Read in config and notify listeners
+							// Read in config and notify listeners
 							this.readPluginConfig(newPath);
 						}
 					}
@@ -183,12 +184,11 @@ public class ServletMonitor implements Runnable {
 					+ filename;
 		}
 
-		JarFile pluginJar;
+		JarFile pluginJar = null;
 		try {
 			pluginJar = new JarFile(path);
 			Enumeration<JarEntry> entries = pluginJar.entries();
 
-			String className = null;
 			JarEntry entry = null;
 			while (entries.hasMoreElements()) {
 				entry = entries.nextElement();
@@ -197,37 +197,45 @@ public class ServletMonitor implements Runnable {
 				if (name.equals(CONFIG_FILE_NAME)) {
 					try {
 						InputStream inStream = pluginJar.getInputStream(entry);
-						//Read in xml and register plugin.
+						// Read in xml and register plugin.
 						XStream streamer = new XStream();
-						
+
 						streamer.alias("plugin", PluginData.class);
 						streamer.alias("servlets", List.class);
 						streamer.alias("servlet", ServletData.class);
 						streamer.alias("expectedMethods", List.class);
-						
+
 						Object result = streamer.fromXML(inStream);
-						
+
 						PluginData plugin = (PluginData) result;
 						plugin.setJarPath(path.toString());
-						
+
 						this.plugins.add(plugin);
-						
-						//Notify all of the registered listeners about the plugins
-						for(int i = 0; i < addedListeners.size(); i++){
+
+						// Notify all of the registered listeners about the
+						// plugins
+						for (int i = 0; i < addedListeners.size(); i++) {
 							addedListeners.get(i).addPlugin(plugin);
 						}
-						
+
 						inStream.close();
 					} catch (IOException e) {
 						throw new IllegalArgumentException(
-								"Failed to read the config file.",
-								e);
+								"Failed to read the config file.", e);
 					}
 				}
 			}
+
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
+		} finally {
+			try {
+				if (pluginJar != null)
+					pluginJar.close();
+			} catch (IOException e) {
+				// we tried
+			}
 		}
 	}
 
@@ -246,11 +254,11 @@ public class ServletMonitor implements Runnable {
 	public void unregisterRemovedListener(IPluginRemovedListener listener) {
 		this.removedListeners.remove(listener);
 	}
-	
-	public void run(){
-		//Folder to check for plugins
+
+	public void run() {
+		// Folder to check for plugins
 		Path folder = Paths.get("plugins");
-		
+
 		this.findExistingFiles(folder);
 		this.watchDirectoryPath(folder);
 	}

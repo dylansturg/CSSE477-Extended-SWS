@@ -35,9 +35,6 @@ import interfaces.IResourceRoute;
 import java.io.File;
 
 import configuration.ResourceStrategyRouteOptions;
-import protocol.HttpStatusCode;
-import protocol.Protocol;
-import request.HTTPRequest;
 
 /**
  * 

@@ -38,7 +38,6 @@ import java.io.IOException;
 import protocol.HttpResponseFactory;
 import protocol.HttpStatusCode;
 import protocol.Protocol;
-import request.HTTPRequest;
 
 /**
  * PUT creates a new file, if necessary, and appends the request content to the

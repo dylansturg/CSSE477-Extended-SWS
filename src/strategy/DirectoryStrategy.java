@@ -33,16 +33,7 @@ import interfaces.IRequestTask;
 import interfaces.IResourceRoute;
 
 import java.lang.reflect.Constructor;
-import java.net.Socket;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
-import protocol.HttpRequest;
-import protocol.HttpResponseFactory;
-import request.HTTPRequest;
 import strategy.directoryoperations.RequestHandler;
 import strategy.directoryoperations.UnsupportedRequestHandler;
 
@@ -53,12 +44,6 @@ import strategy.directoryoperations.UnsupportedRequestHandler;
 public class DirectoryStrategy extends ResourceStrategyBase {
 	private static final String REQUEST_HANDLERS_PACKAGE = "strategy.directoryoperations";
 	private static final String REQUEST_HANDLERS_POSTFIX = "RequestHandler";
-
-	private static final Map<String, RequestHandler> REQUEST_HANDLERS;
-	static {
-		REQUEST_HANDLERS = Collections
-				.synchronizedMap(new HashMap<String, RequestHandler>());
-	}
 
 	/*
 	 * Evaluates directory based HTTP operations. Intended to be used with

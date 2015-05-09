@@ -1,13 +1,12 @@
 package strategy;
 
-import protocol.HttpResponseFactory;
-import protocol.HttpStatusCode;
-import protocol.Protocol;
 import interfaces.HttpResponseBase;
 import interfaces.IHttpRequest;
 import interfaces.IRequestTask;
 import interfaces.IResourceRoute;
-import request.HTTPRequest;
+import protocol.HttpResponseFactory;
+import protocol.HttpStatusCode;
+import protocol.Protocol;
 
 public class NoRouteStrategy extends ResourceStrategyBase {
 	@Override

@@ -39,8 +39,6 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
-import request.HTTPRequest;
-
 /**
  * 
  * @author Chandan R. Rupakheti (rupakhcr@clarkson.edu)

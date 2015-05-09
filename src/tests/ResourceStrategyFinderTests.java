@@ -28,7 +28,8 @@
 
 package tests;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import interfaces.IResourceRoute;
 import interfaces.IResourceStrategy;
 
@@ -39,9 +40,7 @@ import java.util.List;
 import org.junit.Test;
 
 import request.HTTPRequest;
-import strategy.BadRequestStrategy;
 import strategy.DirectoryStrategy;
-import strategy.InternalErrorStrategy;
 import strategy.NoRouteStrategy;
 import strategy.ResourceStrategyFinder;
 import configuration.ResourceStrategyConfiguration;

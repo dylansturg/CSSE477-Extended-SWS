@@ -28,8 +28,6 @@
 
 package interfaces;
 
-import configuration.ResourceStrategyRoute;
-import request.HTTPRequest;
 
 /**
  * Defines an implementation of a server-side resource management protocol. The

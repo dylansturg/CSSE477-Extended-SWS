@@ -47,8 +47,8 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import configuration.ServerConfiguration;
 import server.Server;
+import configuration.ServerConfiguration;
 
 /**
  * Implements handling of IRequestTask instances to serve a collection of
@@ -73,6 +73,7 @@ public class ResponseHandler implements Runnable,
 	 * 
 	 * Not used at the moment. Available for future extension.
 	 */
+	@SuppressWarnings("unused")
 	private ServerConfiguration serverConfig;
 
 	private List<Socket> clients;

@@ -33,7 +33,6 @@ import interfaces.IHttpRequest;
 import protocol.HttpResponseFactory;
 import protocol.HttpStatusCode;
 import protocol.Protocol;
-import request.HTTPRequest;
 
 /**
  * 

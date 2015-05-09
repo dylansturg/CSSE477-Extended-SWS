@@ -28,16 +28,10 @@
 
 package request;
 
-import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.lang.reflect.Constructor;
 import java.net.Socket;
-import java.util.HashMap;
-import java.util.Map;
-
-import request.HTTPRequest;
 
 ;
 

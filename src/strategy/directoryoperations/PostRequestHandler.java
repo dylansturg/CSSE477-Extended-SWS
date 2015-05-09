@@ -38,7 +38,6 @@ import java.io.IOException;
 import protocol.HttpResponseFactory;
 import protocol.HttpStatusCode;
 import protocol.Protocol;
-import request.HTTPRequest;
 
 /**
  * POST request will create a new file or overwrite an existing file in the file

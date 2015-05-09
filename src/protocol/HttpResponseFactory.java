@@ -23,17 +23,7 @@ package protocol;
 
 import interfaces.HttpResponseBase;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.net.FileNameMap;
-import java.net.URLConnection;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.Map;
-
-import javax.net.ssl.SSLEngineResult.Status;
 
 import response.DefaultHttpResponse;
 

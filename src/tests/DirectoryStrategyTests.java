@@ -28,7 +28,9 @@
 
 package tests;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 import interfaces.IRequestTask;
 import interfaces.IResourceRoute;
 
@@ -45,13 +47,12 @@ import java.util.HashMap;
 
 import org.junit.Test;
 
-import configuration.ResourceStrategyRoute;
-import request.GETHTTPRequest;
 import request.HTTPRequest;
 import request.HTTPRequestFactory;
 import strategy.DirectoryStrategy;
 import strategy.directoryoperations.GetRequestHandler;
 import strategy.directoryoperations.RequestHandler;
+import configuration.ResourceStrategyRoute;
 
 /**
  * 

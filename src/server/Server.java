@@ -27,21 +27,16 @@ import java.io.File;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
 import request.HTTPRequestFactory;
 import response.ResponseHandler;
-import strategy.DirectoryStrategy;
 import strategy.ResourceStrategyFinder;
 import configuration.InvalidConfigurationException;
-import configuration.PluginData;
 import configuration.ResourceStrategyConfiguration;
-import configuration.ResourceStrategyRoute;
 import configuration.ResourceStrategyRouteOptions;
 import configuration.ServerConfiguration;
-import configuration.ServletData;
 import configuration.ServletMonitor;
 import configuration.ServletMonitor.IInitialParseCompleteListener;
 
@@ -66,6 +61,8 @@ public class Server implements Runnable {
 	private ServerConfiguration configuration;
 	private ServletMonitor monitor;
 	private ResourceStrategyConfiguration resourcesConfiguration;
+	
+	private ResponseHandler sharedResponseHandler;
 
 	/**
 	 * @param rootDirectory
@@ -186,15 +183,18 @@ public class Server implements Runnable {
 				// Come out of the loop if the stop flag is set
 				if (this.stop)
 					break;
+				
+				if(sharedResponseHandler == null){
+					sharedResponseHandler = new ResponseHandler(configuration, this);
+					new Thread(sharedResponseHandler).start();
+				}
 
-				ResponseHandler connectionResponseHandler = new ResponseHandler(
-						configuration, this);
 				HTTPRequestFactory connectionRequestFactory = new HTTPRequestFactory();
 				ResourceStrategyFinder connectionResourceMapper = new ResourceStrategyFinder(
 						configuration);
 
 				ConnectionHandler handler = new ConnectionHandler(this,
-						connectionResponseHandler, connectionRequestFactory,
+						sharedResponseHandler, connectionRequestFactory,
 						connectionResourceMapper);
 
 				handler.serverClientSocket(connectionSocket);
@@ -204,7 +204,7 @@ public class Server implements Runnable {
 				// ConnectionHandler handler = new ConnectionHandler(this,
 				// connectionSocket);
 				new Thread(handler).start();
-				new Thread(connectionResponseHandler).start();
+				
 			}
 			this.welcomeSocket.close();
 		} catch (Exception e) {

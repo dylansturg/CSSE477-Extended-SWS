@@ -36,7 +36,6 @@ import java.io.File;
 import protocol.HttpResponseFactory;
 import protocol.HttpStatusCode;
 import protocol.Protocol;
-import request.HTTPRequest;
 
 /**
  * DELETE request will delete an existing file from the file system. If no such

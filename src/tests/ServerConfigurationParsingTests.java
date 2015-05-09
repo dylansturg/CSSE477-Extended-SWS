@@ -1,6 +1,8 @@
 package tests;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 import interfaces.IHttpRequest;
 import interfaces.IRequestTask;
 import interfaces.IResourceRoute;
@@ -16,8 +18,6 @@ import java.util.List;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
-
-import request.HTTPRequest;
 
 import com.thoughtworks.xstream.XStream;
 

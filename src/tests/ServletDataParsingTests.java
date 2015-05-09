@@ -1,6 +1,5 @@
 package tests;
 
-import static org.junit.Assert.*;
 import interfaces.IHttpRequest;
 import interfaces.IRequestTask;
 import interfaces.IResourceRoute;
@@ -8,21 +7,15 @@ import interfaces.IResourceStrategy;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.thoughtworks.xstream.XStream;
 
-import request.HTTPRequest;
 import configuration.PluginData;
 import configuration.ServletData;
-import configuration.ServletMonitor;
 
 public class ServletDataParsingTests {
 	private static final String TEST_FILE_PATH = "conf/servlet_test.xml";
