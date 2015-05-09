@@ -31,8 +31,14 @@ public class RequestDurationCache {
 		 * @param request
 		 */
 		public RequestKey(IHttpRequest request) {
-			method = request.getMethod();
-			path = request.getPath();
+			method = request.getMethod().toLowerCase();
+			path = request.getPath().toLowerCase();
+		}
+
+		@Override
+		public int hashCode() {
+			// Java's string hashCode is probably alright
+			return (method + path).hashCode();
 		}
 
 		@Override
@@ -114,6 +120,7 @@ public class RequestDurationCache {
 
 	public RequestDurationCache(
 			Map<RequestKey, RequestStatistics> underlyingCache) {
+		assert underlyingCache != null;
 		cache = underlyingCache;
 	}
 
@@ -134,12 +141,39 @@ public class RequestDurationCache {
 	 *         is available
 	 */
 	public double estimateExecutionTimeForRequest(IHttpRequest request) {
+		assert request != null;
+
 		RequestKey key = new RequestKey(request);
 		if (cache.containsKey(key)) {
 			return cache.get(key).estimateExecutionTime();
 		}
 
 		return -1;
+	}
+
+	/**
+	 * Logs the request's statistics into the underlying cache, as appropriate.
+	 * 
+	 * @param executionTime
+	 * @param successful
+	 * @param request
+	 */
+	public void requestCompleted(double executionTime, boolean successful,
+			IHttpRequest request) {
+		assert request != null;
+		assert executionTime > 0;
+
+		if (executionTime <= 0) {
+			throw new IllegalArgumentException(
+					"requestCompleted requires positive value for executionTime");
+		}
+
+		RequestKey key = new RequestKey(request);
+		if (!cache.containsKey(key)) {
+			cache.put(key, new RequestStatistics());
+		}
+
+		cache.get(key).appendStats(successful, executionTime);
 	}
 
 }
