@@ -1,7 +1,6 @@
 package tests;
 
 import interfaces.IHttpRequest;
-import interfaces.IRequestTask;
 import interfaces.IResourceRoute;
 import interfaces.IResourceStrategy;
 import interfaces.RequestTaskBase;

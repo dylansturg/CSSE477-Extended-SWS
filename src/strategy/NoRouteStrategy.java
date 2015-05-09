@@ -2,7 +2,6 @@ package strategy;
 
 import interfaces.HttpResponseBase;
 import interfaces.IHttpRequest;
-import interfaces.IRequestTask;
 import interfaces.IResourceRoute;
 import interfaces.RequestTaskBase;
 import protocol.HttpResponseFactory;
