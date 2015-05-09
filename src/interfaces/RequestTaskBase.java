@@ -26,12 +26,7 @@
  * http://clarkson.edu/~rupakhcr
  */
 
-package strategy;
-
-import interfaces.HttpResponseBase;
-import interfaces.IHttpRequest;
-import interfaces.IHttpResponse;
-import interfaces.IRequestTask;
+package interfaces;
 
 import java.io.IOException;
 import java.io.OutputStream;

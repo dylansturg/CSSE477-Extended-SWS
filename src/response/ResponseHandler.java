@@ -44,6 +44,7 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.PriorityBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
@@ -130,7 +131,7 @@ public class ResponseHandler implements Runnable,
 	}
 
 	private void commonInit() {
-		tasksAwaitingExecution = new LinkedBlockingQueue<Runnable>();
+		tasksAwaitingExecution = new PriorityBlockingQueue<Runnable>();
 		activeTaskThreadPool = new ThreadPoolExecutor(
 				DEFAULT_THREADS_ALLOCATED, MAXIMUM_THREADS_ALLOCATED,
 				THREAD_KEEP_ALIVE, TimeUnit.MILLISECONDS,
