@@ -83,12 +83,12 @@ public class RequestDurationCache {
 	protected class RequestStatistics {
 		public int successCount;
 		public int failureCount;
-		public double executionTimeSum;
+		public long executionTimeMilisSum;
 
 		public RequestStatistics() {
 			successCount = 0;
 			failureCount = 0;
-			executionTimeSum = 0;
+			executionTimeMilisSum = 0;
 		}
 
 		public void appendStats(boolean success, double executionTime) {
@@ -98,11 +98,11 @@ public class RequestDurationCache {
 				failureCount++;
 			}
 
-			executionTimeSum += executionTime;
+			executionTimeMilisSum += executionTime;
 		}
 
 		public double estimateExecutionTime() {
-			return executionTimeSum / (successCount + failureCount);
+			return executionTimeMilisSum / (successCount + failureCount);
 		}
 
 		public double currentSuccessRate() {
@@ -137,8 +137,8 @@ public class RequestDurationCache {
 	 * necessary execution time.
 	 * 
 	 * @param request
-	 * @return a positive value if an estimate is available, -1 if no estimate
-	 *         is available
+	 * @return estimated number of milis needed to execute the request, or -1 if
+	 *         no estimate is available
 	 */
 	public double estimateExecutionTimeForRequest(IHttpRequest request) {
 		assert request != null;
