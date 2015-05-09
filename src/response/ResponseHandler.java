@@ -223,7 +223,6 @@ public class ResponseHandler implements Runnable,
 								clientOutStreams.get(socket), clientTaskQueue);
 						if (finished) {
 							socket.close();
-							stopped = true;
 						}
 					}
 
