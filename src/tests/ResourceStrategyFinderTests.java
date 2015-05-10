@@ -28,20 +28,16 @@
 
 package tests;
 
-import static org.junit.Assert.*;
-import interfaces.IResourceRoute;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import interfaces.IResourceStrategy;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Test;
 
 import request.HTTPRequest;
-import strategy.BadRequestStrategy;
-import strategy.DirectoryStrategy;
-import strategy.InternalErrorStrategy;
 import strategy.NoRouteStrategy;
 import strategy.ResourceStrategyFinder;
 import configuration.ResourceStrategyConfiguration;
@@ -53,27 +49,6 @@ import configuration.ServerConfiguration;
  * @author Chandan R. Rupakheti (rupakhcr@clarkson.edu)
  */
 public class ResourceStrategyFinderTests {
-
-	@Test
-	public void testResourceFinderCanCreateDirectoryStrategy() {
-		List<ResourceStrategyRoute> testRoutes = new ArrayList<ResourceStrategyRoute>();
-		testRoutes.add(new ResourceStrategyRoute(DirectoryStrategy.class,
-				"", Arrays.asList(new String[] { "GET" }), null));
-		ResourceStrategyConfiguration testConfig = new ResourceStrategyConfiguration(
-				testRoutes);
-
-		ResourceStrategyFinder finder = new ResourceStrategyFinder(
-				new ServerConfiguration(testConfig));
-
-		IResourceRoute foundRoute = finder
-				.findRouteForRequest(new FakeHttpRequest());
-
-		IResourceStrategy strategy = finder
-				.getStrategyForResourceRoute(foundRoute);
-
-		assertNotNull(strategy);
-		assertTrue(strategy.getClass() == DirectoryStrategy.class);
-	}
 
 	@Test
 	public void testResourceFinderServesInternalErrorForUnMappedRoute() {

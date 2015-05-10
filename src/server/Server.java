@@ -27,21 +27,16 @@ import java.io.File;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
 import request.HTTPRequestFactory;
 import response.ResponseHandler;
-import strategy.DirectoryStrategy;
 import strategy.ResourceStrategyFinder;
 import configuration.InvalidConfigurationException;
-import configuration.PluginData;
 import configuration.ResourceStrategyConfiguration;
-import configuration.ResourceStrategyRoute;
 import configuration.ResourceStrategyRouteOptions;
 import configuration.ServerConfiguration;
-import configuration.ServletData;
 import configuration.ServletMonitor;
 import configuration.ServletMonitor.IInitialParseCompleteListener;
 
