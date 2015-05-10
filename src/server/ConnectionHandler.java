@@ -91,7 +91,7 @@ public class ConnectionHandler implements Runnable {
 	}
 
 	private HTTPRequest awaitAndReadHttpRequest() {
-		return requestFactory.createRequest(socket);
+		return requestFactory.createRequest(socket, server.getRootDirectory());
 	}
 
 	/*

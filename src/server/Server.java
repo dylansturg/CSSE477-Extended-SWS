@@ -41,7 +41,6 @@ import com.thoughtworks.xstream.XStream;
 
 import request.HTTPRequestFactory;
 import response.ResponseHandler;
-import strategy.DirectoryStrategy;
 import strategy.ResourceStrategyFinder;
 import configuration.InvalidConfigurationException;
 import configuration.PluginData;
