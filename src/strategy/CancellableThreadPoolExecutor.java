@@ -24,7 +24,7 @@ public class CancellableThreadPoolExecutor extends ThreadPoolExecutor {
 			@SuppressWarnings("unchecked")
 			FutureRequestTask<RequestTaskBase, Void> futureTask = (FutureRequestTask<RequestTaskBase, Void>) r;
 			if (watchdog != null) {
-				watchdog.watchTask(futureTask);
+				watchdog.watchTask(futureTask, t);
 			}
 		}
 	}
