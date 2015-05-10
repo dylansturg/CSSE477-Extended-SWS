@@ -73,8 +73,8 @@ public class HTTPRequest implements IHttpRequest {
 		headers = new HashMap<String, String>();
 		readSocket = socket;
 	}
-	
-	public Map<String, String> getQueryStrings(){
+
+	public Map<String, String> getQueryStrings() {
 		return queryString;
 	}
 
@@ -161,18 +161,24 @@ public class HTTPRequest implements IHttpRequest {
 			System.out.println("Body LENGTH: " + bodyLength);
 			int count = 0;
 
-			int intChar = 0;
-			while (count < bodyLength && (intChar = reader.read()) != -1) {
+			int read = 0;
+			int remaining = bodyLength - count;
+			StringBuilder bodyBuilder = new StringBuilder();
+			char[] buffer = new char[Protocol.CHUNK_LENGTH];
+
+			while (count < bodyLength
+					&& (read = reader.read(buffer, 0,
+							Math.min(Protocol.CHUNK_LENGTH, remaining))) != -1) {
 				if (count < bodyLength) {
-					char ch = (char) intChar;
-					body = body + ch;
-					count++;
+					bodyBuilder.append(buffer, 0, read);
+					count += read;
 				} else {
 					// Extra content characters.
 					throw new Exception("Body is longer than expected.");
 				}
 			}
-			System.out.println("Body: " + body);
+			body = bodyBuilder.toString();
+			// System.out.println("Body: " + body);
 			bodyPresent = count > 0;
 		}
 	}
@@ -182,7 +188,7 @@ public class HTTPRequest implements IHttpRequest {
 	}
 
 	public String getContent() {
-		System.out.println(body);
+		// System.out.println(body);
 		return body;
 	}
 
