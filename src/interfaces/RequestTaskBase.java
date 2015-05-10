@@ -34,7 +34,6 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import server.Server;
 
@@ -42,8 +41,7 @@ import server.Server;
  * 
  * @author Chandan R. Rupakheti (rupakhcr@clarkson.edu)
  */
-public abstract class RequestTaskBase implements IRequestTask,
-		Comparable<RequestTaskBase> {
+public abstract class RequestTaskBase implements IRequestTask {
 	protected List<IRequestTaskCompletionListener> completionListeners;
 	private IHttpRequest request;
 	protected boolean completed = false;
@@ -66,6 +64,14 @@ public abstract class RequestTaskBase implements IRequestTask,
 
 	public final void setServer(Server serv) {
 		server = serv;
+	}
+
+	public final Server getServer() {
+		return server;
+	}
+
+	public final Date getReceivedTimeStamp() {
+		return receivedTimeStamp;
 	}
 
 	@Override
@@ -144,51 +150,5 @@ public abstract class RequestTaskBase implements IRequestTask,
 	@Override
 	public void setStartTime(long timestamp) {
 		this.startTimestamp = timestamp;
-	}
-
-	private long timeDifference(Date first, Date second, TimeUnit unit) {
-		long milis = second.getTime() - first.getTime();
-		return unit.convert(milis, TimeUnit.MILLISECONDS);
-	}
-
-	private double getWaitingTime(Date now) {
-		return (double) timeDifference(receivedTimeStamp, now,
-				TimeUnit.MILLISECONDS);
-	}
-
-	private double getEstimatedRunTime() {
-		return server != null ? server.getRequestDurationEstimator()
-				.estimateExecutionTimeForRequest(request) : -1;
-	}
-
-	@Override
-	public int compareTo(RequestTaskBase o) {
-		if (o == null) {
-			throw new NullPointerException(
-					"Attempt to compare to null IRequestTask");
-		}
-
-		/**
-		 * Use the estimated request time as a benchmark. If the request has
-		 * been waiting longer than its estimate time to execute, then order as
-		 * FIFO. Otherwise, order as shortest duration to compute first.
-		 */
-
-		double myEstimate = getEstimatedRunTime();
-		double otherEstimate = o.getEstimatedRunTime();
-
-		Date now = new Date();
-		double myWait = getWaitingTime(now);
-		double otherWait = o.getWaitingTime(now);
-
-		if (myEstimate < myWait || otherEstimate < otherWait) {
-			// if a wait time ever exceeds the estimate for runtime, order as
-			// FIFO
-			return receivedTimeStamp.compareTo(o.receivedTimeStamp);
-		}
-
-		// Longify for most precision, then intify for conformance
-		return (int) ((long) myEstimate - (long) otherEstimate);
-
 	}
 }

@@ -49,6 +49,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import server.Server;
+import strategy.CancellableThreadPoolExecutor;
 import configuration.ServerConfiguration;
 
 /**
@@ -109,7 +110,7 @@ public class ResponseHandler implements Runnable,
 	public ResponseHandler(ServerConfiguration configuration, Server server) {
 		serverConfig = configuration;
 		this.server = server;
-		clients = new ArrayList<Socket>();
+		clients = Collections.synchronizedList(new ArrayList<Socket>());
 		clientOutStreams = new HashMap<Socket, OutputStream>();
 		commonInit();
 	}
@@ -132,7 +133,7 @@ public class ResponseHandler implements Runnable,
 
 	private void commonInit() {
 		tasksAwaitingExecution = new PriorityBlockingQueue<Runnable>();
-		activeTaskThreadPool = new ThreadPoolExecutor(
+		activeTaskThreadPool = new CancellableThreadPoolExecutor(
 				DEFAULT_THREADS_ALLOCATED, MAXIMUM_THREADS_ALLOCATED,
 				THREAD_KEEP_ALIVE, TimeUnit.MILLISECONDS,
 				tasksAwaitingExecution);
@@ -192,7 +193,7 @@ public class ResponseHandler implements Runnable,
 			task.setServer(server);
 
 			// ThreadPoolExecutor will handle scheduling and running the task
-			activeTaskThreadPool.execute(task);
+			activeTaskThreadPool.submit(task);
 		}
 	}
 
@@ -212,19 +213,23 @@ public class ResponseHandler implements Runnable,
 				try {
 					taskCompletionMonitor.wait();
 
-					for (Socket socket : clients) {
-						Queue<IRequestTask> clientTaskQueue = currentlyExecutingRequests
-								.get(socket);
+					synchronized (clients) {
+						for (Socket socket : clients) {
+							Queue<IRequestTask> clientTaskQueue = currentlyExecutingRequests
+									.get(socket);
 
-						if (clientTaskQueue == null) {
-							continue; // Probably shouldn't happen, but OSTRICH
-										// MODE ENABLED
-						}
+							if (clientTaskQueue == null) {
+								continue; // Probably shouldn't happen, but
+											// OSTRICH
+											// MODE ENABLED
+							}
 
-						boolean finished = flushAllCompletedRequests(
-								clientOutStreams.get(socket), clientTaskQueue);
-						if (finished) {
-							socket.close();
+							boolean finished = flushAllCompletedRequests(
+									clientOutStreams.get(socket),
+									clientTaskQueue);
+							if (finished) {
+								socket.close();
+							}
 						}
 					}
 

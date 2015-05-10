@@ -31,8 +31,12 @@ public class RequestDurationCache {
 		 * @param request
 		 */
 		public RequestKey(IHttpRequest request) {
-			method = request.getMethod().toLowerCase();
-			path = request.getPath().toLowerCase();
+			if (request != null) {
+				method = (request.getMethod() != null ? request.getMethod()
+						: "").toLowerCase();
+				path = (request.getPath() != null ? request.getPath() : "")
+						.toLowerCase();
+			}
 		}
 
 		@Override
@@ -163,7 +167,7 @@ public class RequestDurationCache {
 		assert request != null;
 		assert executionTime > 0;
 
-		if (executionTime <= 0) {
+		if (executionTime < 0) {
 			throw new IllegalArgumentException(
 					"requestCompleted requires positive value for executionTime");
 		}
