@@ -328,9 +328,8 @@ public class ResponseHandler implements Runnable,
 		Queue<FutureRequestTask<RequestTaskBase, Void>> clientQueue = this.currentlyExecutingRequests
 				.get(client);
 		if (clientQueue != null) {
-			boolean removed = clientQueue
-					.remove(new FutureRequestTask<RequestTaskBase, Void>(task));
-			System.out.println(removed);
+			clientQueue.remove(new FutureRequestTask<RequestTaskBase, Void>(
+					task));
 		}
 
 		enqueueRequestTaskForClient(errorTask, client);

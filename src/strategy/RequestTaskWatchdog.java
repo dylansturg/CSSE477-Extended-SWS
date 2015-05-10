@@ -50,6 +50,7 @@ public class RequestTaskWatchdog implements Runnable {
 		murderObservers.add(observer);
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public void run() {
 		while (!stopped) {
@@ -61,9 +62,8 @@ public class RequestTaskWatchdog implements Runnable {
 				continue;
 			}
 
+			List<Entry<FutureRequestTask<RequestTaskBase, Void>, Data>> killedSet = new ArrayList<Map.Entry<FutureRequestTask<RequestTaskBase, Void>, Data>>();
 			synchronized (monitoredTasks) {
-
-				List<Entry<FutureRequestTask<RequestTaskBase, Void>, Data>> killedSet = new ArrayList<Map.Entry<FutureRequestTask<RequestTaskBase, Void>, Data>>();
 
 				long now = System.currentTimeMillis();
 				long killIfStartedBefore = now
@@ -74,16 +74,30 @@ public class RequestTaskWatchdog implements Runnable {
 					long timestamp = entry.getValue().startTime;
 					if (timestamp < killIfStartedBefore) {
 						// Taking too long - needs to die
-						boolean cancelled = entry.getKey().cancel(true);
+						entry.getKey().cancel(true);
+						/*
+						 * This is dangerous and creates a potential problem. We
+						 * can assume that plugins are not dependent on one
+						 * another, and won't lock any resources needed by each
+						 * other.
+						 * 
+						 * Forcing the thread to stop is the only way to enforce
+						 * the interrupted state on the thread, because the
+						 * plugin developer might not.
+						 */
 						entry.getValue().runThread.stop();
+
 						killedSet.add(entry);
 					}
 				}
 
 				for (Entry<FutureRequestTask<RequestTaskBase, Void>, Data> entry : killedSet) {
 					monitoredTasks.remove(entry.getKey());
-					alertObserversOfMurder(entry.getKey());
 				}
+			}
+
+			for (Entry<FutureRequestTask<RequestTaskBase, Void>, Data> entry : killedSet) {
+				alertObserversOfMurder(entry.getKey());
 			}
 		}
 	}
