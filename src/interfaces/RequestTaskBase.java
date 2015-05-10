@@ -76,6 +76,12 @@ public abstract class RequestTaskBase implements IRequestTask {
 
 	@Override
 	public void run() {
+
+		if (Thread.currentThread().isInterrupted()) {
+			completed = false;
+			return;
+		}
+
 		if (!completed) {
 			throw new IllegalStateException(
 					"Attempt to RUN in RequestTaskBase without setting completed not allowed.");

@@ -21,6 +21,10 @@ public class FutureRequestTask<V extends RequestTaskBase, T> extends
 		requestTask = runnable;
 	}
 
+	public V getTask() {
+		return requestTask;
+	}
+
 	private long timeDifference(Date first, Date second, TimeUnit unit) {
 		long milis = second.getTime() - first.getTime();
 		return unit.convert(milis, TimeUnit.MILLISECONDS);
@@ -38,6 +42,20 @@ public class FutureRequestTask<V extends RequestTaskBase, T> extends
 		return requestTask.getServer() != null ? requestTask.getServer()
 				.getRequestDurationEstimator()
 				.estimateExecutionTimeForRequest(requestTask.getRequest()) : -1;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof FutureRequestTask) {
+			@SuppressWarnings("unchecked")
+			FutureRequestTask<V, T> task = (FutureRequestTask<V, T>) obj;
+			return equals(task);
+		}
+		return false;
+	}
+
+	public boolean equals(FutureRequestTask<V, T> other) {
+		return other.requestTask.equals(requestTask);
 	}
 
 	@Override

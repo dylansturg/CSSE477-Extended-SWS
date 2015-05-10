@@ -9,9 +9,24 @@ import java.util.concurrent.TimeUnit;
 
 public class CancellableThreadPoolExecutor extends ThreadPoolExecutor {
 
+	private RequestTaskWatchdog watchdog;
+
 	public CancellableThreadPoolExecutor(int corePoolSize, int maximumPoolSize,
-			long keepAliveTime, TimeUnit unit, BlockingQueue<Runnable> workQueue) {
+			long keepAliveTime, TimeUnit unit,
+			BlockingQueue<Runnable> workQueue, RequestTaskWatchdog watchdog) {
 		super(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue);
+		this.watchdog = watchdog;
+	}
+
+	@Override
+	protected void beforeExecute(Thread t, Runnable r) {
+		if (r instanceof FutureRequestTask) {
+			@SuppressWarnings("unchecked")
+			FutureRequestTask<RequestTaskBase, Void> futureTask = (FutureRequestTask<RequestTaskBase, Void>) r;
+			if (watchdog != null) {
+				watchdog.watchTask(futureTask);
+			}
+		}
 	}
 
 	@Override
@@ -26,6 +41,11 @@ public class CancellableThreadPoolExecutor extends ThreadPoolExecutor {
 
 	private <T> RunnableFuture<T> newTaskFor(RequestTaskBase runnable, T value) {
 		return new FutureRequestTask<RequestTaskBase, T>(runnable, value);
+	}
+
+	@SuppressWarnings("unchecked")
+	public FutureRequestTask<RequestTaskBase, Void> submit(RequestTaskBase task) {
+		return (FutureRequestTask<RequestTaskBase, Void>) super.submit(task);
 	}
 
 }
