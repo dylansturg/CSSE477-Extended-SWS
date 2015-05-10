@@ -70,7 +70,7 @@ public class Server implements Runnable {
 	public ArrayList<String> blacklist;
 	private Timer blacklistTimer;
 	private HashMap<String, Integer> blacklistCounts;
-	private int blacklistMaxCount = 3;
+	private int blacklistMaxCount = 10;
 	private int blacklistResetFrequency = 3000;
 
 	private long connections;
