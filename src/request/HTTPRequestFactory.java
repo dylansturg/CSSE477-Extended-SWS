@@ -87,7 +87,7 @@ public class HTTPRequestFactory {
 			httpRequestInstance = new MalformedHTTPRequest(socket);
 		}
 
-		if (isBadRequestPath(httpRequestInstance.path)) {
+		if (!isBadRequestPath(httpRequestInstance.path)) {
 			return httpRequestInstance;
 		} else {
 			return new MalformedHTTPRequest(socket);
