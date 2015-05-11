@@ -30,14 +30,4 @@
       </entry>
     </options>
   </route>
-  <route>
-    <plugin>primes</plugin>
-    <path>/primes/</path>
-    <options>
-      <entry>
-        <string>RootDirectory</string>
-        <string>web/</string>
-      </entry>
-    </options>
-  </route>
 </routes>

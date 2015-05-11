@@ -42,6 +42,7 @@ import strategy.RequestDurationCache;
 import strategy.ResourceStrategyFinder;
 
 import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.path.Path;
 
 import configuration.InvalidConfigurationException;
 import configuration.ResourceStrategyConfiguration;
@@ -100,8 +101,10 @@ public class Server implements Runnable {
 	public Server(String rootDirectory, final String configFolder, int port,
 			WebServer window) throws InvalidConfigurationException {
 		this.rootDirectory = rootDirectory;
-		this.configurationFile = configFolder + "\\routes.xml";
-		this.blacklistFile = configFolder + "\\blacklist.xml";
+		this.configurationFile = configFolder + File.separatorChar
+				+ "routes.xml";
+		this.blacklistFile = configFolder + File.separatorChar
+				+ "blacklist.xml";
 		this.port = port;
 		this.stop = false;
 		this.connections = 0;
@@ -117,7 +120,7 @@ public class Server implements Runnable {
 			public void pluginsParsed() {
 				try {
 					configuration.parseConfiguration(new File(configFolder
-							+ "\\routes.xml"));
+							+ File.separatorChar + "routes.xml"));
 				} catch (InvalidConfigurationException configExp) {
 
 				}
