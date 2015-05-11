@@ -42,7 +42,6 @@ import strategy.RequestDurationCache;
 import strategy.ResourceStrategyFinder;
 
 import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.io.path.Path;
 
 import configuration.InvalidConfigurationException;
 import configuration.ResourceStrategyConfiguration;
@@ -68,8 +67,8 @@ public class Server implements Runnable {
 	public ArrayList<String> blacklist;
 	private Timer blacklistTimer;
 	private HashMap<String, Integer> blacklistCounts;
-	private int blacklistMaxCount = 10;
-	private int blacklistResetFrequency = 3000;
+	private int blacklistMaxCount = 100;
+	private int blacklistResetFrequency = 1000;
 
 	private long connections;
 	private long serviceTime;
@@ -159,7 +158,6 @@ public class Server implements Runnable {
 				}
 			}
 		}, this.blacklistResetFrequency, this.blacklistResetFrequency);
-
 	}
 
 	/**

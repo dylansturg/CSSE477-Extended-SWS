@@ -110,9 +110,8 @@ public class HTTPRequest implements IHttpRequest {
 		String line;
 
 		line = reader.readLine();
+		System.out.println("Request Line: " + line);
 		requestHeader = line.split("\\s+");
-		System.out.println("Requested path: " + requestHeader[0]
-				+ ", Request version: " + requestHeader[1] + "\n");
 
 		queryText = requestHeader[0].split("\\?");
 		path = queryText[0];
@@ -151,13 +150,10 @@ public class HTTPRequest implements IHttpRequest {
 		// Read the body
 		body = "";
 		if (!this.headers.containsKey("Content-Length")) {
-			System.out.println("No content-length header!");
 			bodyPresent = false;
 		} else {
 			String contentLength = this.headers.get("Content-Length");
 			bodyLength = Integer.parseInt(contentLength);
-			System.out.println("Content LENGTH: " + contentLength);
-			System.out.println("Body LENGTH: " + bodyLength);
 			int count = 0;
 
 			int read = 0;
@@ -177,7 +173,6 @@ public class HTTPRequest implements IHttpRequest {
 				}
 			}
 			body = bodyBuilder.toString();
-			// System.out.println("Body: " + body);
 			bodyPresent = count > 0;
 		}
 	}
@@ -187,7 +182,6 @@ public class HTTPRequest implements IHttpRequest {
 	}
 
 	public String getContent() {
-		// System.out.println(body);
 		return body;
 	}
 
