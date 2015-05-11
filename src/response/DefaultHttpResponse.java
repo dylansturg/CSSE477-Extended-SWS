@@ -1,11 +1,12 @@
 package response;
 
+import interfaces.HttpResponseBase;
+
 import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.util.Map;
 
 import protocol.HttpStatusCode;
-import interfaces.HttpResponseBase;
 
 public class DefaultHttpResponse extends HttpResponseBase {
 

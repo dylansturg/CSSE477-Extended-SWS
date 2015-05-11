@@ -54,6 +54,10 @@ public interface IRequestTask extends Runnable {
 
 	public boolean isComplete();
 
+	public boolean wasSuccessful();
+
+	public IHttpRequest getRequest();
+
 	public HttpResponseBase getResponse();
 
 	public void setRequestingClient(Socket client);

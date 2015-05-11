@@ -21,9 +21,9 @@
 
 package server;
 
-import interfaces.IRequestTask;
 import interfaces.IResourceRoute;
 import interfaces.IResourceStrategy;
+import interfaces.RequestTaskBase;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -61,7 +61,7 @@ public class ConnectionHandler implements Runnable {
 	public ConnectionHandler(Server server, ResponseHandler responseHandler,
 			HTTPRequestFactory requestFactory,
 			ResourceStrategyFinder resourceMapper) {
-		this.server = server;
+		this.setServer(server);
 		this.responseHandler = responseHandler;
 		this.requestFactory = requestFactory;
 		this.resourceStrategyMapper = resourceMapper;
@@ -110,21 +110,33 @@ public class ConnectionHandler implements Runnable {
 					"ConnectionHandler does not currently support serving multiple clients");
 		}
 
-		HTTPRequest incomingRequest = awaitAndReadHttpRequest();
-		// Start the timer after a request comes in - no point counting dead
-		// time
+		if (!this.stopped) {
+			HTTPRequest incomingRequest = awaitAndReadHttpRequest();
+			// Start the timer after a request comes in - no point counting dead
+			// time
 
-		long requestStartTimeStamp = System.currentTimeMillis();
-		IResourceRoute requestRoute = resourceStrategyMapper
-				.findRouteForRequest(incomingRequest);
-		IResourceStrategy strategyForRequest = resourceStrategyMapper
-				.getStrategyForResourceRoute(requestRoute);
+			long requestStartTimeStamp = System.currentTimeMillis();
+			IResourceRoute requestRoute = resourceStrategyMapper
+					.findRouteForRequest(incomingRequest);
+			IResourceStrategy strategyForRequest = resourceStrategyMapper
+					.getStrategyForResourceRoute(requestRoute);
 
-		IRequestTask requestTask = strategyForRequest.prepareEvaluation(
-				incomingRequest, requestRoute);
-		requestTask.setStartTime(requestStartTimeStamp);
+			RequestTaskBase requestTask = strategyForRequest.prepareEvaluation(
+					incomingRequest, requestRoute);
+			requestTask.setStartTime(requestStartTimeStamp);
 
-		responseHandler.enqueueRequestTaskForClient(requestTask, socket);
-		this.stopped = true;
+			responseHandler.enqueueRequestTaskForClient(requestTask, socket);
+			this.stopped = true;
+			
+			
+		}
+	}
+
+	public Server getServer() {
+		return server;
+	}
+
+	public void setServer(Server server) {
+		this.server = server;
 	}
 }

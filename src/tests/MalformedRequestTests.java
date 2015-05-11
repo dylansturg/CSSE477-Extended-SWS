@@ -28,7 +28,7 @@
 
 package tests;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -39,7 +39,6 @@ import java.net.Socket;
 import java.nio.charset.Charset;
 
 import org.junit.Test;
-import org.junit.Assert.*;
 
 import request.DELETEHTTPRequest;
 import request.GETHTTPRequest;

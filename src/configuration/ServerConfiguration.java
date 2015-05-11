@@ -43,7 +43,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.thoughtworks.xstream.*;
+import com.thoughtworks.xstream.XStream;
 
 /**
  * Encapsulates information about the server's configuration. Doesn't really do

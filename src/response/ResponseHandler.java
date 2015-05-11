@@ -30,6 +30,7 @@ package response;
 
 import interfaces.IRequestTask;
 import interfaces.IRequestTask.IRequestTaskCompletionListener;
+import interfaces.RequestTaskBase;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -43,12 +44,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.PriorityBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
-import configuration.ServerConfiguration;
 import server.Server;
+import strategy.CancellableThreadPoolExecutor;
+import strategy.FutureRequestTask;
+import strategy.ITaskEndedObserver;
+import strategy.InternalErrorStrategy;
+import strategy.RequestTaskWatchdog;
+import configuration.ServerConfiguration;
 
 /**
  * Implements handling of IRequestTask instances to serve a collection of
@@ -59,7 +64,7 @@ import server.Server;
  * @author Chandan R. Rupakheti (rupakhcr@clarkson.edu)
  */
 public class ResponseHandler implements Runnable,
-		IRequestTaskCompletionListener {
+		IRequestTaskCompletionListener, ITaskEndedObserver {
 	private static final int DEFAULT_THREADS_ALLOCATED = 3;
 	private static final int MAXIMUM_THREADS_ALLOCATED = 5;
 
@@ -67,12 +72,15 @@ public class ResponseHandler implements Runnable,
 
 	private Server server;
 
+	private RequestTaskWatchdog watchdog = new RequestTaskWatchdog();
+
 	/**
 	 * Can be used to get information about the current server's configuration.
 	 * Eventually should contain information such as desired thread pool size.
 	 * 
 	 * Not used at the moment. Available for future extension.
 	 */
+	@SuppressWarnings("unused")
 	private ServerConfiguration serverConfig;
 
 	private List<Socket> clients;
@@ -82,7 +90,7 @@ public class ResponseHandler implements Runnable,
 	 * Map a client's socket to that client's specific Queue of IRequestTask
 	 * operations.
 	 */
-	private Map<Socket, Queue<IRequestTask>> currentlyExecutingRequests;
+	private Map<Socket, Queue<FutureRequestTask<RequestTaskBase, Void>>> currentlyExecutingRequests;
 
 	// Relies on Java's wait/notify, so the actual object class is unimportant.
 	private Object taskCompletionMonitor = new Object();
@@ -93,7 +101,7 @@ public class ResponseHandler implements Runnable,
 	 * this Runnable when one is complete, so it can be written back to the
 	 * appropriate client.
 	 */
-	private ThreadPoolExecutor activeTaskThreadPool;
+	private CancellableThreadPoolExecutor activeTaskThreadPool;
 
 	/**
 	 * Represents all tasks that the handler still needs to evaluate. None have
@@ -107,7 +115,7 @@ public class ResponseHandler implements Runnable,
 	public ResponseHandler(ServerConfiguration configuration, Server server) {
 		serverConfig = configuration;
 		this.server = server;
-		clients = new ArrayList<Socket>();
+		clients = Collections.synchronizedList(new ArrayList<Socket>());
 		clientOutStreams = new HashMap<Socket, OutputStream>();
 		commonInit();
 	}
@@ -129,19 +137,21 @@ public class ResponseHandler implements Runnable,
 	}
 
 	private void commonInit() {
-		tasksAwaitingExecution = new LinkedBlockingQueue<Runnable>();
-		activeTaskThreadPool = new ThreadPoolExecutor(
+		watchdog.registerObserver(this);
+		tasksAwaitingExecution = new PriorityBlockingQueue<Runnable>();
+		activeTaskThreadPool = new CancellableThreadPoolExecutor(
 				DEFAULT_THREADS_ALLOCATED, MAXIMUM_THREADS_ALLOCATED,
 				THREAD_KEEP_ALIVE, TimeUnit.MILLISECONDS,
-				tasksAwaitingExecution);
+				tasksAwaitingExecution, watchdog);
 
 		this.currentlyExecutingRequests = Collections
-				.synchronizedMap(new HashMap<Socket, Queue<IRequestTask>>());
+				.synchronizedMap(new HashMap<Socket, Queue<FutureRequestTask<RequestTaskBase, Void>>>());
 
 		if (this.clients == null) {
 			this.clients = new ArrayList<Socket>();
 		}
 
+		new Thread(watchdog).start();
 	}
 
 	public void addClientToServed(Socket client, OutputStream clientOut) {
@@ -165,7 +175,7 @@ public class ResponseHandler implements Runnable,
 	 *             if the specified client is not already served by
 	 *             ResponseHandler. Try calling addClientToServed first.
 	 */
-	public void enqueueRequestTaskForClient(IRequestTask task, Socket client) {
+	public void enqueueRequestTaskForClient(RequestTaskBase task, Socket client) {
 		synchronized (clients) {
 			if (!clients.contains(client)) {
 				// We aren't serving that client, and we don't want to.
@@ -178,18 +188,21 @@ public class ResponseHandler implements Runnable,
 		}
 
 		synchronized (currentlyExecutingRequests) {
-			Queue<IRequestTask> clientsQueue = currentlyExecutingRequests
+			Queue<FutureRequestTask<RequestTaskBase, Void>> clientsQueue = currentlyExecutingRequests
 					.get(client);
 			if (clientsQueue == null) {
-				clientsQueue = new LinkedList<IRequestTask>();
+				clientsQueue = new LinkedList<FutureRequestTask<RequestTaskBase, Void>>();
 				currentlyExecutingRequests.put(client, clientsQueue);
 			}
 
-			clientsQueue.add(task);
+			task.setRequestingClient(client);
 			task.registerCompletionListener(this);
+			task.setServer(server);
 
 			// ThreadPoolExecutor will handle scheduling and running the task
-			activeTaskThreadPool.execute(task);
+			FutureRequestTask<RequestTaskBase, Void> future = activeTaskThreadPool
+					.submit(task);
+			clientsQueue.add(future);
 		}
 	}
 
@@ -209,20 +222,23 @@ public class ResponseHandler implements Runnable,
 				try {
 					taskCompletionMonitor.wait();
 
-					for (Socket socket : clients) {
-						Queue<IRequestTask> clientTaskQueue = currentlyExecutingRequests
-								.get(socket);
+					synchronized (clients) {
+						for (Socket socket : clients) {
+							Queue<FutureRequestTask<RequestTaskBase, Void>> clientTaskQueue = currentlyExecutingRequests
+									.get(socket);
 
-						if (clientTaskQueue == null) {
-							continue; // Probably shouldn't happen, but OSTRICH
-										// MODE ENABLED
-						}
+							if (clientTaskQueue == null) {
+								continue; // Probably shouldn't happen, but
+											// OSTRICH
+											// MODE ENABLED
+							}
 
-						boolean finished = flushAllCompletedRequests(
-								clientOutStreams.get(socket), clientTaskQueue);
-						if (finished) {
-							socket.close();
-							stopped = true;
+							boolean finished = flushAllCompletedRequests(
+									clientOutStreams.get(socket),
+									clientTaskQueue);
+							if (finished) {
+								socket.close();
+							}
 						}
 					}
 
@@ -249,23 +265,31 @@ public class ResponseHandler implements Runnable,
 	 * @param tasks
 	 */
 	private boolean flushAllCompletedRequests(OutputStream outStream,
-			Queue<IRequestTask> tasks) {
+			Queue<FutureRequestTask<RequestTaskBase, Void>> tasks) {
 
 		while (!tasks.isEmpty()) {
-			IRequestTask currentTask = tasks.peek();
+			FutureRequestTask<RequestTaskBase, Void> future = tasks.peek();
+			RequestTaskBase currentTask = future.getTask();
 			if (!currentTask.isComplete()) {
 				break; // we're done here
 			}
 
-			currentTask = tasks.remove();
+			watchdog.markTaskComplete(future);
+			tasks.remove(); // grabbed it in peek
+
 			try {
 				currentTask.writeResponse(outStream);
 			} catch (IOException exp) {
 				// TODO Log the exception, and close the socket
 			}
 
-			server.incrementServiceTime(System.currentTimeMillis()
-					- currentTask.getStartTime());
+			long startedTimeStamp = currentTask.getStartTime();
+			long finishedTimeStamp = System.currentTimeMillis();
+			server.incrementServiceTime(finishedTimeStamp - startedTimeStamp);
+			server.getRequestDurationEstimator().requestCompleted(
+					finishedTimeStamp - startedTimeStamp,
+					currentTask.wasSuccessful(), currentTask.getRequest());
+
 		}
 		return tasks.isEmpty();
 	}
@@ -285,6 +309,30 @@ public class ResponseHandler implements Runnable,
 		synchronized (taskCompletionMonitor) {
 			taskCompletionMonitor.notifyAll();
 		}
+	}
+
+	/**
+	 * Since we killed the client's actual request, we will go ahead and queue
+	 * up another request that will just serve them a 500.
+	 * 
+	 * The InternalErrorStrategy task executes immediately and will create
+	 * minimal overhead.
+	 */
+	@Override
+	public void endedTask(FutureRequestTask<RequestTaskBase, Void> killed) {
+		RequestTaskBase task = killed.getTask();
+		Socket client = task.getRequestingClient();
+		RequestTaskBase errorTask = new InternalErrorStrategy()
+				.prepareEvaluation(task.getRequest(), null);
+
+		Queue<FutureRequestTask<RequestTaskBase, Void>> clientQueue = this.currentlyExecutingRequests
+				.get(client);
+		if (clientQueue != null) {
+			clientQueue.remove(new FutureRequestTask<RequestTaskBase, Void>(
+					task));
+		}
+
+		enqueueRequestTaskForClient(errorTask, client);
 	}
 
 }

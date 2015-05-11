@@ -28,9 +28,6 @@
 
 package interfaces;
 
-import configuration.ResourceStrategyRoute;
-import request.HTTPRequest;
-
 /**
  * Defines an implementation of a server-side resource management protocol. The
  * strategy will accept a HTTPRequest and create a unit of execution that will
@@ -54,6 +51,6 @@ public interface IResourceStrategy {
 	 * @return Runnable to execute on a thread which will generate a
 	 *         HTTPResponse
 	 */
-	public IRequestTask prepareEvaluation(IHttpRequest request,
+	public RequestTaskBase prepareEvaluation(IHttpRequest request,
 			IResourceRoute fromRoute);
 }

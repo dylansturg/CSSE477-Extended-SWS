@@ -1,33 +1,25 @@
 package tests;
 
-import static org.junit.Assert.*;
 import interfaces.IHttpRequest;
-import interfaces.IRequestTask;
 import interfaces.IResourceRoute;
 import interfaces.IResourceStrategy;
+import interfaces.RequestTaskBase;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.thoughtworks.xstream.XStream;
 
-import request.HTTPRequest;
 import configuration.PluginData;
 import configuration.ServletData;
-import configuration.ServletMonitor;
 
 public class ServletDataParsingTests {
 	private static final String TEST_FILE_PATH = "conf/servlet_test.xml";
 
-	
 	public static void setupServletXMLFile() throws Exception {
 		File servletConfig = new File(TEST_FILE_PATH);
 
@@ -55,22 +47,22 @@ public class ServletDataParsingTests {
 	public void test() {
 		File config = new File(TEST_FILE_PATH);
 		XStream streamer = new XStream();
-		
+
 		streamer.alias("plugin", PluginData.class);
 		streamer.alias("servlets", List.class);
 		streamer.alias("servlet", ServletData.class);
 		streamer.alias("expectedMethods", List.class);
-		
+
 		Object result = streamer.fromXML(config);
-		
+
 		System.out.println(result);
-		
+
 	}
 
 	public class TestServlet implements IResourceStrategy {
 
 		@Override
-		public IRequestTask prepareEvaluation(IHttpRequest request,
+		public RequestTaskBase prepareEvaluation(IHttpRequest request,
 				IResourceRoute fromRoute) {
 			// TODO Auto-generated method stub
 			return null;

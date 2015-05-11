@@ -30,12 +30,11 @@ package strategy;
 
 import interfaces.HttpResponseBase;
 import interfaces.IHttpRequest;
-import interfaces.IRequestTask;
 import interfaces.IResourceRoute;
+import interfaces.RequestTaskBase;
 import protocol.HttpResponseFactory;
 import protocol.HttpStatusCode;
 import protocol.Protocol;
-import request.HTTPRequest;
 
 /**
  * 
@@ -51,7 +50,7 @@ public class InternalErrorStrategy extends ResourceStrategyBase {
 	 * configuration.ResourceStrategyRoute)
 	 */
 	@Override
-	public IRequestTask prepareEvaluation(IHttpRequest request,
+	public RequestTaskBase prepareEvaluation(IHttpRequest request,
 			IResourceRoute fromRoute) {
 
 		return new InternalErrorRequestTask(request);

@@ -29,10 +29,9 @@
 package strategy;
 
 import interfaces.IHttpRequest;
-import interfaces.IRequestTask;
 import interfaces.IResourceRoute;
 import interfaces.IResourceStrategy;
-import request.HTTPRequest;
+import interfaces.RequestTaskBase;
 
 /**
  * 
@@ -41,7 +40,7 @@ import request.HTTPRequest;
 public abstract class ResourceStrategyBase implements IResourceStrategy {
 
 	@Override
-	public IRequestTask prepareEvaluation(IHttpRequest request,
+	public RequestTaskBase prepareEvaluation(IHttpRequest request,
 			IResourceRoute fromRoute) {
 		// TODO Auto-generated method stub
 		return null;

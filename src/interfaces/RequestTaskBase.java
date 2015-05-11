@@ -26,20 +26,16 @@
  * http://clarkson.edu/~rupakhcr
  */
 
-package strategy;
-
-import interfaces.HttpResponseBase;
-import interfaces.IHttpRequest;
-import interfaces.IHttpResponse;
-import interfaces.IRequestTask;
+package interfaces;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
-import request.HTTPRequest;
+import server.Server;
 
 /**
  * 
@@ -47,21 +43,45 @@ import request.HTTPRequest;
  */
 public abstract class RequestTaskBase implements IRequestTask {
 	protected List<IRequestTaskCompletionListener> completionListeners;
-	protected IHttpRequest request;
+	private IHttpRequest request;
 	protected boolean completed = false;
+	protected boolean successful = false;
 	protected Socket client;
+
+	// Not accessible in implementation
+	private Server server;
 
 	protected long startTimestamp;
 
 	protected HttpResponseBase response;
+
+	private Date receivedTimeStamp = new Date();
 
 	public RequestTaskBase(IHttpRequest request) {
 		this.request = request;
 		completionListeners = new ArrayList<IRequestTask.IRequestTaskCompletionListener>();
 	}
 
+	public final void setServer(Server serv) {
+		server = serv;
+	}
+
+	public final Server getServer() {
+		return server;
+	}
+
+	public final Date getReceivedTimeStamp() {
+		return receivedTimeStamp;
+	}
+
 	@Override
 	public void run() {
+
+		if (Thread.currentThread().isInterrupted()) {
+			completed = false;
+			return;
+		}
+
 		if (!completed) {
 			throw new IllegalStateException(
 					"Attempt to RUN in RequestTaskBase without setting completed not allowed.");
@@ -83,6 +103,11 @@ public abstract class RequestTaskBase implements IRequestTask {
 	}
 
 	@Override
+	public final IHttpRequest getRequest() {
+		return request;
+	}
+
+	@Override
 	public HttpResponseBase getResponse() {
 		return response;
 	}
@@ -92,15 +117,25 @@ public abstract class RequestTaskBase implements IRequestTask {
 		return completed;
 	}
 
+	@Override
+	public boolean wasSuccessful() {
+		return successful;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see strategy.IRequestTask#writeResponse(java.io.OutputStream)
 	 */
 	@Override
-	public void writeResponse(OutputStream out) throws IOException {
+	public final void writeResponse(OutputStream out) throws IOException {
 		IHttpResponse response = getResponse();
 		response.write(out);
+
+		if (response.getStatusCode() < 400) {
+			// 100s, 200s, and 300s indicate success (of some sort)
+			successful = true;
+		}
 	}
 
 	@Override

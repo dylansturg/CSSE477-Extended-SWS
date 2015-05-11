@@ -4,12 +4,12 @@
     <path>/path/to/myplugin/</path>
     <options>
       <entry>
-        <string>MaxThreads</string>
-        <string>3</string>
-      </entry>
-      <entry>
         <string>RootDirectory</string>
         <string>web/</string>
+      </entry>
+      <entry>
+        <string>MaxThreads</string>
+        <string>3</string>
       </entry>
     </options>
   </configuration.ServerRoute>

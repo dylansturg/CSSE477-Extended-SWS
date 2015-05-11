@@ -41,6 +41,7 @@ import com.thoughtworks.xstream.XStream;
 
 import request.HTTPRequestFactory;
 import response.ResponseHandler;
+import strategy.RequestDurationCache;
 import strategy.ResourceStrategyFinder;
 import configuration.InvalidConfigurationException;
 import configuration.ResourceStrategyConfiguration;
@@ -77,6 +78,19 @@ public class Server implements Runnable {
 	private ServerConfiguration configuration;
 	private ServletMonitor monitor;
 	private ResourceStrategyConfiguration resourcesConfiguration;
+
+	private ResponseHandler sharedResponseHandler;
+
+	private RequestDurationCache requestDurationEstimator;
+
+	public RequestDurationCache getRequestDurationEstimator() {
+		return requestDurationEstimator;
+	}
+
+	public Server() {
+		// Don't do anything... probably shouldn't use this one unless you're
+		// testing
+	}
 
 	/**
 	 * @param rootDirectory
@@ -124,6 +138,9 @@ public class Server implements Runnable {
 
 		Map<String, String> options = new HashMap<String, String>();
 		options.put(ResourceStrategyRouteOptions.RootDirectoy, rootDirectory);
+
+		// CONSIDER utilizing a Map that has a maximum size and/or expiration
+		requestDurationEstimator = new RequestDurationCache();
 
 		this.blacklistTimer.scheduleAtFixedRate(new TimerTask() {
 			public void run() {
@@ -239,14 +256,18 @@ public class Server implements Runnable {
 				if (this.stop)
 					break;
 
-				ResponseHandler connectionResponseHandler = new ResponseHandler(
-						configuration, this);
+				if (sharedResponseHandler == null) {
+					sharedResponseHandler = new ResponseHandler(configuration,
+							this);
+					new Thread(sharedResponseHandler).start();
+				}
+
 				HTTPRequestFactory connectionRequestFactory = new HTTPRequestFactory();
 				ResourceStrategyFinder connectionResourceMapper = new ResourceStrategyFinder(
 						configuration);
 
 				ConnectionHandler handler = new ConnectionHandler(this,
-						connectionResponseHandler, connectionRequestFactory,
+						sharedResponseHandler, connectionRequestFactory,
 						connectionResourceMapper);
 
 				handler.serverClientSocket(connectionSocket);
@@ -256,7 +277,7 @@ public class Server implements Runnable {
 				// ConnectionHandler handler = new ConnectionHandler(this,
 				// connectionSocket);
 				new Thread(handler).start();
-				new Thread(connectionResponseHandler).start();
+
 			}
 			this.welcomeSocket.close();
 		} catch (Exception e) {
