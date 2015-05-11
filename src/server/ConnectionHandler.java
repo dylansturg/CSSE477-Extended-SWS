@@ -127,8 +127,7 @@ public class ConnectionHandler implements Runnable {
 
 			responseHandler.enqueueRequestTaskForClient(requestTask, socket);
 			this.stopped = true;
-			
-			
+
 		}
 	}
 

@@ -30,19 +30,19 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import com.thoughtworks.xstream.XStream;
-
 import request.HTTPRequestFactory;
 import response.ResponseHandler;
 import strategy.RequestDurationCache;
 import strategy.ResourceStrategyFinder;
+
+import com.thoughtworks.xstream.XStream;
+
 import configuration.InvalidConfigurationException;
 import configuration.ResourceStrategyConfiguration;
 import configuration.ResourceStrategyRouteOptions;
@@ -96,6 +96,7 @@ public class Server implements Runnable {
 	 * @param rootDirectory
 	 * @param port
 	 */
+	@SuppressWarnings("unchecked")
 	public Server(String rootDirectory, final String configFolder, int port,
 			WebServer window) throws InvalidConfigurationException {
 		this.rootDirectory = rootDirectory;
