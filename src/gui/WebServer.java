@@ -50,8 +50,8 @@ public class WebServer extends JFrame {
 	private JTextField txtRootDirectory;
 	private JButton butSelect;
 
-	private JLabel lblConfigurationFile;
-	private JTextField txtConfigurationFile;
+	private JLabel lblConfigurationFolder;
+	private JTextField txtConfigurationFolder;
 	private JButton butSelectConfig;
 
 	private JPanel panelInput;
@@ -109,7 +109,7 @@ public class WebServer extends JFrame {
 		this.lblPortNumber = new JLabel("Port Number");
 		this.txtPortNumber = new JTextField("8080");
 		this.lblRootDirectory = new JLabel("Select Root Directory");
-		this.lblConfigurationFile = new JLabel("Select Configuration File");
+		this.lblConfigurationFolder = new JLabel("Select Configuration Folder");
 
 		// Set the root directory to be the current working directory
 		this.txtRootDirectory = new JTextField(System.getProperty("user.dir"));
@@ -118,10 +118,10 @@ public class WebServer extends JFrame {
 		this.butSelect = new JButton("Select");
 
 		// Set the configuration file to an estimate
-		this.txtConfigurationFile = new JTextField(
-				System.getProperty("user.dir") + "/conf/routes.xml");
-		this.txtConfigurationFile.setEditable(false);
-		this.txtConfigurationFile.setPreferredSize(new Dimension(400, 21));
+		this.txtConfigurationFolder = new JTextField(
+				System.getProperty("user.dir") + "/conf");
+		this.txtConfigurationFolder.setEditable(false);
+		this.txtConfigurationFolder.setPreferredSize(new Dimension(400, 21));
 		this.butSelectConfig = new JButton("Select");
 
 		this.panelInput.setBorder(BorderFactory
@@ -134,8 +134,8 @@ public class WebServer extends JFrame {
 		this.panelInput.add(new JLabel("")); // Empty label
 		this.panelInput.add(this.butSelect);
 
-		this.panelInput.add(this.lblConfigurationFile);
-		this.panelInput.add(this.txtConfigurationFile);
+		this.panelInput.add(this.lblConfigurationFolder);
+		this.panelInput.add(this.txtConfigurationFolder);
 		this.panelInput.add(new JLabel(""));
 		this.panelInput.add(this.butSelectConfig);
 
@@ -198,19 +198,19 @@ public class WebServer extends JFrame {
 		this.butSelectConfig.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				// Get hold of the current directory
-				String currentFile = WebServer.this.txtConfigurationFile
+				String currentFile = WebServer.this.txtConfigurationFolder
 						.getText();
 				JFileChooser fileChooser = new JFileChooser(currentFile);
 				fileChooser
-						.setDialogTitle("Chose Web Server Configuration File");
-				fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+						.setDialogTitle("Chose Web Server Configuration Folder");
+				fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 				fileChooser.setMultiSelectionEnabled(false);
 				fileChooser.setAcceptAllFileFilterUsed(false);
 				if (fileChooser.showOpenDialog(WebServer.this) == JFileChooser.APPROVE_OPTION) {
 					// A folder has been chosen
 					currentFile = fileChooser.getSelectedFile()
 							.getAbsolutePath();
-					WebServer.this.txtConfigurationFile.setText(currentFile);
+					WebServer.this.txtConfigurationFolder.setText(currentFile);
 				}
 			}
 		});
@@ -243,12 +243,12 @@ public class WebServer extends JFrame {
 				// Get hold of the root directory
 				String rootDirectory = WebServer.this.txtRootDirectory
 						.getText();
-				String configurationFile = WebServer.this.txtConfigurationFile
+				String configurationFolder = WebServer.this.txtConfigurationFolder
 						.getText();
 
 				// Now run the server in non-gui thread
 				try {
-					server = new Server(rootDirectory, configurationFile, port,
+					server = new Server(rootDirectory, configurationFolder, port,
 							WebServer.this);
 				} catch (InvalidConfigurationException failed) {
 					JOptionPane

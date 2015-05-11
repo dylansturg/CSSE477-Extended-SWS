@@ -31,6 +31,8 @@ package configuration;
 import interfaces.IResourceStrategy;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -74,7 +76,7 @@ public class ServerConfiguration implements IPluginAddedListener,
 	public ResourceStrategyConfiguration getManagedResourceConfiguration() {
 		return managedResourceConfiguration;
 	}
-
+	
 	public void setConfigurationOption(String key, String value) {
 		configuration.put(key, value);
 	}

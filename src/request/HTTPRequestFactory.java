@@ -29,6 +29,8 @@
 package request;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -46,14 +48,17 @@ import request.HTTPRequest;
  * @author Nathan Jarvis
  */
 
-//Factory reads in the request verb and then creates through reflection the
-//correct HTTPRequest
+// Factory reads in the request verb and then creates through reflection the
+// correct HTTPRequest
 public class HTTPRequestFactory {
+	private String rootPath;
 
-	public HTTPRequest createRequest(Socket socket) {
+	public HTTPRequest createRequest(Socket socket, String root) {
 		InputStream inStream = null;
 		String requestVerb = "";
 		InputStreamReader reader;
+		rootPath = root;
+		HTTPRequest httpRequestInstance;
 
 		try {
 			inStream = socket.getInputStream();
@@ -69,28 +74,51 @@ public class HTTPRequestFactory {
 				requestVerb = requestVerb + ch;
 			}
 		} catch (Exception e) {
-			//Log and send back bad request
+			// Log and send back bad request
 			e.printStackTrace();
 
 			return new MalformedHTTPRequest(socket);
 		}
 
 		try {
-			Class<?> requestClass = Class.forName("request." + requestVerb.toUpperCase()
-					+ "HTTPRequest");
+			Class<?> requestClass = Class.forName("request."
+					+ requestVerb.toUpperCase() + "HTTPRequest");
 			Constructor<?> constructor = requestClass.getConstructor(
 					Socket.class, InputStreamReader.class);
 			Object instance = constructor.newInstance(socket, reader);
-			HTTPRequest httpRequestInstance = (HTTPRequest) instance;
-			
+			httpRequestInstance = (HTTPRequest) instance;
+
 			httpRequestInstance.readHeadersAndBody();
 			httpRequestInstance.checkRequest();
 			httpRequestInstance.method = requestVerb;
-
-			return httpRequestInstance;
 		} catch (Exception e) {
-			MalformedHTTPRequest badRequest = new MalformedHTTPRequest(socket);
-			return badRequest;
+			httpRequestInstance = new MalformedHTTPRequest(socket);
 		}
+
+		if (isBadRequestPath(rootPath, httpRequestInstance.path)) {
+			return httpRequestInstance;
+		} else {
+			return new MalformedHTTPRequest(socket);
+		}
+	}
+
+	public boolean isBadRequestPath(String root, String path) {
+		String tempPath;
+		String requestPath = "";
+		tempPath = rootPath + path;
+		File file = new File(tempPath);
+
+		try {
+			requestPath = file.getCanonicalPath();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		if (!requestPath.contains(root)) {
+			return false;
+		} else {
+			return true;
+		}
+
 	}
 }

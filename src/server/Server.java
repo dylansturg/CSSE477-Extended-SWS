@@ -24,11 +24,20 @@ package server;
 import gui.WebServer;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
+
+import com.thoughtworks.xstream.XStream;
 
 import request.HTTPRequestFactory;
 import response.ResponseHandler;
@@ -53,6 +62,13 @@ public class Server implements Runnable {
 	private boolean stop;
 	private ServerSocket welcomeSocket;
 
+	private String blacklistFile;
+	public ArrayList<String> blacklist;
+	private Timer blacklistTimer;
+	private HashMap<String, Integer> blacklistCounts;
+	private int blacklistMaxCount = 10;
+	private int blacklistResetFrequency = 3000;
+
 	private long connections;
 	private long serviceTime;
 
@@ -66,15 +82,18 @@ public class Server implements Runnable {
 	 * @param rootDirectory
 	 * @param port
 	 */
-	public Server(String rootDirectory, final String configFile, int port,
+	public Server(String rootDirectory, final String configFolder, int port,
 			WebServer window) throws InvalidConfigurationException {
 		this.rootDirectory = rootDirectory;
-		this.configurationFile = configFile;
+		this.configurationFile = configFolder + "\\routes.xml";
+		this.blacklistFile = configFolder + "\\blacklist.xml";
 		this.port = port;
 		this.stop = false;
 		this.connections = 0;
 		this.serviceTime = 0;
 		this.window = window;
+		this.blacklistTimer = new Timer();
+		this.blacklistCounts = new HashMap<String, Integer>();
 
 		resourcesConfiguration = new ResourceStrategyConfiguration();
 		configuration = new ServerConfiguration(resourcesConfiguration);
@@ -82,7 +101,8 @@ public class Server implements Runnable {
 			@Override
 			public void pluginsParsed() {
 				try {
-					configuration.parseConfiguration(new File(configFile));
+					configuration.parseConfiguration(new File(configFolder
+							+ "\\routes.xml"));
 				} catch (InvalidConfigurationException configExp) {
 
 				}
@@ -91,6 +111,12 @@ public class Server implements Runnable {
 		monitor.registerAddedListener(configuration);
 		(new Thread(monitor)).start();
 
+		File config = new File(this.blacklistFile);
+		XStream streamer = new XStream();
+
+		Object result = streamer.fromXML(config);
+		blacklist = (ArrayList<String>) result;
+
 		// Sets a default root directory as picked by user - servlets specific
 		// can be set in server config xml
 		configuration.setConfigurationOption(
@@ -98,6 +124,20 @@ public class Server implements Runnable {
 
 		Map<String, String> options = new HashMap<String, String>();
 		options.put(ResourceStrategyRouteOptions.RootDirectoy, rootDirectory);
+
+		this.blacklistTimer.scheduleAtFixedRate(new TimerTask() {
+			public void run() {
+				Iterator<String> keySetIterator = blacklistCounts.keySet()
+						.iterator();
+
+				while (keySetIterator.hasNext()) {
+					String key = keySetIterator.next();
+					if (blacklistCounts.get(key) > 0) {
+						blacklistCounts.put(key, 0);
+					}
+				}
+			}
+		}, this.blacklistResetFrequency, this.blacklistResetFrequency);
 
 	}
 
@@ -124,7 +164,7 @@ public class Server implements Runnable {
 			try {
 				configuration.parseConfiguration(new File(configurationFile));
 			} catch (InvalidConfigurationException exp) {
-				
+
 			}
 		}
 	}
@@ -177,6 +217,23 @@ public class Server implements Runnable {
 				// Listen for incoming socket connection
 				// This method block until somebody makes a request
 				Socket connectionSocket = this.welcomeSocket.accept();
+
+				String ip = connectionSocket.getInetAddress().toString();
+				if (this.blacklist.contains(ip)) {
+					connectionSocket.close();
+					continue;
+				}
+
+				if (this.blacklistCounts.containsKey(ip)) {
+					if (this.blacklistCounts.get(ip) > blacklistMaxCount) {
+						this.updateBlacklist(ip);
+					} else {
+						int currentCount = this.blacklistCounts.get(ip);
+						this.blacklistCounts.put(ip, currentCount + 1);
+					}
+				} else {
+					this.blacklistCounts.put(ip, 1);
+				}
 
 				// Come out of the loop if the stop flag is set
 				if (this.stop)
@@ -237,5 +294,21 @@ public class Server implements Runnable {
 		if (this.welcomeSocket != null)
 			return this.welcomeSocket.isClosed();
 		return true;
+	}
+
+	public void updateBlacklist(String badIP) {
+		this.blacklist.add(badIP);
+		File blacklistConfig = new File(blacklistFile);
+		XStream streamer = new XStream();
+
+		try {
+			blacklistConfig.createNewFile();
+			FileOutputStream out = new FileOutputStream(blacklistConfig);
+			streamer.toXML(this.blacklist, out);
+			out.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }
