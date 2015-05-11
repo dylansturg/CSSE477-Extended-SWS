@@ -45,13 +45,11 @@ import java.net.Socket;
 // Factory reads in the request verb and then creates through reflection the
 // correct HTTPRequest
 public class HTTPRequestFactory {
-	private String rootPath;
 
-	public HTTPRequest createRequest(Socket socket, String root) {
+	public HTTPRequest createRequest(Socket socket) {
 		InputStream inStream = null;
 		String requestVerb = "";
 		InputStreamReader reader;
-		rootPath = root;
 		HTTPRequest httpRequestInstance;
 
 		try {
@@ -89,26 +87,15 @@ public class HTTPRequestFactory {
 			httpRequestInstance = new MalformedHTTPRequest(socket);
 		}
 
-		if (isBadRequestPath(rootPath, httpRequestInstance.path)) {
+		if (isBadRequestPath(httpRequestInstance.path)) {
 			return httpRequestInstance;
 		} else {
 			return new MalformedHTTPRequest(socket);
 		}
 	}
 
-	public boolean isBadRequestPath(String root, String path) {
-		String tempPath;
-		String requestPath = "";
-		tempPath = rootPath + path;
-		File file = new File(tempPath);
-
-		try {
-			requestPath = file.getCanonicalPath();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-		if (!requestPath.contains(root)) {
+	public boolean isBadRequestPath(String path) {
+		if (!path.contains("..")) {
 			return false;
 		} else {
 			return true;
