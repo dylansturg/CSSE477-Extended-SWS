@@ -423,14 +423,23 @@
 
 	function requestEdit(snippet){
 		var snipId = snippet['id'];
-		var publisherId = snippet['publisher']['id'];
-		var snipText = snippet['text'];
 
-		$('#input-put-text').val(snipText);
-		$('#input-put-id').val(snipId);
-		$('#input-put-publisherId').val(publisherId);
+		$.ajax({
+			type: "GET",
+			url: "rhitter/snippets/snippet/" + snipId,
+			success: function(data){
+				var snippet = JSON.parse(data);
 
-		$('#put-modal').modal('show');
+				var publisherId = snippet['publisher']['id'];
+				var snipText = snippet['text'];
+
+				$('#input-put-text').val(snipText);
+				$('#input-put-id').val(snipId);
+				$('#input-put-publisherId').val(publisherId);
+
+				$('#put-modal').modal('show');
+			}
+		});
 	}
 
 	</script>
