@@ -18,5 +18,7 @@
 	<classpathentry kind="lib" path="libs/xom-1.1.jar"/>
 	<classpathentry kind="lib" path="libs/xpp3_min-1.1.4c.jar"/>
 	<classpathentry kind="lib" path="libs/xstream-1.4.8.jar"/>
+	<classpathentry kind="lib" path="libs/gson-2.3.1.jar"/>
+	<classpathentry kind="lib" path="libs/mysql-connector-java-5.1.35-bin.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

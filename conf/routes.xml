@@ -16,10 +16,8 @@
   <route>
     <plugin>primes</plugin>
     <path>/primes/</path>
-    <options>
-    </options>
+    <options/>
   </route>
-
   <route>
     <plugin>tweeter</plugin>
     <path>/tweeter/</path>
@@ -27,6 +25,44 @@
       <entry>
         <string>RootDirectory</string>
         <string>web/</string>
+      </entry>
+    </options>
+  </route>
+
+<route>
+    <plugin>static</plugin>
+    <path>/static/</path>
+    <options>
+      <entry>
+        <string>RootDirectory</string>
+        <string>static/</string>
+      </entry>
+    </options>
+  </route>
+
+  <route>
+    <plugin>rhitter</plugin>
+    <path>/rhitter/</path>
+    <options>
+      <entry>
+        <string>PluginDatabaseName</string>
+        <string>rhitter</string>
+      </entry>
+      <entry>
+        <string>PluginDatabaseUsername</string>
+        <string>java</string>
+      </entry>
+      <entry>
+        <string>PluginDatabasePassword</string>
+        <string>Password1@</string>
+      </entry>
+      <entry>
+        <string>PluginDatabaseServerName</string>
+        <string>dylans-pc.rose-hulman.edu</string>
+      </entry>
+      <entry>
+        <string>PluginDatabaseServerPort</string>
+        <string>3306</string>
       </entry>
     </options>
   </route>
