@@ -294,8 +294,8 @@
 		var form = {id: $('#input-put-id').val(), text: $('#input-put-text').val(), publisherId: $('#input-put-publisherId').val()};
 
 		$.ajax({
-			type: this.method,
-			url: this.action + "?token=" + token,
+			type: "PUT",
+			url: this.action + form['id'] + "?token=" + token,
 			data: JSON.stringify(form),
 			success: function(data){
 				$('#put-modal').modal('hide');
@@ -342,6 +342,12 @@
 
 		var lst = $('<ul>').addClass('nav navbar-nav navbar-right');
 		lst.append($('<li>').append($('<a>').text(username)));
+		lst.append($('<li>').append($('<button>').addClass('btn btn-default navbar-btn').text('Log Out').on('click', function(){
+			sessionStorage.removeItem('user');
+			sessionStorage.removeItem('userId');
+			sessionStorage.removeItem('token');
+			window.location.reload();
+		})));
 
 		$('#session-navbar').empty().append(lst);
 
@@ -358,6 +364,8 @@
 		sessionStorage.setItem("user", username);
 		sessionStorage.setItem("userId", userId);
 		sessionStorage.setItem("token", token);
+
+		refresh();
 	}
 
 	function populateSnippetGrid(snippets){
