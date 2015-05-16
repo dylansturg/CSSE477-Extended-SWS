@@ -40,4 +40,10 @@ public class ResourceStrategyRouteOptions {
 	public static final String AllowPersistentConnections = "AllowPersistentConnections";
 	public static final String ServeDirectories = "AllowServeDirectories";
 
+	public static final String PluginDatabaseServerName = "PluginDatabaseServerName";
+	public static final String PluginDatabaseServerPort = "PluginDatabaseServerPort";
+	public static final String PluginDatabaseName = "PluginDatabaseName";
+	public static final String PluginDatabaseUsername = "PluginDatabaseUsername";
+	public static final String PluginDatabasePassword = "PluginDatabasePassword";
+
 }

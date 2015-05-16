@@ -49,6 +49,8 @@ public class HttpStatusCode {
 			"Method Not Allowed");
 	public static final HttpStatusCode LENGTH_REQUIRED = Create(411,
 			"Length Required");
+	public static final HttpStatusCode USER_ERROR = Create(445,
+			"The provided content was unacceptable.");
 	public static final HttpStatusCode TEAPOT = Create(418, "I'm a Teapot");
 
 	// 5xx indicates internal failure

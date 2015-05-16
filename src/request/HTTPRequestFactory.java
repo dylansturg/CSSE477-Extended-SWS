@@ -95,7 +95,7 @@ public class HTTPRequestFactory {
 	}
 
 	public boolean isBadRequestPath(String path) {
-		if (!path.contains("..")) {
+		if (path != null && !path.contains("..")) {
 			return false;
 		} else {
 			return true;
