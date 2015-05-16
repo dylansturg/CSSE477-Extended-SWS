@@ -7,6 +7,8 @@
 	<!-- Optional theme -->
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css">
 
+	<link rel="stylesheet" href="/static/rhitter/site.css">
+
 	<script src="//code.jquery.com/jquery-2.1.4.min.js"></script>
 
 	<!-- Latest compiled and minified JavaScript -->
@@ -18,7 +20,7 @@
 	<title>RHITter #Trending</title>
 </head>
 <body>
-	<nav class="navbar navbar-default">
+	<nav class="navbar navbar-default navbar-fixed-top">
 		<div class="container-fluid">
 			<!-- Brand and toggle get grouped for better mobile display -->
 			<div class="navbar-header">
@@ -35,11 +37,15 @@
 			<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 				<ul class="nav navbar-nav">
 					<li class="">
-						<a href="#">Link <span class="sr-only">(current)</span></a>
+						<a href="#" id="navbar-refresh-snippets" data-toggle="tooltip" data-placement="bottom" title="Load newest Snippets"><span class="glyphicon glyphicon-refresh"></span></a>
 					</li>
+					<li class="">
+						<a href="#" id="navbar-create-snippet" data-toggle="tooltip" data-placement="bottom" title="Create a new Snippet"><span class="glyphicon glyphicon-plus"></span></a>
+					</li>
+
 				</ul>
 				<div id="session-navbar">
-					<ul class="nav navbar-nav navbar-right">
+					<ul class="nav navbar-nav">
 						<li>
 							<button id="sign-up" type="button" class="btn btn-default navbar-btn" data-toggle="modal" data-target="#register-modal" >Sign Up</button>
 						</li>
@@ -49,7 +55,7 @@
 							<input type="text" name="username" class="form-control" placeholder="User">
 							<input type="password" name="password" class="form-control" placeholder="Password">
 						</div>
-						<button type="submit" class="btn btn-default">Submit</button>
+						<button type="submit" class="btn btn-default">Login</button>
 					</form>
 				</div>
 
@@ -59,7 +65,86 @@
 
 	<div class="container">
 		<h1>Content Goes Here</h1>
+		<h3>Have Something on Your Mind? <span class="glyphicon glyphicon-plus"></span></h3>
+
+		<div id="snippets-grid" class="table-responsive">
+			<table class="table">
+				<tr>
+					<div class="panel panel-default">
+						<div class="panel-heading">
+							<h3 class="panel-title">Author Name
+								<span style="padding-left: 10px;" class="glyphicon glyphicon-remove pull-right"></span>
+								<span class="glyphicon glyphicon-edit pull-right"></span>
+								
+							</h3>
+
+						</div>
+						<div class="panel-body">
+							Some wicked awesome snippet text...
+						</div>
+
+						<div class="panel-footer">
+							Last modified on...
+						</div>
+					</div>
+				</tr>
+			</table>
+		</div>
 	</div>
+
+	<div class="modal fade" id="put-modal" tabindex="-1" role="dialog">
+		<div class="modal-dialog">
+			<form class="form-horizontal" id="put-form" method="put" action="/rhitter/snippets/">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+						<h4 class="modal-title">Register For RHITter</h4>
+					</div>
+					<div class="modal-body">
+						<p>Please fill in this information...</p>
+						<input type="hidden" id="input-put-id" value="0">
+						<input type="hidden" id="input-put-publisherId" value="0">
+						<div class="form-group">
+							<label for="input-put-text" class="col-sm-2 contorl-label">Snippet</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control" id="input-put-text" name="input-put-text">
+							</div>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+						<input type="submit" class="btn btn-primary" value="Submit" />
+					</div>
+				</div><!-- /.modal-content -->
+			</form>
+		</div><!-- /.modal-dialog -->
+	</div><!-- /.modal -->
+
+	<div class="modal fade" id="post-modal" tabindex="-1" role="dialog">
+		<div class="modal-dialog">
+			<form class="form-horizontal" id="post-form" method="post" action="/rhitter/snippets/">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+						<h4 class="modal-title">Register For RHITter</h4>
+					</div>
+					<div class="modal-body">
+						<p>Please fill in this information...</p>
+						<div class="form-group">
+							<label for="input-post-text" class="col-sm-2 contorl-label">Snippet</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control" id="input-post-text" name="input-post-text">
+							</div>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+						<input type="submit" class="btn btn-primary" value="Submit" />
+					</div>
+				</div><!-- /.modal-content -->
+			</form>
+		</div><!-- /.modal-dialog -->
+	</div><!-- /.modal -->
 
 	<div class="modal fade" id="register-modal" tabindex="-1" role="dialog">
 		<div class="modal-dialog">
@@ -84,95 +169,270 @@
 								<input type="password" class="form-control" id="input-register-password" name="input-register-password">
 							</div>
 						</div>
-					</form>
-				</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-					<input type="submit" class="btn btn-primary" value="Register" />
-				</div>
-			</div><!-- /.modal-content -->
-		</form>
-	</div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+						<input type="submit" class="btn btn-primary" value="Register" />
+					</div>
+				</div><!-- /.modal-content -->
+			</form>
+		</div><!-- /.modal-dialog -->
+	</div><!-- /.modal -->
 
-<script type="text/javascript">
-$('#login-form').submit(function(){
-	var form = {username: $('[name=username]').val(), password: $('[name=password]').val()};
-	login(form['username'], form['password']);
+	<script type="text/javascript">
 
-	return false;
-});
-
-function login(username, password){
-	var payload = {username: username, password: password};
-	$.ajax({
-		type: $('#login-form')[0].method,
-		url: $('#login-form')[0].action,
-		data: JSON.stringify(payload),
-		success: function (data) {
-			var response = JSON.parse(data);
-			var token = response['token'];
-			var userId = response['user_id'];
-
-			loggedIn({username: username, userId: userId}, token);
-		},
-		error: function(data){
-			bootbox.alert("The credentials you provided did not match an existing user.  Please try again or register.");
-		}
+	$(function(){
+		$('[data-toggle="tooltip"]').tooltip();
 	});
-}
 
-$('#register-form').submit(function(){
+	$('#login-form').submit(function(){
+		var form = {username: $('[name=username]').val(), password: $('[name=password]').val()};
+		login(form['username'], form['password']);
 
-	var form = {username: $('[name=input-register-username]').val(), password: $('[name=input-register-password]').val()};
+		return false;
+	});
 
-	console.log("Form data:");
-	console.log(form);
+	function login(username, password){
+		var payload = {username: username, password: password};
+		$.ajax({
+			type: $('#login-form')[0].method,
+			url: $('#login-form')[0].action,
+			data: JSON.stringify(payload),
+			success: function (data) {
+				var response = JSON.parse(data);
+				var token = response['token'];
+				var userId = response['userId'];
 
-	$.ajax({
-		type: this.method,
-		url: this.action,
-		data: JSON.stringify(form),
-		success: function(data){
-			var user = JSON.parse(data);
-			bootbox.alert("Your account was successfully created.")
-
-			login(user['username'], user['password']);
-
-			$('#register-modal').modal('hide');
-		},
-		error: function(data){
-			var response = JSON.parse(data.responseText);
-			var errorMsg = "There was an error while processing your request.  Please try not to fail at typing data into a form.";
-			if (response['reason'] !== undefined){
-				errorMsg = response['reason'];
+				loggedIn({username: username, userId: userId}, token);
+			},
+			error: function(data){
+				bootbox.alert("The credentials you provided did not match an existing user.  Please try again or register.");
 			}
-
-			bootbox.alert(errorMsg);
-		}
-	});
-
-	return false;
-});
-
-function loggedIn(user, token){
-	var lst = $('<ul>').addClass('nav navbar-nav navbar-right');
-	lst.append($('<li>').append($('<a>').text(username)));
-
-	$('#session-navbar').empty().append(lst);
-
-	if(typeof(sessionStorage) === 'undefined'){
-		bootbox.alert("Your browser does not support HTML5 sessionStorage.  This website won't work.  Please upgrade your browser experience with IE11.");
-		return;
+		});
 	}
 
-	var username = user['username'];
-	var userId = user['id'];
+	$('#register-form').submit(function(){
 
-	sessionStorage.setItem("user", username);
-	sessionStorage.setItem("userId", userId);
-	sessionStorage.setItem("token", token);
-}
-</script>
+		var form = {username: $('[name=input-register-username]').val(), password: $('[name=input-register-password]').val()};
+
+		console.log("Form data:");
+		console.log(form);
+
+		$.ajax({
+			type: this.method,
+			url: this.action,
+			data: JSON.stringify(form),
+			success: function(data){
+				var user = JSON.parse(data);
+				bootbox.alert("Your account was successfully created.")
+
+				login(user['username'], user['password']);
+
+				$('#register-modal').modal('hide');
+			},
+			error: function(data){
+				var response = JSON.parse(data.responseText);
+				var errorMsg = "There was an error while processing your request.  Please try not to fail at typing data into a form.";
+				if (response['reason'] !== undefined){
+					errorMsg = response['reason'];
+				}
+
+				bootbox.alert(errorMsg);
+			}
+		});
+
+		return false;
+	});
+
+	$('#post-form').submit(function(){
+
+		var token = sessionStorage.getItem('token');
+		if(token === undefined){
+			bootbox.alert("Please login before trying to post.");
+			return false;
+		}
+
+		var form = {text: $('#input-post-text').val()};
+
+		$.ajax({
+			type: this.method,
+			url: this.action + "?token=" + token,
+			data: JSON.stringify(form),
+			success: function(data){
+				$('#post-modal').modal('hide');
+				refresh();
+			},
+			error: function(xhr){
+				bootbox.alert("Your post failed.  Sorry.");
+			}
+		});
+
+		return false;
+	});
+
+	$('#put-form').submit(function(){
+
+		var token = sessionStorage.getItem('token');
+		if(token === undefined){
+			bootbox.alert("Please login before you try to edit a snippet.");
+		}
+
+		var form = {id: $('#input-put-id').val(), text: $('#input-put-text').val(), publisherId: $('#input-put-publisherId').val()};
+
+		$.ajax({
+			type: this.method,
+			url: this.action + "?token=" + token,
+			data: JSON.stringify(form),
+			success: function(data){
+				$('#put-modal').modal('hide');
+				refresh();
+			},
+			error: function(xhr){
+				bootbox.alert("The operation has failed.  Sorry.");
+			}
+		});
+
+		return false;
+	});
+
+	$('#navbar-create-snippet').on('click', function(){
+		bootbox.alert("Please login first.");
+	});
+
+	$('#navbar-refresh-snippets').on('click', function(){
+		refresh();
+	});
+
+	function refresh(){
+		$('#navbar-refresh-snippets').addClass('disabled');
+		$.ajax({
+			type: "GET",
+			url: "rhitter/snippets/",
+			success: function(data){
+				var snippets = JSON.parse(data);
+				populateSnippetGrid(snippets);
+			},
+			error: function(xhr){
+				bootbox.alert("Looks like the server failed or something.  I don't know.  Good luck.");
+			},
+			complete: function(){
+				$('#navbar-refresh-snippets').removeClass('disabled');
+			},
+		})
+	}
+
+	function loggedIn(user, token){
+
+		var username = user['username'];
+		var userId = user['userId'];
+
+		var lst = $('<ul>').addClass('nav navbar-nav navbar-right');
+		lst.append($('<li>').append($('<a>').text(username)));
+
+		$('#session-navbar').empty().append(lst);
+
+		$('#navbar-create-snippet').off('click');
+		$('#navbar-create-snippet').on('click', function(){
+			$('#post-modal').modal('show');
+		});
+
+		if(typeof(sessionStorage) === 'undefined'){
+			bootbox.alert("Your browser does not support HTML5 sessionStorage.  This website won't work.  Please upgrade your browser experience with IE11.");
+			return;
+		}
+
+		sessionStorage.setItem("user", username);
+		sessionStorage.setItem("userId", userId);
+		sessionStorage.setItem("token", token);
+	}
+
+	function populateSnippetGrid(snippets){
+		var table = $('<table>').addClass('table');
+
+		for (var i=0; i < snippets.length; i++){
+			var snippet = snippets[i];
+			var row = $('<tr>');
+			var panel = panelForSnippet(snippet);
+			row.append(panel);
+
+			table.append(row);
+		}
+
+		$('#snippets-grid').empty().append(table);
+	}
+
+	function panelForSnippet(snippet){
+		var author = snippet["publisher"]["username"];
+		var amAuthor = false;
+		var snippetId = snippet["id"];
+		var myId = parseInt(sessionStorage.getItem("userId"));
+		if (myId !== NaN){
+			var authorId = parseInt(snippet["publisher"]["id"]);
+			amAuthor = authorId === myId;
+		}
+		
+		var panel = $('<div>').addClass('panel panel-default');
+		var headerContainer = $('<div>').addClass('panel-heading');
+		var header = $('<h3>').addClass('panel-title').append(author);
+		if(amAuthor){
+			header.append($('<span>').addClass('glyphicon glyphicon-remove pull-right glyphicon-padded')).append($('<span>').addClass('glyphicon glyphicon-edit pull-right'));
+
+			$(header).find('.glyphicon-remove').on('click', function(){
+				requestDelete(snippetId);
+			});
+			$(header).find('.glyphicon-edit').on('click', function(){
+				requestEdit(snippet);
+			});
+		}
+
+		headerContainer.append(header);
+
+		var body = $('<div>').addClass('panel-body').append(snippet["text"]);
+
+		var footer = $('<div>').addClass('panel-footer').append('Last Modified on ' + snippet['timestamp']);
+
+		panel.append(headerContainer).append(body).append(footer);
+
+		return panel;
+	}
+
+	function requestDelete(snippetId){
+		var token = sessionStorage.getItem("token");
+		if(token === undefined){
+			bootbox.alert("You must login before you can try to delete snippets.");
+			return false;
+		}
+
+		bootbox.confirm("Are you sure you want to delete that?", 
+			function(result){
+				if(result){
+					$.ajax({
+						type: "DELETE",
+						url: "/rhitter/snippets/" + snippetId + "?token=" + token,
+						success: function(){
+							bootbox.alert("Your Snippet was deleted.");
+							refresh();
+						},
+						error: function(){
+							bootbox.alert("Looks like the server let us both down.");
+						}
+					});
+				}
+			});
+	}
+
+	function requestEdit(snippet){
+		var snipId = snippet['id'];
+		var publisherId = snippet['publisher']['id'];
+		var snipText = snippet['text'];
+
+		$('#input-put-text').val(snipText);
+		$('#input-put-id').val(snipId);
+		$('#input-put-publisherId').val(publisherId);
+
+		$('#put-modal').modal('show');
+	}
+
+	</script>
 </body>
 </html>
