@@ -185,6 +185,18 @@
 
 	$(function(){
 		$('[data-toggle="tooltip"]').tooltip();
+		refresh();
+
+		var username = sessionStorage.getItem("user");
+		var userId = sessionStorage.getItem("userId");
+		var token = sessionStorage.getItem("token");
+
+		if(username !== null && userId !== null && token !== null){
+			if(username !== undefined && userId !== undefined && token !== undefined){
+				loggedIn({username: username, userId: userId}, token);
+			}
+		}
+
 	});
 
 	$('#login-form').submit(function(){
@@ -309,7 +321,7 @@
 		$('#navbar-refresh-snippets').addClass('disabled');
 		$.ajax({
 			type: "GET",
-			url: "rhitter/snippets/",
+			url: "/rhitter/snippets/",
 			success: function(data){
 				var snippets = JSON.parse(data);
 				populateSnippetGrid(snippets);
@@ -428,7 +440,7 @@
 
 		$.ajax({
 			type: "GET",
-			url: "rhitter/snippets/snippet/" + snipId,
+			url: "/rhitter/snippets/snippet/" + snipId,
 			success: function(data){
 				var snippet = JSON.parse(data);
 
